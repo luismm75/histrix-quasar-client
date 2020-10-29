@@ -1,9 +1,15 @@
 <template>
   <q-page padding>
-    <HistrixClient />
+    <p>Loging test</p>
+    <LoginForm />
   </q-page>
 </template>
-
+import { MyQuasarButton } from "quasar-ui-histrix-quasar-client";
+export default {
+  components: {
+    LoginForm
+  }
+}
 <style lang="sass" scoped>
 .directive-target
   width: 50px

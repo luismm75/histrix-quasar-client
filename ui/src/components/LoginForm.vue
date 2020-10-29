@@ -1,0 +1,164 @@
+<template>
+        <q-card>
+            <q-separator />
+            <q-card-section>
+                <form @submit.prevent="submitLogin">
+                  <div class="row">
+                      <div class="col-xs-12 q-mb-sm">
+                          <q-input
+                          inverted-light
+                          :label="'Ingrese email operador'" id="email" autofocus
+                          type="text" v-model="form.email" name="email" class="full-width"
+                          :before="[
+                              {
+                              icon: 'person',
+                              }
+                          ]"
+                        :error="$v.form.email.$error"
+                          >
+                          <template v-slot:prepend>
+                            <q-icon name="email" />
+                          </template>
+                      </q-input>
+                      </div>
+                      <div class="col-xs-12 q-mb-sm">
+                          <q-input :label="'Ingrese contraseña'" id="password"
+                             inverted-light
+                             :type="isPwd ? 'password' : 'text'"
+                              v-model="form.password"
+                              name="password" class="full-width"
+                              :before="[{ icon: 'lock' }]"
+                              :error="$v.form.password.$error"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="vpn_key" />
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              :name="isPwd ? 'visibility_off' : 'visibility'"
+                              class="cursor-pointer"
+                              @click="isPwd = !isPwd"
+                            />
+                          </template>
+                        </q-input>
+                      </div>
+                      <br>
+                        <div class="col-xs-12 q-mb-sm text-center">
+                          <q-btn icon="chevron_right" class="q-pl-md q-pr-md q-pt-sm q-pb-sm full-width"
+                                :disable="btnLoading" type="submit"
+                                :loading="btnLoading"
+                                color="primary" size="md" label="Ingresar"
+                                  >
+                          </q-btn>
+                          <q-btn v-if="!login" sixe="sm" flat class="q-ma-md bg-accent" color="white" align="left"
+                              :to="{ name: 'register', query: { t: new Date().getTime() }}">
+                              <span class="q-ml-xs">Registrarme</span>
+                          </q-btn>
+
+                          <q-btn sixe="sm" flat class="q-ma-md" color="primary" align="left"
+                            @click="close()"
+                              :to="{ name: 'mail-reset-password' }">
+                              <span class="q-ml-xs">Recuperar contraseña</span>
+                          </q-btn>
+                        </div>
+                  </div>
+                </form>
+            </q-card-section>
+        </q-card>
+</template>
+
+<script>
+import Vue from 'vue';
+import { required, email } from 'vuelidate/lib/validators'
+
+// import validate from '../mixins/validate.js'
+import api from '../services/histrixApi.js';
+
+export default {
+  props: ['nextUrl', 'login'],
+  name: 'LoginForm',
+  components: {
+
+  },
+  mixins: [],
+  data() {
+    return {
+      form: {
+        email: null,
+        password: null,
+      },
+      btnLoading: false,
+      showRecaptcha: false,
+      processEnv: process.env,
+      loading: false,
+      redir: '',
+      // redirect: (this.$route.params.nextUrl) ? `#${this.$route.params.nextUrl}` : null,
+      isPwd: true,
+    };
+  },
+  mounted() {
+    this.form.email = this.login;
+  },
+  validations: {
+    form: {
+      email: { required },
+      password: { required },
+    },
+  },
+  computed: {
+    redirect() {
+      if (this.redir !== '') {
+        return this.redir;
+      }
+      return (this.$route.params.nextUrl) ? { path: `${this.$route.params.nextUrl}` } : { path: this.nextUrl, query: { t: new Date().getTime() } };
+    },
+  },
+  methods: {
+    submitLogin() {
+      /*
+      if (!this.validateForm()) {
+        return;
+      }
+      */
+      if (this.showRecaptcha && !this.recaptcha()) {
+        return;
+      }
+      this.btnLoading = true;
+      api.login(this.form.email, this.form.password)
+      .catch((error) => {
+        console.log( error.response );
+        this.$q.notify({
+          message: 'Usuario o contraseña incorrectos' + error.response.statusText,
+          type: 'negative',
+          timeout: 3000,
+          position: 'top',
+        });
+    })
+      this.form.password = null;
+      this.btnLoading = false;
+
+      
+    },
+    setError(error) {
+      this.btnLoading = false;
+      this.$q.notify({
+        message: 'Revise los datos del formulario.',
+        type: 'negative',
+        timeout: 3000,
+        position: 'top',
+      });
+    },
+  },
+  events: {
+    'get-user': function () {
+      this.getUser(true);
+    },
+    'login-modal': function (redirect) {
+      this.redirect = redirect;
+    },
+  },
+};
+</script>
+
+<style scoped>
+</style>
