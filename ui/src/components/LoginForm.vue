@@ -2,7 +2,7 @@
         <q-card>
             <q-separator />
             <q-card-section>
-                <form @submit.prevent="submitLogin">
+                <q-form @submit.prevent="submitLogin">
                   <div class="row">
                       <div class="col-xs-12 q-mb-sm">
                           <q-input
@@ -14,7 +14,7 @@
                               icon: 'person',
                               }
                           ]"
-                        :error="$v.form.email.$error"
+                        
                           >
                           <template v-slot:prepend>
                             <q-icon name="email" />
@@ -28,7 +28,7 @@
                               v-model="form.password"
                               name="password" class="full-width"
                               :before="[{ icon: 'lock' }]"
-                              :error="$v.form.password.$error"
+                        
                         >
                           <template v-slot:prepend>
                             <q-icon name="vpn_key" />
@@ -61,14 +61,15 @@
                               <span class="q-ml-xs">Recuperar contraseña</span>
                           </q-btn>
                         </div>
-                  </div>
-                </form>
+                  </div>                  
+                </q-form>
             </q-card-section>
         </q-card>
 </template>
 
 <script>
 import Vue from 'vue';
+import vuelidate from 'vuelidate'
 import { required, email } from 'vuelidate/lib/validators'
 
 // import validate from '../mixins/validate.js'
@@ -97,6 +98,7 @@ export default {
     };
   },
   mounted() {
+
     this.form.email = this.login;
   },
   validations: {

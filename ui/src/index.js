@@ -76,7 +76,6 @@ export default {
   profileMenu,
   profileMenuItems,  
   install (Vue) {
-    Vue.component(Component.name, Component);
     Vue.component(ExportForm.name, ExportForm);
     Vue.component(HistrixApp.name, HistrixApp);
     Vue.component(HistrixCalendar.name, HistrixCalendar);
@@ -90,14 +89,14 @@ export default {
     Vue.component(HistrixTable.name, HistrixTable);
     Vue.component(HistrixTree.name, HistrixTree);
     Vue.component(LoginForm.name, LoginForm);
-    vue.component(DatabaseSelector.name, DatabaseSelector);
-    vue.component(HistrixExpansionMenu.name, HistrixExpansionMenu);
-    vue.component(HistrixLog.name, HistrixLog);
-    vue.component(HistrixMenu.name, HistrixMenu);
-    vue.component(HistrixNews.name, HistrixNews);
-    vue.component(HistrixUsers.name, HistrixUsers);
-    vue.component(notificationMenu.name, notificationMenu);
-    vue.component(profileMenu.name, profileMenu);
-    vue.component(profileMenuItems.name, profileMenuItems);
+    Vue.component(DatabaseSelector.name, DatabaseSelector);
+    Vue.component(HistrixExpansionMenu.name, HistrixExpansionMenu);
+    Vue.component(HistrixLog.name, HistrixLog);
+    Vue.component(HistrixMenu.name, HistrixMenu);
+    Vue.component(HistrixNews.name, HistrixNews);
+    Vue.component(HistrixUsers.name, HistrixUsers);
+    Vue.component(notificationMenu.name, notificationMenu);
+    Vue.component(profileMenu.name, profileMenu);
+    Vue.component(profileMenuItems.name, profileMenuItems);
   }
 }

@@ -4,7 +4,7 @@
     <LoginForm />
   </q-page>
 </template>
-import { MyQuasarButton } from "quasar-ui-histrix-quasar-client";
+import { LoginForm } from "quasar-ui-histrix-quasar-client";
 export default {
   components: {
     LoginForm

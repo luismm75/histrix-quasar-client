@@ -35,7 +35,7 @@
 export default {
   name: 'profileMenuItems',
   components: {
-    HistrixMenu: () => import('components/widgets/HistrixExpansionMenu.vue'),
+    HistrixMenu: () => import('./HistrixExpansionMenu.vue'),
   },
   props: ['mini'],
   methods: {

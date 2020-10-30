@@ -64,7 +64,7 @@ export default {
     mini: Boolean,
   },
   components: {
-    // HistrixExpansionMenu: () => import("components/widgets/HistrixExpansionMenu.vue"),
+     HistrixExpansionMenu: () => import("./HistrixExpansionMenu.vue"),
   },  
   data() {
     return {

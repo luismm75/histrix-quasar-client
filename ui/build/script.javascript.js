@@ -16,6 +16,8 @@ const rollupPlugins = [
     preferBuiltins: false
   }),
   json(),
+  commonjs(),
+  VuePlugin(/* VuePluginOptions */),
   buble({
     objectAssign: 'Object.assign'
   })
