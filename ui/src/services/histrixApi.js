@@ -23,7 +23,11 @@ export default {
     return localStorage.getItem('host') || process.env.API_URL
   },
   apiUrl() {
-    return `${this.host()}api/db/${this.currentDb()}`;
+    if (this.currentDb()) {
+      return `${this.host()}api/db/${this.currentDb()}`;
+    } else {
+      return process.env.API_URL;
+    }
   },
 
   /**
