@@ -126,7 +126,11 @@ export default {
         return;
       }
       this.btnLoading = true;
+
       api.login(this.form.email, this.form.password)
+      .then((success) => {
+        this.$emit('login')
+      })
       .catch((error) => {
         console.log( error.response );
         this.$q.notify({

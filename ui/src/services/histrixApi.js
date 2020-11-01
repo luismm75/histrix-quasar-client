@@ -129,18 +129,19 @@ export default {
 
   getBasicDataUser(scope) {
     return Vue.prototype.$axios
-      .get(`${this.apiUrl()}/app/users/current_user_form.xml`)
+      .get(`${this.apiUrl()}/me`)
+      /*      
       .then((resp) => {
-        if (!resp.data || resp.data.errors) {
-          return null;
-        }
+        console.log(resp.data)
         scope.$events.fire('got-user');
-        localStorage.setItem('user', JSON.stringify(resp.data.data[0]));
-        return resp.data.data[0];
+        //localStorage.setItem('user', JSON.stringify(resp.data.data[0]));
+        localStorage.setItem('user', JSON.stringify(resp.data));
+        return resp.data;
       })
       .catch(e =>
         // console.log('error')
         null);
+        */
   },
   /*
   getCuitData(cuit) {
@@ -168,7 +169,7 @@ export default {
      * @param {string} username
      * @param {string} password
      */
-  login(username, password) {
+  login(username, password, redirect) {
     const token = null;
     return Vue.auth.login({
       url: `${this.apiUrl()}/token`,
@@ -187,7 +188,8 @@ export default {
         Accept: 'application/json, text/plain',
         'Content-Type': 'application/json',
       },
-      redirect: '/auth',
+      // redirect: '/auth',
+      redirect: redirect,
       fetchUser: false,
     }).then((success) => {
       this.getUser().then((ok) => {
@@ -232,31 +234,37 @@ export default {
   },
 
   async getUser(verify = false) {
-    try {
       if (Vue.auth.check()) {
-        const userObject = await api.getBasicDataUser(this);
+        this.getBasicDataUser(this)
+              .then((resp) => {
+                const userObject = resp.data;              
 
-        this.$auth.user(userObject);
-        this.user = userObject;
-        //                this.$q.localStorage.set('user', JSON.stringify(userObject))
-        this.$events.fire('loaded-user');
-        this.showLoginModal = false;
+                // this.$events.fire('got-user');
+                localStorage.setItem('user', JSON.stringify(resp.data));
+                console.log(userObject);
 
-        if (userObject.verified == null) {
-          this.$q.notify({
-            message: 'Usuario no Verificado, por favor revise su casilla de correo y confirme su registro.',
-            type: 'negative',
-            timeout: 50000,
-            position: 'top',
-          });
-          this.redir = 'auth/verify';
-
-          return;
-        }
+                Vue.auth.user(userObject);
+                this.user = userObject;
+                //                this.$q.localStorage.set('user', JSON.stringify(userObject))
+                // Vue.events.fire('loaded-user');
+                this.showLoginModal = false;
+                
+                if (userObject.verified == null) {
+                  /*
+                  Notify.create({
+                    message: 'Usuario no Verificado, por favor revise su casilla de correo y confirme su registro.',
+                    type: 'negative',
+                    timeout: 50000,
+                    position: 'top',
+                  });
+                  */
+                  this.redir = 'auth/verify';
+                  
+                  return false;
+                }
+        })
+        
       }
-    } catch (e) {
-      console.log(e);
-    }
   },
   async getValidToken(id) {
     return Vue.prototype.$axios
@@ -354,7 +362,7 @@ export default {
         fileLink.click();
       })
       .catch((err) => {
-        this.$q.notify({
+        Notify.create({
           message: 'Error downloading File',
           type: 'negative',
           textColor: 'white',
