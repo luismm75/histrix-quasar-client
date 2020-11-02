@@ -127,7 +127,7 @@ export default {
       }
       this.btnLoading = true;
 
-      api.login(this.form.email, this.form.password)
+      api.login(this.form.email, this.form.password, this.redirect)
       .then((success) => {
         this.$emit('login')
       })
