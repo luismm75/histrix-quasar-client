@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import api from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixChart',

@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import api from '../services/histrixApi.js'
 
 export default {
   name: 'ExportForm',
@@ -88,7 +87,7 @@ export default {
   },
   methods: {
     downloadFile() {
-      api.downloadAppData(this.path, this.query, this.fileFormat, this.fileName)
+      histrixApi.downloadAppData(this.path, this.query, this.fileFormat, this.fileName)
     },
   },
 };

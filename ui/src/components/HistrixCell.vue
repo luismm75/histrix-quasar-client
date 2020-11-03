@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import api from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixCell',
@@ -63,7 +62,7 @@ export default {
   computed: {
     thumb() {
       if (this.col.value.thumb) {
-        return api.apiUrl() + '/thumb/' + this.col.value.computedPath;
+        return histrixApi.apiUrl() + '/thumb/' + this.col.value.computedPath;
       }
       return null
     },

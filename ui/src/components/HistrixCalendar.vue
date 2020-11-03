@@ -126,7 +126,6 @@
 
 <script>
 import QCalendar from '@quasar/quasar-ui-qcalendar';
-import api from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixCalendar',
@@ -254,7 +253,7 @@ export default {
       return `${this.schema.api  }/app/${  this.path }?${ query || '' }&_dt=!&start=2020-01-01`
     },
     getData(url) {
-      api.getData(url)
+      histrixApi.getData(url)
         .then((response) => {
           this.data = response.data;
         })

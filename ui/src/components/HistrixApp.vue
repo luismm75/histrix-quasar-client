@@ -460,13 +460,13 @@ export default {
      * database id
      */
     databaseId() {
-      return (this.database)?this.database:api.currentDb();
+      return (this.database)?this.database:histrixApi.currentDb();
     },
     /**
      * url api endpoint
      */
     apiUrl() {
-      return (this.api)?this.api:api.apiUrl();
+      return (this.api)?this.api:histrixApi.apiUrl();
     },
     /**
      * select apropiate component to render
@@ -644,7 +644,7 @@ export default {
      * get PDF blob data
      */
     fetchPDF () {
-      api.getAppPdf(this.path, this.queryString)
+      histrixApi.getAppPdf(this.path, this.queryString)
           .then(res => {
       // create the blob
       const blob = new Blob([res.data], {
@@ -685,7 +685,7 @@ export default {
      * get Schema from API
      */
     getSchema () {
-      api.getAppSchema(this.path, this.queryString)
+      histrixApi.getAppSchema(this.path, this.queryString)
         .then(response => {
           this.resources = response.data.resources;
           this.schema = response.data.schema;
