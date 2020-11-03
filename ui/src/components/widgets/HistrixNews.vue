@@ -46,7 +46,7 @@
 </template>
 
 <script>
-const histrixApi = Vue.prototype.$histrixApi
+import histrixApi from '../../services/histrixApi.js'
 
 export default {
   name: 'HistrixNews',

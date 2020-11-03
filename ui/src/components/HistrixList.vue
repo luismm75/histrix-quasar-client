@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import api from '../services/histrixApi.js';
+import histrixApi from '../services/histrixApi.js'
 
 export default {
   name: 'HistrixList',
@@ -96,7 +96,7 @@ export default {
       }, 300);
     },
     getData(url) {
-      api.getAppData(url)
+      histrixApi.getAppData(url)
         .then((response) => {
           this.data = response.data.data;
         })

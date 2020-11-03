@@ -56,7 +56,7 @@
 
 <script>
 import { date } from 'quasar';
-const histrixApi = Vue.prototype.$histrixApi
+import histrixApi from '../../services/histrixApi.js'
 
 export default {
   name: 'HistrixUsers',
