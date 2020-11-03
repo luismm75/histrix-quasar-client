@@ -250,7 +250,7 @@ import Vue from 'vue';
 import { required, maxLength, decimal, email 
 } from 'vuelidate/lib/validators';
 import qs from 'qs';
-const histrixApi = Vue.prototype.$histrixApi
+import histrixApi from '../services/histrixApi.js'
 
 export default {
   name: 'HistrixTable',
