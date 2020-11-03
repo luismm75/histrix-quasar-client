@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import api from '../../services/histrixApi.js';
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: "notificationMenu",
@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     getNotifications() {
-      api.getUserNotifications().then((response) => {
+      histrixApi.getUserNotifications().then((response) => {
         this.notificationCount = response.data.messageCount;
         this.notifications = response.data.messages;
       })

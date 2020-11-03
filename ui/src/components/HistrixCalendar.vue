@@ -126,6 +126,7 @@
 
 <script>
 import QCalendar from '@quasar/quasar-ui-qcalendar';
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixCalendar',

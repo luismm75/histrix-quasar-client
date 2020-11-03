@@ -31,6 +31,7 @@
 </template>
 
 <script>
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'ExportForm',

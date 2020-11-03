@@ -250,8 +250,7 @@ import Vue from 'vue';
 import { required, maxLength, decimal, email 
 } from 'vuelidate/lib/validators';
 import qs from 'qs';
-import api from '../services/histrixApi.js'
-
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixTable',
@@ -563,7 +562,7 @@ export default {
     },
     processData() {
       this.submitting = true;
-      api.processApp(this.xmlUrl, this.rawData)
+      histrixApi.processApp(this.xmlUrl, this.rawData)
         .then((response) => {
           this.submitting = false;
         })
@@ -642,7 +641,7 @@ export default {
       if (item._ajax_ == false) {
         this.removeItem(item);
       } else {
-        api.deleteAppData(this.xmlUrl(), this.getKeys(item))
+        histrixApi.deleteAppData(this.xmlUrl(), this.getKeys(item))
           .then((response) => {
             this.removeItem(item);
           })
@@ -722,7 +721,7 @@ export default {
       this.fullQuery = $query;
     },
     getData(url) {
-      api.getAppData(url, this.query)
+      histrixApi.getAppData(url, this.query)
         .then((response) => {
           const {data} = response.data;
           data.map((element) => {

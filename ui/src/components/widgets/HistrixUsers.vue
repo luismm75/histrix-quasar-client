@@ -56,7 +56,7 @@
 
 <script>
 import { date } from 'quasar';
-import api from '../../services/histrixApi.js';
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixUsers',
@@ -107,7 +107,7 @@ export default {
   },
   mounted () {
     // this.subscribeWamp();
-    api.getUsers()
+    histrixApi.getUsers()
       .then((response) => {
         this.users = response.data.users;
         this.total = response.data.total;

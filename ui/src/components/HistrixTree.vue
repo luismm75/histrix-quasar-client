@@ -132,7 +132,8 @@
 </template>
 
 <script>
-import api from '../services/histrixApi.js'
+
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixTable',
@@ -221,7 +222,7 @@ export default {
       return keyData;
     },
     delete(item) {
-      api.deleteAppData(this.xmlUrl(), this.getKeys(item))
+      histrixApi.deleteAppData(this.xmlUrl(), this.getKeys(item))
         .then((response) => {
           const index = this.data.indexOf(item);
           this.data.splice(index, 1);
@@ -275,7 +276,7 @@ export default {
     },
     getData(url) {
       console.log(this.requestQuery);
-      api.getAppData(url, this.requestQuery)
+      histrixApi.getAppData(url, this.requestQuery)
         .then((response) => {
           const { data } = response.data;
           /*

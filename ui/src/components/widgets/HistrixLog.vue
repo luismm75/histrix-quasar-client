@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import api from '../../services/histrixApi.js';
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixLog',
@@ -22,7 +22,7 @@ export default {
     subscribeWamp() {
       const that = this;
       if (this.$wamp) {
-        this.$wamp.subscribe(`${api.currentDb()}.histrix.log`, (args, kwArgs, details) => {
+        this.$wamp.subscribe(`${histrixApi.currentDb()}.histrix.log`, (args, kwArgs, details) => {
           that.data.push(kwArgs.data.data.log);
         });
       }

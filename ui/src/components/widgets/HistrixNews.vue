@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import api from '../../services/histrixApi.js';
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixNews',
@@ -60,7 +60,7 @@ export default {
   methods: {
     getData() {
       const url = '/news/htx_news.xml';
-      api.getAppData(url)
+      histrixApi.getAppData(url)
         .then((response) => {
           this.data = response.data.data;
         })

@@ -33,6 +33,7 @@
 </template>
 
 <script>
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixChart',
@@ -139,7 +140,7 @@ export default {
     },
 
     getData(url) {
-      api.getData(url)
+      histrixApi.getData(url)
         .then((response) => {
           this.setChartOptions(response.data.data);
           this.loading = false;

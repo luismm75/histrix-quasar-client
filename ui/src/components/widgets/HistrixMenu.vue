@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import api from '../../services/histrixApi.js';
+
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixMenu',
@@ -74,7 +75,7 @@ export default {
     }
   },
   mounted() {
-    api.getMenu(this.level)
+    histrixApi.getMenu(this.level)
       .then((response) => {
         this.loading = false
         this.tree = response.data.tree;

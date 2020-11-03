@@ -62,7 +62,7 @@
 
 <script>
 import Vue from 'vue';
-import api from '../services/histrixApi.js';
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixField',
@@ -185,7 +185,7 @@ export default {
     },
     getHelpSchema(url) {
       if (this.helpPath) {
-        api.getAppSchema(this.helpPath)
+        histrixApi.getAppSchema(this.helpPath)
           .then((response) => {
             this.helpSchema = response.data.schema;
           })
@@ -205,7 +205,7 @@ export default {
       const that = this;
 
       this.delayTimer = setTimeout(() => {
-        api.getAppData(this.helpPath, params)
+        histrixApi.getAppData(this.helpPath, params)
           .then((response) => {
             const row = response.data.data[0];
             const schema = that.helpSchema;
@@ -223,7 +223,7 @@ export default {
     getFieldSchema: function(query) {
       if (this.hasOptions) {
         if (query) {
-                api.getAppSchema(this.innerContainerUrl, query)
+                histrixApi.getAppSchema(this.innerContainerUrl, query)
                   .then(response => {
                     this.options = this.mapOptions(response.data.data);
                   })
@@ -242,7 +242,7 @@ export default {
 
       if (this.hasOptions) {
         if (this.query != undefined && Object.entries(this.query).length !== 0) {
-          api.getAppData(this.innerContainerUrl, this.query)
+          histrixApi.getAppData(this.innerContainerUrl, this.query)
             .then((response) => {
               // this.options = this.mapOptions(response.data.data);
               this.options = this.mapRemoteOptions(response.data.data);

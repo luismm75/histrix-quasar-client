@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import api from '../../services/histrixApi.js';
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixExpansionMenu',
@@ -91,7 +91,7 @@ export default {
       return { path, query: { _title: node.label } }
     },
     getData() {
-      api.getMenu(this.level)
+      histrixApi.getMenu(this.level)
         .then((response) => {
           this.loading = false
           this.data = response.data.tree;

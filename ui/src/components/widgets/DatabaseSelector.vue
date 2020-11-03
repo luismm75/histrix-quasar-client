@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import api from '../../services/histrixApi.js';
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'DatabaseSelector',
@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     getData(host) {
-      api.getHostDb(host)
+      histrixApi.getHostDb(host)
         .then((response) => {
           const data = [];
           Object.entries(response.data).map((info) => {

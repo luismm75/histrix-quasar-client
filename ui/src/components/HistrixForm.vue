@@ -123,7 +123,8 @@ import { date } from 'quasar';
 import {
   required, maxLength, decimal, email,
 } from 'vuelidate/lib/validators';
-import api from '../services/histrixApi.js';
+
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   name: 'HistrixForm',
@@ -413,7 +414,7 @@ export default {
     Why soud i refresh the schema ?
     refreshSchema() {
       var fieldQuerys = {fieldQuerys: this.fieldQuerys};
-      api.getAppSchema(this.url, {...this.query, ...fieldQuerys})
+      histrixApi.getAppSchema(this.url, {...this.query, ...fieldQuerys})
         .then((response) => {
           this.localSchema = response.data.schema;
         })
@@ -495,7 +496,7 @@ export default {
     },
     processData() {
       this.submitting = true;
-      api.processAppForm(this.xmlUrl(), this.postData)
+      histrixApi.processAppForm(this.xmlUrl(), this.postData)
         .then((response) => {
           this.submitting = false;
           // this.$router.back();
@@ -512,7 +513,7 @@ export default {
     saveForm() {
       this.submitting = true;
       if (this.newRecord) {
-        api.insertAppData(
+        histrixApi.insertAppData(
           this.xmlUrl(),
           {
             keys: this.getKeys(this.editedItem),
@@ -528,7 +529,7 @@ export default {
             this.submitting = false;
           });
       } else {
-        api.updateAppData(
+        histrixhistrixApi.updateAppData(
           this.xmlUrl(),
           {
             keys: this.getKeys(this.editedItem),
@@ -571,7 +572,7 @@ export default {
       }
     },
     getData() {
-      api.getAppData(this.xmlUrl(), this.query)
+      histrixApi.getAppData(this.xmlUrl(), this.query)
         .then((response) => {
           this.localValues = response.data.data[0];
           this.localValues = { ...this.localValues, ...this.parseDateToLocale() };

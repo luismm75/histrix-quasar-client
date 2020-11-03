@@ -73,7 +73,7 @@ import vuelidate from 'vuelidate'
 import { required, email } from 'vuelidate/lib/validators'
 
 // import validate from '../mixins/validate.js'
-import api from '../services/histrixApi.js';
+const histrixApi = Vue.prototype.$histrixApi
 
 export default {
   props: ['nextUrl', 'login'],
@@ -127,7 +127,7 @@ export default {
       }
       this.btnLoading = true;
 
-      api.login(this.form.email, this.form.password, this.redirect)
+      histrixApi.login(this.form.email, this.form.password, this.redirect)
       .then((success) => {
         this.$emit('login')
       })
