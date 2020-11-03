@@ -282,10 +282,10 @@
 import Vue from "vue"
 import httpVueLoader from "http-vue-loader"
 import qs from 'qs';
-import api from '../services/histrixApi.js';
+// import api from '../services/histrixApi.js';
 
 httpVueLoader.httpRequest = function (url) {
-  api.getData(url)
+  histrixApi.getData(url)
     .then(function (res) {
       return res.data;
     })
