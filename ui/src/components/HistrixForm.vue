@@ -529,7 +529,7 @@ export default {
             this.submitting = false;
           });
       } else {
-        histrixhistrixApi.updateAppData(
+        histrixApi.updateAppData(
           this.xmlUrl(),
           {
             keys: this.getKeys(this.editedItem),

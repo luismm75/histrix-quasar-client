@@ -68,12 +68,13 @@
 </template>
 
 <script>
+
 import Vue from 'vue';
 import vuelidate from 'vuelidate'
 import { required, email } from 'vuelidate/lib/validators'
 
 // import validate from '../mixins/validate.js'
-const histrixApi = Vue.prototype.$histrixApi
+import histrixApi from '../services/histrixApi.js'
 
 export default {
   props: ['nextUrl', 'login'],
