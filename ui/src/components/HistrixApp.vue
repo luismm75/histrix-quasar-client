@@ -282,7 +282,7 @@
 import Vue from "vue"
 import httpVueLoader from "http-vue-loader"
 import qs from 'qs';
-const histrixApi = Vue.prototype.$histrixApi
+import histrixApi from '../services/histrixApi.js'
 
 httpVueLoader.httpRequest = function (url) {
   histrixApi.getData(url)
