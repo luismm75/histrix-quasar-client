@@ -11,7 +11,7 @@ export default {
     return Vue.prototype.$axios.get(url);
   },
   currentDb() {
-    return localStorage.getItem('database');
+    return localStorage.getItem('database') || process.env.DB;
   },
   async info() {
     return this.getData('/api/info/');
@@ -20,11 +20,11 @@ export default {
     return this.getData(`/api/db/${db}`);
   },
   host () {
-    return localStorage.getItem('host') || process.env.API_URL
+    return localStorage.getItem('host') || process.env.MAIN_URL
   },
   apiUrl() {
     if (this.currentDb()) {
-      return `${this.host()}api/db/${this.currentDb()}`;
+      return `${this.host()}/api/db/${this.currentDb()}`;
     } else {
       return process.env.API_URL;
     }

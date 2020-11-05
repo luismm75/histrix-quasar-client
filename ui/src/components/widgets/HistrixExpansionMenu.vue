@@ -33,9 +33,25 @@
         v-if="node.children"
         class="capitalize"
       >
+	 <template v-slot:header >
+          <q-item-section avatar>
+            <q-avatar :icon="node.icon || 'arrow_right'"  />
+          </q-item-section>
+
+          <q-item-section >
+            <span v-html="node.label.toLowerCase()" />
+          </q-item-section>
+<!--
+          <q-item-section side>
+            <div class="row items-center">
+              <q-icon name="star" color="red" size="24px" />
+            </div>
+          </q-item-section>
+-->
+        </template>
       <q-separator />
 
-        <histrixExpansionMenu :tree="node.children" _class="bg-grey-9" :mini="mini" />
+        <histrixExpansionMenu :tree="node.children" _class="bg-grey-2" :mini="mini" />
 
 
       </q-expansion-item>
@@ -53,7 +69,7 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js'
+import histrixApi from '../../services/histrixApi.js';
 
 export default {
   name: 'HistrixExpansionMenu',

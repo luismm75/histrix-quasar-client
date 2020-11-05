@@ -96,10 +96,11 @@
       <div class="row">
         <div class="col-5 "></div>
         <div class="col">
+
           <span class="q-pa-sm">
             <q-btn label="Cancelar"  icon="close"   class="nojustify-end flat"  v-close-popup />
-            <q-btn v-if="schema.insertButton"  label="Grabar" icon="save" @click="insertRow()" :loading="submitting" />
-            <q-btn label="guardar"   icon="save" :disable="$v.$invalid" class=" bg-primary text-white nojustify-end" @click="saveForm()" :loading="submitting" v-if="canUpdate && !localSchema.readonly && !localSchema.can_process" />
+            <q-btn v-if="editedIndex == -1"_v-if="schema.insertButton"  label="Grabar" icon="save" @click="insertRow()" :loading="submitting" />
+            <q-btn label="guardar"   icon="save" :disable="$v.$invalid" class=" bg-primary text-white nojustify-end" @click="saveForm()" :loading="submitting" v-if="updateButton" />
           </span>
           <!--
             <q-btn
@@ -123,8 +124,7 @@ import { date } from 'quasar';
 import {
   required, maxLength, decimal, email,
 } from 'vuelidate/lib/validators';
-
-const histrixApi = Vue.prototype.$histrixApi
+import histrixApi from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixForm',
@@ -145,6 +145,12 @@ export default {
     HistrixField: () => import('./HistrixField.vue'),
   },
   computed: {
+    insertButton() {
+      return this.editedIndex == -1 || this.editedIndex == null
+    },
+    updateButton() {
+      return this.canUpdate && !this.localSchema.readonly && !this.localSchema.can_process && !this.insertButton
+    },
     localValidations() {
       const localValidations = {};
       Object.entries(this.editables).map((fieldArray) => {

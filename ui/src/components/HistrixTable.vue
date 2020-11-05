@@ -671,6 +671,7 @@ export default {
         this.newRecord = true;
         this.editedItem = JSON.parse(JSON.stringify(this.schema.values));      
       }
+      this.insertButton = true;
       this.edit = true;
 
       // if (this.$refs.histrixForm) {
