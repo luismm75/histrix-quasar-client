@@ -169,7 +169,7 @@ export default {
      * @param {string} username
      * @param {string} password
      */
-  login(username, password, redirect) {
+  async login(username, password, redirect) {
     const token = null;
     return Vue.auth.login({
       url: `${this.apiUrl()}/token`,
@@ -192,12 +192,7 @@ export default {
       redirect: redirect,
       fetchUser: false,
     }).then((success) => {
-      this.getUser().then((ok) => {
-        // this.$router.push(this.redirect);
-        // Vue.emit('close');
-      }).catch((error) => {
-        throw error;
-      });
+      return this.getUser()
     });
   },
   async getData(url) {
@@ -233,38 +228,23 @@ export default {
     return this.getData(url);
   },
 
-  async getUser(verify = false) {
-      if (Vue.auth.check()) {
-        this.getBasicDataUser(this)
-              .then((resp) => {
-                const userObject = resp.data;              
+  getUser(verify = false) {
+    return this.getBasicDataUser(this)
+          .then((resp) => {
+            const userObject = resp.data;              
+            // this.$events.fire('got-user');
+            localStorage.setItem('user', JSON.stringify(resp.data));
 
-                // this.$events.fire('got-user');
-                localStorage.setItem('user', JSON.stringify(resp.data));
-                console.log(userObject);
-
-                Vue.auth.user(userObject);
-                this.user = userObject;
-                //                this.$q.localStorage.set('user', JSON.stringify(userObject))
-                // Vue.events.fire('loaded-user');
-                this.showLoginModal = false;
-                
-                if (userObject.verified == null) {
-                  /*
-                  Notify.create({
-                    message: 'Usuario no Verificado, por favor revise su casilla de correo y confirme su registro.',
-                    type: 'negative',
-                    timeout: 50000,
-                    position: 'top',
-                  });
-                  */
-                  this.redir = 'auth/verify';
-                  
-                  return false;
-                }
-        })
-        
-      }
+            Vue.auth.user(userObject);
+            // this.$q.localStorage.set('user', JSON.stringify(userObject))
+            // Vue.events.fire('loaded-user');
+            if (userObject.verified == null) {
+              /*  'Usuario no Verificado, por favor revise su casilla de correo y confirme su registro.',
+              */
+              return '/auth/verify';
+            }
+            return true;
+    })
   },
   async getValidToken(id) {
     return Vue.prototype.$axios

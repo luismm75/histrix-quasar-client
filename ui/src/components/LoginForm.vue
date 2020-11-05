@@ -126,40 +126,24 @@ export default {
       if (this.showRecaptcha && !this.recaptcha()) {
         return;
       }
+      
       this.btnLoading = true;
 
       histrixApi.login(this.form.email, this.form.password, this.redirect)
       .then((success) => {
-        this.$emit('login')
+        this.$router.push(success)
+        this.btnLoading = false;
       })
-      .catch((error) => {
-        console.log( error.response );
-        this.$q.notify({
-          message: 'Usuario o contraseña incorrectos' + error.response.statusText,
-          type: 'negative',
-          timeout: 3000,
-          position: 'top',
-        });
-    })
       this.form.password = null;
-      this.btnLoading = false;
-
-      
-    },
-    setError(error) {
-      this.btnLoading = false;
-      this.$q.notify({
-        message: 'Revise los datos del formulario.',
-        type: 'negative',
-        timeout: 3000,
-        position: 'top',
-      });
+  
     },
   },
   events: {
+    /*
     'get-user': function () {
       this.getUser(true);
     },
+    */
     'login-modal': function (redirect) {
       this.redirect = redirect;
     },

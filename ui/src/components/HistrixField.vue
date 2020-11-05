@@ -62,7 +62,8 @@
 
 <script>
 import Vue from 'vue';
-const histrixApi = Vue.prototype.$histrixApi
+
+import histrixApi from '../services/histrixApi.js'
 
 export default {
   name: 'HistrixField',

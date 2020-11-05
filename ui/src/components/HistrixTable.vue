@@ -60,6 +60,8 @@
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width class="bg-primary" v-if="schema.inline_detail"/>
+          <q-th auto-width v-if="canUpdate || canDelete" class="bg-primary" />
+
           <q-th
             v-for="col in props.cols"
             :key="col.name"
@@ -68,7 +70,6 @@
           >
             {{ col.label }}
           </q-th>
-        <q-th auto-width v-if="canUpdate || canDelete" class="bg-primary" />
         </q-tr>
       </template>
 
@@ -86,6 +87,11 @@
               :icon="props.expand ? 'remove' : 'add'"
             />
           </q-td>
+          <q-td key="actions">
+            <q-btn flat rounded icon="edit"   v-if="canUpdate && !isGrid" color="positive" @click="editRow(props.row)"   size="sm" no-caps />
+            <q-btn flat unelevated rounded icon="delete" v-if="schema.can_delete && canDelete " color="secondary"  @click="deleteItem(props.row)" size="sm" no-caps />
+          </q-td>
+
           <q-td
             v-for="cell in props.cols.filter(row => row.name)"
             :key="cell.name"
@@ -115,10 +121,6 @@
 
           </q-td>
 
-          <q-td key="actions">
-            <q-btn flat rounded icon="edit"   v-if="canUpdate && !isGrid" color="positive" @click="editRow(props.row)"   size="sm" no-caps />
-            <q-btn flat unelevated rounded icon="delete" v-if="schema.can_delete && canDelete " color="secondary"  @click="deleteItem(props.row)" size="sm" no-caps />
-          </q-td>
         </q-tr>
         <q-tr v-if="props.expand" :props="props">
           <q-td colspan="100%" class="bg-grey-12 qa-pa-xs">
@@ -544,6 +546,7 @@ export default {
     rowRecived(row) {
       Vue.set(this.data, row._id, row);
       this.$refs.formDialog.hide();
+      this.refresh();
     },
     formSaved(row, index) {
       // update row values

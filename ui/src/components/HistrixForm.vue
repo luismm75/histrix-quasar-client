@@ -514,6 +514,8 @@ export default {
         });
     },
     insertRow() {
+      this.newRecord = true
+      this.saveForm();
       this.$emit('insert-row', this.localValues, this.editedIndex);
     },
     saveForm() {
