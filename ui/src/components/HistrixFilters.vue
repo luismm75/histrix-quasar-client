@@ -1,49 +1,21 @@
 <template>
   <div>
-  <q-expansion-item
-      v-model="open"
-      icon="search"
-      :label="schema.title"
-      caption="búsqueda avanzada" >
-        <!-- <q-expansion-item dense dense-toggle icon="filter_list" label="Filtros"> -->
-        <q-item v-for="field in filters" v-bind:key="field.uid" class=" col-xs-12 col-sm-6 col-md-6" dense>
-           <HistrixField dense v-model="field.valor" :schema="field" clearable  filled/>
-        </q-item>
-          <q-btn
-            v-if="schema.filters[0]"
-            v-close-popup
-
-            class="fit"
-            color="secondary"
-            label="Buscar"
-            icon="search"
-            v-on:click="filterData"
-          />
-
+    <q-expansion-item v-if="filterCount > 1" v-model="open" icon="search" :label="schema.title" caption="búsqueda avanzada" >
+          <q-item v-for="field in filters" v-bind:key="field.uid" class=" col-xs-12 col-sm-6 col-md-6" dense>
+            <HistrixField dense v-model="field.valor" :schema="field" clearable  filled />
+          </q-item>
+          <q-btn v-if="schema.filters[0]" v-close-popup class="fit" color="secondary" label="Buscar" icon="search" v-on:click="filterData" />
     </q-expansion-item>
-<!--
-    <q-btn icon="filter_list" :class="(open?'bg-accent ':'')" flat round _label="Filtros">
-      <q-menu v-model="open" anchor="bottom left" self="top middle" dense ref="filter" >
 
-        <q-card class="q-pa-md row">
+    <div v-if="filterCount == 1">
+      <q-item v-for="field in filters" v-bind:key="field.uid" class=" col-xs-12 col-sm-6 col-md-6">
+        
+           <HistrixField v-model="field.valor" :schema="field" clearable  filled/>
+            <q-space />
+            <q-btn v-if="schema.filters[0]" color="secondary" label="Buscar" icon="search" v-on:click="filterData" />          
+       </q-item>
 
-        <q-item v-for="field in filters" v-bind:key="field.uid" class=" col-xs-12 col-sm-6 col-md-6" dense>
-           <HistrixField dense v-model="field.valor" :schema="field" clearable  filled/>
-        </q-item>
-          <q-btn
-            v-if="schema.filters[0]"
-            v-close-popup
-
-            class="fit"
-            color="secondary"
-            label="Buscar"
-            icon="search"
-            v-on:click="filterData"
-          />
-        </q-card>
-      </q-menu>
-    </q-btn>
-    -->
+    </div>
   </div>
 </template>
 
@@ -63,6 +35,11 @@ export default {
       filters: [],
       open: false,
     };
+  },
+  computed: {
+    filterCount() {
+      return this.filters.length
+    },
   },
   methods: {
     filterData() {

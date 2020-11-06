@@ -475,6 +475,7 @@ export default {
         sm = all;
         xs = all;
       }
+
       return `col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
     },
 

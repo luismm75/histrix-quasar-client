@@ -38,10 +38,9 @@
 
     <!-- TOP right: BUTTONS -->
       <template v-slot:top-right="props">
+          <q-btn-group dense flat  v-if="!inner">
 
-              <q-btn-group push v-if="!inner">
-
-          <q-btn v-if="schema.export" flat  icon="fas fa-file-excel" title="Exportar" @click="$emit('export')" />
+          <q-btn v-if="schema.export" flat  icon="get_app" _icon="fas fa-file-excel" title="Exportar" @click="$emit('export')" />
           <q-btn flat   icon="print" title="Imprimir" @click="$emit('print')" />
           <!--  <q-btn flat round dense :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" />  -->
           <q-btn flat  :icon="mode === 'grid' ? 'list' : 'grid_on'" @click=" mode = mode === 'grid' ? 'list' : 'grid'; separator = mode === 'grid' ? 'none' : 'horizontal';" >
@@ -228,7 +227,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="edit" ref="formDialog" class="full-width">
+    <q-dialog v-model="edit" ref="formDialog" full-width>
       <q-card class="row">
         <q-card-section class="col items-center no-wrap">
           <HistrixForm ref="histrixForm"
@@ -238,7 +237,7 @@
           v-on:form-saved="formSaved"
           v-on:insert-row="rowRecived"
           :computedFields="computedFields"
-          :newRecord="newRecord"/>
+          :newRecord="newRecord" />
 
         </q-card-section>
       </q-card>
