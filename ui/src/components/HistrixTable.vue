@@ -2,6 +2,7 @@
   <div>
     <HistrixApp v-if="schema.header" :path="headerPath" :query="this.$route.query" :title="this.title" class="col"/>
 
+
     <q-table
       :data="innerData"
       :columns="schema.columns"
@@ -95,14 +96,15 @@
             v-for="cell in props.cols.filter(row => row.name)"
             :key="cell.name"
             :props="props"
-            :style="colStyle(cell)"
-          >
+            :style="colStyle(cell)" >
 
               <HistrixField
                 v-model="data[props.key][cell.name]"
-                :row="rawData[props.key]"
+                :row="rawData[props.key]"                
+                :query="fieldQuerys(cell.name, rawData[props.key])"
                 :name="cell.name"
                 :schema="schema.fields[cell.name]"
+                :rowSchema="data[props.key].DT_RowAttr['attributes'][cell.name]"
                 dense
                 :error-message="errorMessage(props.key, schema.fields[cell.name])"
                 :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
@@ -123,7 +125,6 @@
         </q-tr>
         <q-tr v-if="props.expand" :props="props">
           <q-td colspan="100%" class="bg-grey-12 qa-pa-xs">
-
             <HistrixApp
               name="detail"
               inner="true"
@@ -150,11 +151,13 @@
                   <q-item-label>{{ cell.label }}</q-item-label>
                 </q-item-section>
                 <q-item-section _side class="col-11">
+
               <HistrixField
                 v-model="data[props.key][cell.name]"
                 :row="rawData[props.key]"
                 :name="cell.name"
                 :schema="schema.fields[cell.name]"
+                :rowSchema="data[props.key].DT_RowAttr['attributes'][cell.name]"
                 dense
                 :error-message="errorMessage(props.key, schema.fields[cell.name])"
                 :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
@@ -227,7 +230,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="edit" ref="formDialog" full-width>
+    <q-dialog v-model="edit" ref="formDialog" full-width> -->
       <q-card class="row">
         <q-card-section class="col items-center no-wrap">
           <HistrixForm ref="histrixForm"
@@ -310,8 +313,11 @@ export default {
         this.getData(this.xmlUrl(this.fullQuery));
       },
     },
-    innerData() {
-      this.$emit('input', this.rawData);      
+    innerData: {
+      handler() {
+        this.$emit('input', this.rawData);      
+      },
+      deep: true
     },
   },
   computed: {
@@ -460,18 +466,110 @@ export default {
           return column.name;
         });
     },
+    fieldsWithContainers() {
+      return this.filterObject(
+        this.schema.fields,
+        field => !field.innerContainer && !field.options,
+      );
+    },
+    updatedFields() {
+      return this.filterObject(this.schema.fields, field => !field.update_fields);
+    },
+
   },
   methods: {
+    fieldQuerys(fieldname, row) {
+      const fieldQuerys = {};
+    
+      //if (this.fieldsWithContainers) {
+      const field = this.schema.fields[fieldname]
+        const rel = {};
+        /**
+        * Read initial container conditions
+        */
+       if (field.innerContainer) {
+
+        if (field.innerContainer.schema) {
+          Object.entries(field.innerContainer.schema.conditions).map((conditions) => {
+            Object.entries(conditions[1]).map((condition) => {
+              rel[conditions[0]] = condition[1].valor;
+            });
+          }, this);
+          fieldQuerys[field.name] = rel;
+        }
+
+        /**
+         * Read Relationships
+         */
+        if (field.innerContainer.relationship) {
+          Object.entries(field.innerContainer.relationship).map((relationship) => {
+            const localtarget = relationship[0];
+            const source = relationship[1];
+
+            rel[localtarget] = row[source.valor];
+          }, this);
+
+          fieldQuerys[field.name] = rel;
+        }
+      }
+    /*
+      // updated field querys with (histrix actualiza)
+      Object.entries(this.updatedFields).map((fieldArray) => {
+        const field = fieldArray[1];
+
+        const relations = field.update_fields;
+        relations.map((relation) => {
+          // for inner field querys
+          const rel = {};
+          if (relation.parentField) {
+            const query = {};
+
+            query[relation.targetField] = row[field.name];
+            rel[relation.field] = query;
+
+            fieldQuerys[relation.parentField] = rel;
+
+            if (fieldQuerys[relation.field] == undefined) {
+              rel[relation.field] = query;
+              fieldQuerys[relation.parentField] = rel;
+            } else {
+              fieldQuerys[relation.field][relation.field] = query;
+            }
+          } else if (fieldQuerys[relation.field] == undefined) {
+            rel[relation.targetField] = row[field.name];
+            fieldQuerys[relation.field] = rel;
+          } else {
+            fieldQuerys[relation.field][relation.targetField] = row[field.name];
+          }
+        }, this);
+      }, this);
+      
+      // add External Query data
+      Object.keys(this.query).map((key) => {
+        if (this.query[key]) {
+          const query = this.query[key];
+          if (typeof query === 'object' || typeof query === 'function') {
+            fieldQuerys[key] = query;
+          }
+        }
+      });
+
+      return fieldQuerys;
+      */
+
+      return rel;
+    },    
     bubbleLink(link) {
       this.$emit('open-link', link);
     },
     refresh() {
       this.getData(this.xmlUrl(this.fullQuery));
     },
+    
     getFieldAttribute(rowIndex, name, attr) {
-      if (this.schema.fields[name] 
-      && this.data[rowIndex].DT_RowAttr['attributes']
-      && this.data[rowIndex].DT_RowAttr['attributes'][name]) {
+      if (this.data[rowIndex].DT_RowAttr['attributes']
+      && this.data[rowIndex].DT_RowAttr['attributes'][name]
+      && this.data[rowIndex].DT_RowAttr['attributes'][name][attr] != undefined) {
         return this.data[rowIndex].DT_RowAttr['attributes'][name][attr];
       }
       return this.schema.fields[name][attr];
@@ -542,7 +640,14 @@ export default {
       this.editedItem = item;
       this.edit = true;
     },
-    rowRecived(row) {
+    /**
+     * Executed when row is inserted by Form
+     */
+    rowRecived(row, index) {
+      console.log('rowRecived')
+      console.log(row)
+      console.log(index)
+      
       Vue.set(this.data, row._id, row);
       this.$refs.formDialog.hide();
       this.refresh();
@@ -723,12 +828,24 @@ export default {
     histrixFilter($query) {
       this.fullQuery = $query;
     },
+    filterObject(obj, predicate) {
+      const result = {}; let
+        key;
+      for (key in obj) {
+        if (obj.hasOwnProperty(key) && !predicate(obj[key])) {
+          result[key] = obj[key];
+        }
+      }
+      return result;
+    },   
     getData(url) {
       histrixApi.getAppData(url, this.query)
         .then((response) => {
           const {data} = response.data;
           data.map((element) => {
-            element._id = element.DT_RowAttr['o'];
+            if (element.DT_RowAttr) {
+              element._id = element.DT_RowAttr['o'];
+            }
           });
           // alert('llega')
           this.data = data;

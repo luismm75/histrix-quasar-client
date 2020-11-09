@@ -53,9 +53,7 @@
               v-on:process-finish="$emit('process-finish', true)"
             ></component>
             <div class="row justify-center">
-              <div>
-                <span class="q-pa-sm ">
-
+              <div class="q-pa-sm ">
                   <q-btn
                     icon="thumb_up"
                     label="procesar "
@@ -63,7 +61,6 @@
                     @click="$refs.main.processData()"
                     v-if="schema.can_process && !inner"
                   />
-                </span>
               </div>
             </div>
 
@@ -200,7 +197,7 @@
         <q-header class="bg-primary">
           <q-toolbar>
             
-            <q-toolbar-title>{{ innerQuery._title }}</q-toolbar-title>
+            <q-toolbar-title>{{ innerQuery._title || this.dialogTitle }}</q-toolbar-title>
 
             <q-btn flat v-close-popup round dense icon="close" />
           </q-toolbar>
@@ -639,6 +636,7 @@ export default {
       const queryString = '{"' + decodeURI(data.parameters.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}'
       this.innerQuery = JSON.parse(queryString)
       this.linkDialog = true
+      this.dialogTitle = data.title
     },
     /**
      * get PDF blob data
@@ -753,6 +751,7 @@ export default {
       dialog: false,
       exportDialog: false,  // show export Dialog
       linkDialog: false,    // show inner link Dialog
+      dialogTitle: '',
       innerPath: '',    //  inner link 
       innerQuery: '',    //  inner link 
       resources: null,

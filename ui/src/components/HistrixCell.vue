@@ -23,7 +23,7 @@
       size="sm"
       :style="col.value.button_style "
       :icon="icon"
-      @click="$emit('open-link', {link: col.value.link, parameters: col.value['linkParameters']})" >
+      @click="$emit('open-link', {link: col.value.link, title: text ,parameters: col.value['linkParameters']})" >
       {{text}}
     </q-btn>
 

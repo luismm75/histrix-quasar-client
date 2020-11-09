@@ -3,6 +3,7 @@
     <span class="q-pa-xs text-caption" v-if="isRadio" >
       {{  label }}
     </span>
+
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
@@ -69,6 +70,7 @@ export default {
   name: 'HistrixField',
   props: {
     schema: Object,
+    rowSchema: Object,
     query: Object,
     value: null,
     row: null,
@@ -328,10 +330,10 @@ export default {
       return this.schema.size > 90;
     },
     isDate() {
-      return this.schema['data-role'] == 'datebox';
+      return this.schema['data-role'] == 'datebox' || this.histrixType == 'date';
     },
     isTime() {
-      return this.schema.histrix_type == 'Time';
+      return this.schema.histrix_type == 'Time' || this.histrixType == 'time';
     },
     label() {
       // if (!this.isDisabled) {
@@ -381,6 +383,7 @@ export default {
     },
     histrixType() {
       let { type } = this;
+
       if (this.hasOptions) {
         type = 'q-select';
         if (this.schema.histrix_type == 'Radio') {
@@ -388,8 +391,20 @@ export default {
         }
       }
 
+      if (this.rowSchema && this.rowSchema.TipoDato) {
+        type = this.rowSchema.TipoDato
+      }
+
+      if (type == 'select') {
+        type = 'q-select';
+      }
+
       if (this.renderHelper) {
         type = 'object';
+      }
+
+      if (this.schema.histrix_type == 'Editor') {
+        type = 'q-editor';
       }
 
       if (this.schema.histrix_type == 'Check') {

@@ -8,7 +8,8 @@
       <q-space />
     </q-toolbar>
     -->
-    <q-form >
+
+    <q-form @submit="onSubmit">
       <div class="row">
         <div class="col">
           <q-tabs v-model="currentTab"  dense class="text-grey" active-color="primary" indicator-color="primary" align="justify" narrow-indicator>
@@ -91,16 +92,20 @@
 
         </div>
       </div>
-      </q-form>
 
       <div class="row">
         <div class="col-5 "></div>
         <div class="col">
 
           <span class="q-pa-sm">
-            <q-btn label="Cancelar"  icon="close"   class="nojustify-end flat"  v-close-popup />
-            <q-btn v-if="editedIndex == -1"_v-if="schema.insertButton"  label="Grabar" icon="save" @click="insertRow()" :loading="submitting" />
+            
+            <q-btn label="Cancelar"  icon="close"   class="nojustify-end flat"  v-close-popup type="reset" v-if="insertButton || updateButton" />
+            <q-btn v-if="insertButton || updateButton" type="submit" label="Grabar" icon="save" class=" bg-primary text-white nojustify-end" :loading="submitting" />
+            
+            <!--
+            <q-btn v-if="editedIndex == -1"_v-if="schema.insertButton"  label="Grabar" icon="save" @click="insertRow()"  />
             <q-btn label="guardar"   icon="save" :disable="$v.$invalid" class=" bg-primary text-white nojustify-end" @click="saveForm()" :loading="submitting" v-if="updateButton" />
+            -->
           </span>
           <!--
             <q-btn
@@ -114,6 +119,7 @@
             -->
         </div>
       </div>
+    </q-form>
 
   </div>
 </template>
@@ -146,10 +152,10 @@ export default {
   },
   computed: {
     insertButton() {
-      return this.editedIndex == -1 || this.editedIndex == null
+      return this.schema.insertButton && (this.editedIndex == -1 || this.editedIndex == null)
     },
     updateButton() {
-      return this.canUpdate && !this.localSchema.readonly && !this.localSchema.can_process && !this.insertButton
+      return this.canUpdate && !this.localSchema.readonly && !this.localSchema.can_process && !this.insertButton && this.schema.updateButton
     },
     localValidations() {
       const localValidations = {};
@@ -230,7 +236,7 @@ export default {
       return { ...this.localValues, ...this.parseLocaleToDate() };
     },
     canUpdate() {
-      return this.resources.hasOwnProperty('PUT');
+      return this.resources.hasOwnProperty('PUT') && this.schema.can_update;
     },
     visibleColumns() {
       if (this.localSchema.columns) {
@@ -323,9 +329,15 @@ export default {
     },
   },
   mounted() {
-    console.log('aaa');
     this.localSchema = this.schema;
     this.localValues = this.editedItem;
+
+    
+    Object.keys(this.query).map((key) => {
+        this.localValues[key] = this.query[key];
+    });
+
+
     if (this.query && this.localSchema.preFetch != false  && !this.editedItem  ) {
       this.getData();
     }
@@ -333,8 +345,6 @@ export default {
   watch: {
     editedItem:  {
       handler(data) {
-          console.log('cambia algo')
-          console.log(data)
           this.localValues = this.editedItem;
         },
       deep: true,
@@ -514,10 +524,16 @@ export default {
           this.$emit('process-finish', true);
         });
     },
+    onSubmit() {
+      if (this.editedIndex == -1) {
+        this.insertRow()
+      } else {
+        this.saveForm()
+      }
+    },
     insertRow() {
       this.newRecord = true
       this.saveForm();
-      this.$emit('insert-row', this.localValues, this.editedIndex);
     },
     saveForm() {
       this.submitting = true;
@@ -531,7 +547,9 @@ export default {
         )
           .then((response) => {
             this.submitting = false;
-            this.$emit('form-saved', this.localValues, this.editedIndex);
+            const id = response.data.id
+            this.$emit('form-saved', this.localValues, id);
+            this.$emit('insert-row', this.localValues, id);
           })
           .catch((e) => {
             console.log(e);
