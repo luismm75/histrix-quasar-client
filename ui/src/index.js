@@ -13,6 +13,7 @@ import HistrixList from './components/HistrixList.vue';
 import HistrixTable from './components/HistrixTable.vue';
 import HistrixTree from './components/HistrixTree.vue';
 import LoginForm from './components/LoginForm.vue';
+import HistrixPasswordChange from './components/HistrixPasswordChange.vue';
 import DatabaseSelector from './components/widgets/DatabaseSelector.vue';
 import HistrixExpansionMenu from './components/widgets/HistrixExpansionMenu.vue';
 import HistrixLog from './components/widgets/HistrixLog.vue';
@@ -40,6 +41,7 @@ export {
   HistrixTable,
   HistrixTree,
   LoginForm,
+  HistrixPasswordChange,
   DatabaseSelector,
   HistrixExpansionMenu,
   HistrixLog,
@@ -66,6 +68,7 @@ export default {
   HistrixTable,
   HistrixTree,
   LoginForm,
+  HistrixPasswordChange,
   DatabaseSelector,
   HistrixExpansionMenu,
   HistrixLog,
@@ -88,6 +91,7 @@ export default {
     Vue.component(HistrixList.name, HistrixList);
     Vue.component(HistrixTable.name, HistrixTable);
     Vue.component(HistrixTree.name, HistrixTree);
+    Vue.component(HistrixPasswordChange.name, HistrixPasswordChange);
     Vue.component(LoginForm.name, LoginForm);
     Vue.component(DatabaseSelector.name, DatabaseSelector);
     Vue.component(HistrixExpansionMenu.name, HistrixExpansionMenu);

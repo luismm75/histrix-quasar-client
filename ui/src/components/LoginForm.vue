@@ -8,6 +8,7 @@
                           <q-input
                           inverted-light
                           :label="'Ingrese email operador'" id="email" autofocus
+                          required
                           type="text" v-model="form.email" name="email" class="full-width"
                           :before="[
                               {
@@ -56,7 +57,7 @@
                           </q-btn>
 
                           <q-btn sixe="sm" flat class="q-ma-md" color="primary" align="left"
-                            @click="close()"
+                            v-close-popup
                               :to="{ name: 'mail-reset-password' }">
                               <span class="q-ml-xs">Recuperar contraseña</span>
                           </q-btn>
@@ -133,6 +134,15 @@ export default {
       .then((success) => {
         this.$router.push(success)
         this.btnLoading = false;
+      }).catch((error) => {
+        this.btnLoading = false;
+        this.$q.notify({
+            message: 'email o contraseña incorrectos ',
+            type: 'negative',
+            timeout: 40000,
+            position: 'top',
+        })
+
       })
       this.form.password = null;
   
