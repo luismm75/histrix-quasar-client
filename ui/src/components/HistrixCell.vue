@@ -23,8 +23,8 @@
       size="sm"
       :style="col.value.button_style "
       :icon="icon"
-      @click="$emit('open-link', {link: col.value.link, title: text ,parameters: col.value['linkParameters']})" >
-      {{text}}
+      @click="$emit('open-popup', {link: col.value.link, title: col.value.text ,parameters: col.value['linkParameters']})" >
+      {{text}} 
     </q-btn>
 
     <q-icon
@@ -32,7 +32,6 @@
       :name="checkIcon"
        >
     </q-icon>
-
     <q-linear-progress v-else-if="isProgress" :value="col.value.value / 100" color="accent"  size="20px" >
          <div class="absolute-full flex flex-center">
           <q-badge color="transparent" text-color="black"  :label="col.value.value" />
@@ -47,6 +46,7 @@
        // TODO IMPLEMENT PROGRESS METER
     -->
   </span>
+  
 </template>
 
 <script>

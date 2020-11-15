@@ -3,7 +3,6 @@
     <span class="q-pa-xs text-caption" v-if="isRadio" >
       {{  label }}
     </span>
-
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
@@ -18,16 +17,19 @@
       :inner="true"
       :mask="fieldMask"
       :filled="!isDisabled"
+      
       :disabled="isDisabled"
       :readonly="isDisabled"
-      :_readonly="schema.readonly == 'readonly'"
+      
       :size="size"
+      :_readonly="schema.readonly == 'readonly'"
       :multiple="schema.multiple == 'multiple'"
       :autogrow="isTextarea"
       :style="style"
       @v-on:keyup.113="showHelper()"
       :input-class="inputClass"
       v-on:computed-total="onComputedTotal"
+      :clearable="clearable"
       inline
       dense
     >
@@ -74,6 +76,7 @@ export default {
     query: Object,
     value: null,
     row: null,
+    submitting: null
   },
   watch: {
     localValue: {
@@ -87,12 +90,22 @@ export default {
       handler(newVal, oldVal) {
         this.getOptions();
       },
+      deep: true
     },
     query: {
       handler(newVal, oldVal) {
         this.getOptions();
       },
+      deep: true
     },
+    options: {
+      handler(newVal, oldVal) {
+        if (this.options.length == 1 && this.schema.innerContainer.empty == false) {
+          this.localValue = this.options[0]
+        }
+      },
+      deep: true
+    }
 
   },
   components: {
@@ -242,7 +255,6 @@ export default {
     getOptions() {
       // this.$emit("refreshFieldSchema", {value: localValue.value, selected_option: option})
       // this.getFieldSchema(query)
-
       if (this.hasOptions) {
         if (this.query != undefined && Object.entries(this.query).length !== 0) {
           histrixApi.getAppData(this.innerContainerUrl, this.query)
@@ -256,8 +268,6 @@ export default {
         } else {
           this.options = this.mapOptions(this.schema.options);
         }
-
-        // this.options = this.mapOptions(this.schema.options);
       }
     },
   },
@@ -277,6 +287,9 @@ export default {
     this.getHelpSchema();
   },
   computed: {
+    clearable() {
+      return this.fieldComponent == 'q-select' && this.schema.innerContainer.empty == true
+    },
     inputClass() {
       return `text-${this.schema.align}`;
     },
@@ -297,6 +310,9 @@ export default {
       return url;
     },
     isDisabled() {
+      if (this.submitting) {
+        return true;
+      }
       if (this.histrixType == 'object') {
         return false;
       }
@@ -337,12 +353,11 @@ export default {
     },
     label() {
       // if (!this.isDisabled) {
-      return this.schema.label || this.schema.title;
+      return this.schema.label || this.schema.title || this.rowSchema.label;
       // }
     },
     fieldComponent() {
       let component = 'q-input';
-
       switch (this.histrixType) {
         case 'radio':
           component = 'q-option-group';
@@ -353,19 +368,15 @@ export default {
         case 'q-editor':
           component = 'q-editor';
           break;
-
         case 'q-input':
           component = 'q-input';
           break;
-
         case 'q-select':
           component = 'q-select';
           break;
-
         case 'object':
           component = 'HistrixApp';
           break;
-
         default:
           component = 'q-input';
           break;

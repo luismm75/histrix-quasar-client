@@ -2,7 +2,6 @@
   <div>
     <HistrixApp v-if="schema.header" :path="headerPath" :query="this.$route.query" :title="this.title" class="col"/>
 
-
     <q-table
       :data="innerData"
       :columns="schema.columns"
@@ -18,7 +17,7 @@
       :expanded.sync="expanded"
       :hide-bottom="data.length < pagination.rowsPerPage"
       :_hide-top="data.length < pagination.rowsPerPage"
-
+      v-on:closepopup="closePopup"
     >
     <!-- TOP LEFT: FILTERS -->
     <template v-slot:top-left="props">
@@ -99,7 +98,7 @@
             :style="colStyle(cell)" >
 
               <HistrixField
-                v-model="data[props.key][cell.name]"
+                v-model="rawData[props.key][cell.name]"
                 :row="rawData[props.key]"                
                 :query="fieldQuerys(cell.name, rawData[props.key])"
                 :name="cell.name"
@@ -108,16 +107,17 @@
                 dense
                 :error-message="errorMessage(props.key, schema.fields[cell.name])"
                 :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
-
                 v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
               />
+
             <HistrixCell
               v-else
               :path="path"
               :props="props"
               :schema="schema.fields[cell.name]"
               :col="cell"
-              v-on:open-link="bubbleLink"
+              v-on:open-popup="bubbleLink"
+              v-on:closepopup="closePopup"
             />
 
           </q-td>
@@ -170,7 +170,8 @@
               :props="props"
               :schema="schema.fields[cell.name]"
               :col="cell"
-              v-on:open-link="bubbleLink"
+              v-on:open-popup="bubbleLink"
+              v-on:closepopup="closePopup"
             />
 
                 </q-item-section>
@@ -560,7 +561,10 @@ export default {
       return rel;
     },    
     bubbleLink(link) {
-      this.$emit('open-link', link);
+      this.$emit('open-popup', link);      
+    },
+    closePopup() {
+      this.$emit('closepopup');
     },
     refresh() {
       this.getData(this.xmlUrl(this.fullQuery));
@@ -643,11 +647,7 @@ export default {
     /**
      * Executed when row is inserted by Form
      */
-    rowRecived(row, index) {
-      console.log('rowRecived')
-      console.log(row)
-      console.log(index)
-      
+    rowRecived(row, index) {      
       Vue.set(this.data, row._id, row);
       this.$refs.formDialog.hide();
       this.refresh();
@@ -672,6 +672,7 @@ export default {
       histrixApi.processApp(this.xmlUrl, this.rawData)
         .then((response) => {
           this.submitting = false;
+          this.$emit('closepopup')
         })
         .catch((e) => {
           this.submitting = false;

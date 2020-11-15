@@ -8,7 +8,6 @@
       <q-space />
     </q-toolbar>
     -->
-
     <q-form @submit="onSubmit">
       <div class="row">
         <div class="col">
@@ -50,6 +49,7 @@
                         v-model="localValues[field.name]"
                         :name="field.name"
                         :schema="field"
+                        :submitting="submitting"
                         :query="fieldQuerys[field.name]"
                         :readonly="localSchema.readonly"
                         :disabled="localSchema.readonly"
@@ -77,6 +77,7 @@
                   v-model="localValues[field.name]"
                   :name="field.name"
                   :schema="field"
+                  :submitting="submitting"
                   :query="fieldQuerys[field.name]"
                   :readonly="localSchema.readonly"
                   :disabled="localSchema.readonly"
@@ -518,6 +519,7 @@ export default {
           this.submitting = false;
           // this.$router.back();
           this.$emit('process-finish', true);
+          this.$emit('closepopup');
         })
         .catch((e) => {
           this.submitting = false;

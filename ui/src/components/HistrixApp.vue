@@ -41,7 +41,8 @@
               :computedFields="computedFields"
               :computedTotals="computedTotals"
               v-on:open-detail="openDetail"
-              v-on:open-link="showLinkDialog"
+              v-on:open-popup="showLinkDialog"
+              v-on:closepopup="closePopup"
               v-on:computed-total="onComputedTotal"
               v-on:select-row="selectRow"
               v-on:export="showExportForm"
@@ -96,7 +97,8 @@
                 :computedFields="computedFields"
                 :computedTotals="computedTotals"
                 v-on:open-detail="openDetail"
-                v-on:open-link="showLinkDialog"
+                v-on:open-popup="showLinkDialog"
+                v-on:closepopup="closePopup"
                 v-on:computed-total="onComputedTotal"
                 v-on:select-row="selectRow"
                 v-on:export="showExportForm"
@@ -190,15 +192,11 @@
     </q-banner>
 -->
 
-
-    <q-dialog   v-model="linkDialog"  transition-show="scale" transition-hide="scale">
-
+    <q-dialog   v-model="linkDialog" full-width  transition-show="slide-down" transition-hide="slide-up">
       <q-layout view="Lhh lpR fff" container class="bg-white">
         <q-header class="bg-primary">
           <q-toolbar>
-            
             <q-toolbar-title>{{ innerQuery._title || this.dialogTitle }}</q-toolbar-title>
-
             <q-btn flat v-close-popup round dense icon="close" />
           </q-toolbar>
         </q-header>
@@ -220,9 +218,7 @@
 -->
         <q-page-container>
           <q-page >
-
             <HistrixApp :path="innerPath" :query="innerQuery"  :title="innerQuery._title" class="col" /> 
-        
           </q-page>
         </q-page-container>
       </q-layout>
@@ -618,13 +614,11 @@ export default {
     dirname (path) {
       return path.match(/.*\//);
     },
-
+    closePopup() {
+      this.$emit('closepopup');
+    },
     showLinkDialog (data) {
-      console.log(data)
-      console.log(data.parameters)
-
       const link = data.link;
-
       //var path = (dir || this.dirname(this.path)) + link.file;
       let path = `${link.dir}/${link.file}`;
 
@@ -683,7 +677,7 @@ export default {
      * get Schema from API
      */
     getSchema () {
-      histrixApi.getAppSchema(this.path, this.queryString)
+      histrixApi.getAppSchema(this.path, this.query)
         .then(response => {
           this.resources = response.data.resources;
           this.schema = response.data.schema;

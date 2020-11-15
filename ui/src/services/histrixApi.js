@@ -272,9 +272,9 @@ export default {
    * getSchema
    * @param {string} path App Xml Path
    */
-  async getAppSchema(path, query) {
+  async getAppSchema(path, params) {
     return Vue.prototype.$axios
-      .options(`${this.apiUrl()}/app/${path}`, { params: query });
+      .options(`${this.apiUrl()}/app/${path}`, { params});
   },
   async getAppData(path, params) {
     return Vue.prototype.$axios({
