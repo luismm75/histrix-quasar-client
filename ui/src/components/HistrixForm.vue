@@ -517,9 +517,10 @@ export default {
       histrixApi.processAppForm(this.xmlUrl(), this.postData)
         .then((response) => {
           this.submitting = false;
+          this.localValues = this.editedItem;
+          this.$emit('closepopup');
           // this.$router.back();
           this.$emit('process-finish', true);
-          this.$emit('closepopup');
         })
         .catch((e) => {
           this.submitting = false;
