@@ -58,8 +58,8 @@
       <!-- TABLE HEADER -->
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th auto-width class="bg-primary" v-if="schema.inline_detail"/>
-          <q-th auto-width v-if="canUpdate || canDelete" class="bg-primary" />
+          <q-th auto-width class="bg-primary" v-if="schema.inline_detail">1</q-th> 
+          <q-th auto-width v-if="(canUpdate && !isGrid) || (schema.can_delete && canDelete )" class="bg-primary text-white" >{{canUpdate}} - {{canDelete}}</q-th> 
 
           <q-th
             v-for="col in props.cols"
@@ -86,7 +86,7 @@
               :icon="props.expand ? 'remove' : 'add'"
             />
           </q-td>
-          <q-td key="actions">
+          <q-td key="actions" v-if="(canUpdate && !isGrid) || (schema.can_delete && canDelete )">
             <q-btn flat rounded icon="edit"   v-if="canUpdate && !isGrid" color="positive" @click="editRow(props.row)"   size="sm" no-caps />
             <q-btn flat unelevated rounded icon="delete" v-if="schema.can_delete && canDelete " color="secondary"  @click="deleteItem(props.row)" size="sm" no-caps />
           </q-td>
@@ -194,7 +194,8 @@
 
       <template v-slot:bottom-row="props">
         <q-tr :props="props" v-if="data.length > 0">
-          <q-th />
+          <q-th v-if="schema.inline_detail"/> 
+          <q-th  v-if="canUpdate || canDelete" class="bg-primary" />
           <q-th
                 v-for="col in props.cols.filter(col => col.name !== 'desc')"
                 :key="col.name"
