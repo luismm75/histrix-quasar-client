@@ -7,7 +7,7 @@
                       <div class="col-xs-12 q-mb-sm">
                           <q-input
                           inverted-light
-                          :label="'Ingrese email operador'" id="email" autofocus
+                          :label="'Ingrese su correo electrónico'" id="email" autofocus
                           required
                           type="text" v-model="form.email" name="email" class="full-width"
                           :before="[
