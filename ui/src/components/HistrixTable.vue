@@ -59,7 +59,7 @@
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width class="bg-primary" v-if="schema.inline_detail">1</q-th> 
-          <q-th auto-width v-if="(canUpdate && !isGrid) || (schema.can_delete && canDelete ) " class="bg-primary text-white" >{{canUpdate}} - {{canDelete}}</q-th> 
+          <q-th auto-width v-if="(canUpdate && !isGrid) || (schema.can_delete && canDelete ) " class="bg-primary text-white" ></q-th> 
 
           <q-th
             v-for="col in props.cols"
