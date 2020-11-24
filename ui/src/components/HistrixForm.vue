@@ -8,6 +8,7 @@
       <q-space />
     </q-toolbar>
     -->
+
     <q-form @submit="onSubmit">
       <div class="row">
         <div class="col">
@@ -587,8 +588,12 @@ export default {
     parseLocaleToDate() {
       const dates = {};
       for (const key in this.dateFields) {
-        const gmt = date.extractDate(this.localValues[key], 'DD/MM/YYYY');
-        dates[key] = date.formatDate(gmt, 'YYYY-MM-DD');
+        if (this.localValues[key]) {
+          const gmt = date.extractDate(this.localValues[key], 'DD/MM/YYYY');
+          dates[key] = date.formatDate(gmt, 'YYYY-MM-DD');
+        } else {
+          dates[key] = this.localValues[key];         
+        }
       }
       return dates;
     },
