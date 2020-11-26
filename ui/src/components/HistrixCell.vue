@@ -40,6 +40,7 @@
     <span
       v-else
       v-html="formatedValue"
+      :class="schema.class"
     ></span>
 
     <!--
