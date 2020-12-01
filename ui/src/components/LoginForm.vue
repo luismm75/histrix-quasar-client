@@ -48,7 +48,7 @@
                           <q-btn icon="chevron_right" class="q-pl-md q-pr-md q-pt-sm q-pb-sm full-width"
                                 :disable="btnLoading" type="submit"
                                 :loading="btnLoading"
-                                color="primary" size="md" label="Ingresar"
+                                color="positive" size="md" label="Ingresar"
                                   >
                           </q-btn>
                           <q-btn v-if="!login" sixe="sm" flat class="q-ma-md bg-accent" color="white" align="left"
