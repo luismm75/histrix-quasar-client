@@ -235,7 +235,7 @@ export default {
       return this.filter(this.localSchema.fields, field => (field['data-role'] != 'datebox'));
     },
     postData() {
-      return { ...this.localValues, ...this.parseLocaleToDate() };
+      return this.localValues;
     },
     canUpdate() {
       return this.resources.hasOwnProperty('PUT') && this.schema.can_update;
@@ -577,6 +577,7 @@ export default {
           });
       }
     },
+    /*
     parseDateToLocale() {
       const dates = {};
       for (const key in this.dateFields) {
@@ -597,7 +598,7 @@ export default {
       }
       return dates;
     },
-
+    */
     setDefaultValues() {
       for (const key in this.localSchema.fields) {
         const field = this.localSchema.fields[key];

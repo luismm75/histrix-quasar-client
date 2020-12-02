@@ -78,6 +78,7 @@
 
 <script>
 import Vue from 'vue';
+import { date } from 'quasar';
 
 import histrixApi from '../services/histrixApi.js'
 
@@ -526,11 +527,20 @@ export default {
       }
       return style;
     },
+    dateMask() {
+      return 'DD/MM/YYYY';
+    },
     localValue: {
       get() {
         if (this.histrixType == 'check') {
           return this.value === true || this.value != 0;
         }
+        if (this.isDate) {
+          let fecha = new Date(this.value)
+          fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
+          return date.formatDate(fecha, this.dateMask)
+        }
+
 
         if (this.histrixType == 'q-select' && this.options && this.schema.multiple != 'multiple') {
           return this.options.find(obj => obj.value == this.value);
@@ -551,7 +561,20 @@ export default {
           const option = this.options.find(obj => obj.value == localValue.value);
           this.$emit('selectOption', { value: localValue.value, selected_option: option });
         } else {
-          this.$emit('input', localValue);
+          if (this.isDate) {
+            var fecha = new Date()
+            if (this.dateMask === 'DD/MM/YYYY') {
+              fecha = new Date(localValue.replace( /(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"))
+              fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
+            } else {
+              fecha = new Date(localValue)
+              fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
+            }
+            this.$emit('input', date.formatDate(fecha, 'YYYY-MM-DD'));
+
+          } else {
+            this.$emit('input', localValue);
+          }          
         }
       },
     },
