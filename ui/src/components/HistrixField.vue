@@ -59,7 +59,7 @@
         <!-- DATE CONTROL POPUP -->
         <q-icon name="event" class="cursor-pointer"  v-if="isDate">
           <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale" >
-            <q-date mask="DD/MM/YYYY" v-model="localValue" @input="() => $refs.qDateProxy.hide()"
+            <q-date mask="DD/MM/YYYY" :locale="dateLocale" v-model="localValue" @input="() => $refs.qDateProxy.hide()"
             />
           </q-popup-proxy>
         </q-icon>
@@ -294,6 +294,14 @@ export default {
       rules: [],
       toolbar: [],
       type: 'q-input',
+      dateLocale: {
+        /* starting with Sunday */
+        days: 'Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado'.split('_'),
+        daysShort: 'Dom_Lun_Mar_Mié_Jue_Vie_Sáb'.split('_'),
+        months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
+        monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
+        firstDayOfWeek: 1
+      }      
     };
   },
   mounted() {
@@ -368,7 +376,13 @@ export default {
     },
     label() {
       // if (!this.isDisabled) {
-      return this.schema.label || this.schema.title || this.rowSchema.label;
+      if (this.schema.label || this.schema.title) {
+        return this.schema.label || this.schema.title  
+      }
+
+      if (this.rowSchema) {
+        return  this.rowSchema.label;
+      }
       // }
     },
     fieldComponent() {
