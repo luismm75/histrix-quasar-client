@@ -11,6 +11,8 @@
       :title="label"
       :type="inputType"
       :path="helperPath"
+      :headers="headers"
+      :url="uploadUrl"
       :query="query"
       :options="options"
       :rules="rules"
@@ -45,6 +47,30 @@
       dense
     >
 
+      <template v-slot:before v-if="histrixType === 'q-file'" >
+        <q-avatar  size="40px">
+          <q-img v-if="localValue" :src="thumb" spinner-color="grey"  @click="showImage = true" />
+        </q-avatar>
+        <q-dialog  v-model="showImage">
+          <q-card style="width:700px; max-width: 80vw;">
+          <q-card-section class="row items-center q-pb-none">
+              <q-space />
+              <q-btn icon="close" flat round dense v-close-popup />
+            </q-card-section>        
+            <q-card-section>
+                <q-img  :src="thumb" spinner-color="grey" >
+                </q-img>
+
+            </q-card-section>
+          </q-card>
+        </q-dialog>        
+      </template>
+
+
+      <template v-slot:prepend>
+         <q-icon v-if="histrixType === 'q-file'" name="attach_file" />
+      </template>
+
 
       <!-- in control button -->
       <template v-slot:append>
@@ -63,6 +89,10 @@
             />
           </q-popup-proxy>
         </q-icon>
+
+        <!-- IMAGE FOLDER -->
+          <!-- <q-icon   v-if="histrixType === 'q-file'" name="close" @click.stop="localValue = null" class="cursor-pointer" /> -->
+          <!-- <q-icon name="create_new_folder" @click.stop v-if="histrixType === 'q-file'" /> -->
 
         <!-- TIME CONTROL POPUP -->
         <q-icon name="access_time" class="cursor-pointer" v-if="isTime">
@@ -90,7 +120,8 @@ export default {
     query: Object,
     value: null,
     row: null,
-    submitting: null
+    submitting: null,
+    path: null
   },
   watch: {
     localValue: {
@@ -126,6 +157,18 @@ export default {
     HistrixApp: () => import('./HistrixApp.vue'),
   },
   methods: {
+    uploadFn (file) {
+      return new Promise((resolve, reject) => {
+        // Retrieve JWT token from your store.
+        // const token = "myToken";
+        resolve({
+          url: this.uploadUrl,
+          method: 'POST',
+          headers: this.headers
+        })
+      })
+    },
+
     showHelper() {
       if (this.schema.helpContainer) {
         this.$refs.helperProxy.show();
@@ -289,6 +332,7 @@ export default {
     return {
       delayTimer: 0,
       helpSchema: {},
+      showImage: false,
       helpFoundes: true,
       options: [],
       rules: [],
@@ -350,6 +394,16 @@ export default {
     renderHelper() {
       return this.schema.innerContainer && !this.hasOptions;
     },
+    headers() {
+      return [{name: 'Authorization', value: 'Bearer ' + localStorage.accessToken}]
+
+    },
+    uploadUrl() {
+      return histrixApi.apiUrl() + '/files/upload/' + this.path ;
+    },
+    thumb() {
+      return histrixApi.apiUrl() + '/thumb/' +btoa(this.path + this.value);
+    },
     helperPath() {
       const helper = this.schema.innerContainer;
       const url = `${helper.dir}/${helper.xml}`;
@@ -391,6 +445,9 @@ export default {
         case 'radio':
           component = 'q-option-group';
           break;
+        case 'q-file':
+          component = 'q-uploader';
+          break;          
         case 'check':
           component = 'q-checkbox';
           break;
@@ -497,6 +554,9 @@ export default {
       return (this.histrixType == 'radio');
     },
     inputType() {
+     if (this.schema.histrix_type == 'File') {
+       return this.schema.histrix_type
+     }
       if (this.histrixType == 'radio') {
         return this.histrixType;
       }
@@ -522,6 +582,10 @@ export default {
 
       if (this.renderHelper) {
         type = 'object';
+      }
+
+      if (this.schema.histrix_type == 'File') {
+        type = 'q-file';
       }
 
       if (this.schema.histrix_type == 'Editor') {
@@ -559,7 +623,11 @@ export default {
         if (this.histrixType == 'q-select' && this.options && this.schema.multiple != 'multiple') {
           return this.options.find(obj => obj.value == this.value);
         }
-
+        /*
+        if (this.histrixType == 'q-file') {
+          return []
+        }
+          */
         if (this.histrixType == 'object') {
           return this.value;
         }

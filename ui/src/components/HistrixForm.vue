@@ -37,6 +37,7 @@
                   :name="field.name"
                   :class="fieldClass(field)"
                 >
+        
                   <q-item dense >
                     <!--
                     <q-item-section style="text-align:right">
@@ -50,6 +51,7 @@
                         v-model="localValues[field.name]"
                         :name="field.name"
                         :schema="field"
+                        :path="computedPath(field)"                        
                         :submitting="submitting"
                         :query="fieldQuerys[field.name]"
                         :readonly="localSchema.readonly"
@@ -78,6 +80,8 @@
                   v-model="localValues[field.name]"
                   :name="field.name"
                   :schema="field"
+                  :path="computedPath(field)"
+                  
                   :submitting="submitting"
                   :query="fieldQuerys[field.name]"
                   :readonly="localSchema.readonly"
@@ -368,6 +372,11 @@ export default {
   },
 
   methods: {
+    computedPath(field) {
+      const dirValue = this.localValues[field.path] || ''
+      const path = this.schema.path + '/' + dirValue + '/'
+      return path.replaceAll('//', '/').replaceAll('//', '/')
+    },
     errorMessage(field) {
       const cell = this.$v.localValues[field.name];
 
