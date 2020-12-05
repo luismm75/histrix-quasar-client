@@ -8,8 +8,7 @@
       <q-space />
     </q-toolbar>
     -->
-
-    <q-form @submit="onSubmit">
+    <q-form @submit="onSubmit" enctype="multipart/form-data">
       <div class="row">
         <div class="col">
           <q-tabs v-model="currentTab"  dense class="text-grey" active-color="primary" indicator-color="primary" align="justify" narrow-indicator>
@@ -238,8 +237,25 @@ export default {
     dateFields() {
       return this.filter(this.localSchema.fields, field => (field['data-role'] != 'datebox'));
     },
+    files() {
+       const data = []
+       Object.keys(this.localValues).map(item => {
+        if (typeof this.localValues[item] === 'object') {
+          data.push({name: item, data: this.localValues[item], path: this.computedPath(this.schema.fields[item])})
+        }
+      })
+      return data
+
+    },
     postData() {
-      return this.localValues;
+      const data = this.localValues
+       Object.keys(this.localValues).map(item => {
+        if (typeof this.localValues[item] === 'object') {
+          console.log(this.localValues[item])
+          data[item] = this.localValues[item]['name']
+        }
+      })
+      return data
     },
     canUpdate() {
       return this.resources.hasOwnProperty('PUT') && this.schema.can_update;
@@ -550,6 +566,8 @@ export default {
     },
     saveForm() {
       this.submitting = true;
+      histrixApi.upload(this.files)
+
       if (this.newRecord) {
         histrixApi.insertAppData(
           this.xmlUrl(),

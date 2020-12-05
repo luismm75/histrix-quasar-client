@@ -7,6 +7,7 @@
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
+      :name="schema.name"
       v-bind="$attrs"
       :title="label"
       :type="inputType"
@@ -48,8 +49,8 @@
     >
 
       <template v-slot:before v-if="histrixType === 'q-file'" >
-        <q-avatar  size="40px">
-          <q-img v-if="localValue" :src="thumb" spinner-color="grey"  @click="showImage = true" />
+        <q-avatar size="60px">
+          <q-img  v-if="value" :src="thumb" spinner-color="grey"  @click="showImage = true" />
         </q-avatar>
         <q-dialog  v-model="showImage">
           <q-card style="width:700px; max-width: 80vw;">
@@ -91,7 +92,7 @@
         </q-icon>
 
         <!-- IMAGE FOLDER -->
-          <!-- <q-icon   v-if="histrixType === 'q-file'" name="close" @click.stop="localValue = null" class="cursor-pointer" /> -->
+           <q-icon   v-if="histrixType === 'q-file'" name="close" @click.stop="localValue = null" class="cursor-pointer" /> 
           <!-- <q-icon name="create_new_folder" @click.stop v-if="histrixType === 'q-file'" /> -->
 
         <!-- TIME CONTROL POPUP -->
@@ -399,10 +400,10 @@ export default {
 
     },
     uploadUrl() {
-      return histrixApi.apiUrl() + '/files/upload/' + this.path ;
+      return histrixApi.apiUrl() + '/files/' + this.path ;
     },
     thumb() {
-      return histrixApi.apiUrl() + '/thumb/' +btoa(this.path + this.value);
+      return histrixApi.apiUrl() + '/thumb' + this.path + this.value;
     },
     helperPath() {
       const helper = this.schema.innerContainer;
@@ -446,7 +447,7 @@ export default {
           component = 'q-option-group';
           break;
         case 'q-file':
-          component = 'q-uploader';
+          component = 'q-file';
           break;          
         case 'check':
           component = 'q-checkbox';

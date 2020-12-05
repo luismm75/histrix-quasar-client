@@ -287,6 +287,22 @@ export default {
     return Vue.prototype.$axios
       .get(`${this.apiUrl()}/pdf/${path}`, { params, responseType: 'arraybuffer' });
   },
+  async upload(files) {
+    files.map(file => {
+      let formData = new FormData();
+      formData.append('file', file.data);      
+      Vue.prototype.$axios({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },        
+        url: `${this.apiUrl()}/files/${file.path}`,
+        data: formData,
+      });
+    })
+//    return 
+
+  },
   async insertAppData(path, data) {
     return Vue.prototype.$axios({
       method: 'POST',
