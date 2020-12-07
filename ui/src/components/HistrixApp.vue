@@ -192,7 +192,7 @@
     </q-banner>
 -->
 
-    <q-dialog   v-model="linkDialog" full-width  transition-show="slide-down" transition-hide="slide-up">
+    <q-dialog   v-model="linkDialog" full-width  transition-show="slide-down" transition-hide="slide-up" @before-hide="closePopup">
       <q-layout view="Lhh lpR fff" container class="bg-white">
         <q-header class="bg-primary">
           <q-toolbar>
@@ -218,7 +218,7 @@
 -->
         <q-page-container>
           <q-page >
-            <HistrixApp :path="innerPath" :query="innerQuery"  :title="innerQuery._title" class="col" /> 
+            <HistrixApp :path="innerPath" :query="innerQuery"  :title="innerQuery._title" class="col" v-on:closepopup="closePopup" /> 
           </q-page>
         </q-page-container>
       </q-layout>
@@ -617,6 +617,9 @@ export default {
       return path.match(/.*\//);
     },
     closePopup() {
+      console.log('test');
+      this.refreshMaster()
+      this.linkDialog = false
       this.$emit('closepopup');
     },
     getDialogTitle(data) {
@@ -625,8 +628,11 @@ export default {
       console.log(data)
       const attrs = data['DT_RowAttr']      
       Object.entries(data).map(function(value){
-        if (value[1] != '' && schema.fields[value[0]] && !schema.fields[value[0]].hidden){
-          title.push(value[1])
+        const field = schema.fields[value[0]]
+        if (value[1] != '' && field && !field.hidden && field.histrix_type == 'Varchar'){
+          console.log(field);
+          const val = value[1].replace(/<[^>]*>?/gm, '');
+          title.push(val)
         }
       });
       return title.join(' - ')

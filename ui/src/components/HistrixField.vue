@@ -49,6 +49,7 @@
     >
 
       <template v-slot:before v-if="histrixType === 'q-file'" >
+        
         <q-avatar size="60px">
           <q-img  v-if="value" :src="thumb" spinner-color="grey"  @click="showImage = true" />
         </q-avatar>
@@ -624,14 +625,16 @@ export default {
         if (this.histrixType == 'q-select' && this.options && this.schema.multiple != 'multiple') {
           return this.options.find(obj => obj.value == this.value);
         }
-        /*
-        if (this.histrixType == 'q-file') {
-          return []
+        
+        if (this.histrixType == 'q-file' && this.value === []) {
+          return null
         }
-          */
+
+        /*
         if (this.histrixType == 'object') {
           return this.value;
         }
+        */
         if (this.value) {
           return (this.value.value != undefined) ? this.value.value : this.value;
         }

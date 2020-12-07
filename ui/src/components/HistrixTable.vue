@@ -289,7 +289,7 @@ export default {
     }
     */
     if (this.schema.preFetch === true /* && this.data.length == 0 */) {
-      this.getData(this.xmlUrl(this.query));
+      this.getData();
     } else {
       // Open filter
       if (!this.data.length) {
@@ -300,19 +300,19 @@ export default {
   watch: {
     path: {
       handler(newVal, oldVal) {
-        this.getData(this.xmlUrl(this.query));
+        this.getData();
       },
     },
     query: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) != JSON.stringify(oldVal)) {
-          this.getData(this.xmlUrl(this.query));
+          this.getData();
         }
       },
     },
     fullQuery: {
       handler(newVal, oldVal) {
-        this.getData(this.xmlUrl(this.fullQuery));
+        this.getData();
       },
     },
     innerData: {
@@ -569,11 +569,11 @@ export default {
       this.$emit('closepopup');
     },
     refresh() {
-      this.getData(this.xmlUrl(this.fullQuery));
+      this.getData();
     },
     
     getFieldAttribute(rowIndex, name, attr) {
-      if (this.data[rowIndex].DT_RowAttr['attributes']
+      if (this.data[rowIndex].DT_RowAttr && this.data[rowIndex].DT_RowAttr['attributes']
       && this.data[rowIndex].DT_RowAttr['attributes'][name]
       && this.data[rowIndex].DT_RowAttr['attributes'][name][attr] != undefined) {
         return this.data[rowIndex].DT_RowAttr['attributes'][name][attr];
@@ -656,16 +656,12 @@ export default {
     },
     formSaved(row, index) {
       // update row values
+      
       if (this.data[index]) {
-        for (const field in row) {
-          if (row[field] !== undefined && (typeof row[field] === 'object' || typeof row[field] === 'function')) {
-            this.data[index][field].value = row[field].value || row[field]._
-          } else {
-            this.data[index][field] = row[field];
-          }
-        }
+        this.getData(index);
       } else {
-        this.getData(this.xmlUrl(this.query));
+
+        this.getData();
       }
       this.$refs.formDialog.hide();
     },
@@ -678,7 +674,7 @@ export default {
         })
         .catch((e) => {
           this.submitting = false;
-          console.log(e);
+
         });
     },
     selectRow(props) {
@@ -687,8 +683,6 @@ export default {
         const rowAttr = row.DT_RowAttr;
         this.$emit('open-detail', rowAttr);
       } else {
-        console.log(row);
-        console.log(this.getValuesFromRow(row));
         this.$emit('select-row', { row: this.getValuesFromRow(row), schema: this.schema });
       }
     },
@@ -841,7 +835,8 @@ export default {
       }
       return result;
     },   
-    getData(url) {
+    getData(index) {
+      const url = this.xmlUrl(this.fullQuery)
       histrixApi.getAppData(url, this.query)
         .then((response) => {
           const {data} = response.data;
@@ -851,7 +846,12 @@ export default {
             }
           });
           // alert('llega')
-          this.data = data;
+          if (index) {
+            this.data[index] = data[index];
+          } else {
+            this.data = data;            
+          }
+
           this.loading = false;
           this.openFilter = false;
 
@@ -870,7 +870,7 @@ export default {
     return {
       edit: false,
       filter: '',
-      fullQuery: {},
+      fullQuery: this.query,
       expanded: [],
       loading: true,
       message: null,

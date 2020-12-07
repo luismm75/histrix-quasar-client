@@ -8,6 +8,7 @@
       <q-space />
     </q-toolbar>
     -->
+
     <q-form @submit="onSubmit" enctype="multipart/form-data">
       <div class="row">
         <div class="col">
@@ -544,9 +545,10 @@ export default {
         .then((response) => {
           this.submitting = false;
           this.localValues = this.editedItem;
-          this.$emit('closepopup');
+
           // this.$router.back();
           this.$emit('process-finish', true);
+          this.$emit('closepopup');          
         })
         .catch((e) => {
           this.submitting = false;
@@ -565,37 +567,35 @@ export default {
       this.saveForm();
     },
     saveForm() {
+      // set button state
       this.submitting = true;
-      histrixApi.upload(this.files)
 
-      if (this.newRecord) {
-        histrixApi.insertAppData(
-          this.xmlUrl(),
-          {
+      // upload attached files
+      if (this.fields) {
+        histrixApi.upload(this.files)
+      }
+
+      const postData = {
             keys: this.getKeys(this.editedItem),
             data: this.postData,
-          },
-        )
+          };
+      // if this is a new record Insert
+      if (this.newRecord) {        
+        histrixApi.insertAppData( this.xmlUrl(), postData)
           .then((response) => {
             this.submitting = false;
-            const id = response.data.id
-            this.$emit('form-saved', this.localValues, id);
-            this.$emit('insert-row', this.localValues, id);
-          })
-          .catch((e) => {
+            this.$emit('closepopup');
+            this.$emit('form-saved', this.localValues, response.data.id);
+            this.$emit('insert-row', this.localValues, response.data.id);
+          }).catch((e) => {
             console.log(e);
             this.submitting = false;
-          });
+        });
       } else {
-        histrixApi.updateAppData(
-          this.xmlUrl(),
-          {
-            keys: this.getKeys(this.editedItem),
-            data: this.postData,
-          },
-        )
+        histrixApi.updateAppData( this.xmlUrl(), postData)
           .then((response) => {
             this.submitting = false;
+            this.$emit('closepopup');
             this.$emit('form-saved', this.localValues, this.editedIndex);
           })
           .catch((e) => {
@@ -604,28 +604,6 @@ export default {
           });
       }
     },
-    /*
-    parseDateToLocale() {
-      const dates = {};
-      for (const key in this.dateFields) {
-        const fieldDate = Date(this.localValues[key]);
-        dates[key] = date.formatDate(fieldDate, 'DD/MM/YYYY');
-      }
-      return dates;
-    },
-    parseLocaleToDate() {
-      const dates = {};
-      for (const key in this.dateFields) {
-        if (this.localValues[key]) {
-          const gmt = date.extractDate(this.localValues[key], 'DD/MM/YYYY');
-          dates[key] = date.formatDate(gmt, 'YYYY-MM-DD');
-        } else {
-          dates[key] = this.localValues[key];         
-        }
-      }
-      return dates;
-    },
-    */
     setDefaultValues() {
       for (const key in this.localSchema.fields) {
         const field = this.localSchema.fields[key];
@@ -638,7 +616,7 @@ export default {
       histrixApi.getAppData(this.xmlUrl(), this.query)
         .then((response) => {
           this.localValues = response.data.data[0];
-          this.localValues = { ...this.localValues, ...this.parseDateToLocale() };
+          // this.localValues = { ...this.localValues, ...this.parseDateToLocale() };
           this.setDefaultValues();
         })
         .catch((e) => {
