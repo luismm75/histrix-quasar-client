@@ -40,7 +40,7 @@
       <template v-slot:top-right="props">
           <q-btn-group dense flat  v-if="!inner">
 
-          <q-btn v-if="schema.export" flat  icon="get_app" _icon="fas fa-file-excel" title="Exportar" @click="$emit('export')" />
+          <q-btn v-if="schema.export" flat  icon="get_app" _icon="fas fa-file-excel" title="Exportar" @click="$emit('export', fullQuery)" />
           <q-btn flat   icon="print" title="Imprimir" @click="$emit('print')" />
           <!--  <q-btn flat round dense :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" />  -->
           <q-btn flat  :icon="mode === 'grid' ? 'list' : 'grid_on'" @click=" mode = mode === 'grid' ? 'list' : 'grid'; separator = mode === 'grid' ? 'none' : 'horizontal';" >

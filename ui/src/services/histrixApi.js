@@ -342,6 +342,16 @@ export default {
       },
     });
   },
+  queryStringToObject(query) {
+    const urlParams =  new URLSearchParams(query);
+
+    const obj = {}
+    urlParams.forEach(function(value, key) {
+      var newkey = key.replace('[]','');
+      obj[newkey] = urlParams.getAll(key);
+    });
+    return obj;
+  },
   downloadAppData(path, query, fileFormat, fileName) {
     const url = `${this.apiUrl()}/export/${fileFormat}/${path}`;
     Vue.prototype.$axios

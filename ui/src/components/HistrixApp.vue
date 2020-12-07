@@ -235,6 +235,7 @@
             :schema="schema"
             :path="path"
             :query="query"
+            :exportQuery="exportQuery"
           />
         </q-card-section>
       </q-card>
@@ -608,7 +609,8 @@ export default {
       this.pdf = !this.pdf
     },
 
-    showExportForm () {
+    showExportForm (query) {
+      this.exportQuery = query
       this.exportDialog = true
     },
     dirname (path) {
@@ -743,6 +745,7 @@ export default {
       show: true,
       message: null,
       dialog: false,
+      exportQuery: null,
       exportDialog: false,  // show export Dialog
       linkDialog: false,    // show inner link Dialog
       dialogTitle: '',

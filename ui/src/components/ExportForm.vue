@@ -1,5 +1,5 @@
 <template>
-  <q-card flat>
+  <q-card flat>}
       <q-card-section class="bg-primary text-white">
         <div class="text-h6">Exportar Archivo {{schema.title}}</div>
         <div class="text-subtitle2">Seleccione formato</div>
@@ -38,6 +38,7 @@ export default {
   props: {
     path: null,
     query: null,
+    exportQuery: null,
     schema: {},
   },
   components: {
@@ -85,10 +86,14 @@ export default {
     };
   },
   computed: {
+    params() {
+      const params = histrixApi.queryStringToObject(this.exportQuery)
+      return { ...this.query, ...params };
+    }
   },
   methods: {
     downloadFile() {
-      histrixApi.downloadAppData(this.path, this.query, this.fileFormat, this.fileName)
+      histrixApi.downloadAppData(this.path, this.params, this.fileFormat, this.fileName)
     },
   },
 };
