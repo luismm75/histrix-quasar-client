@@ -9,7 +9,6 @@
 
     <div v-if="filterCount == 1">
       <q-item v-for="field in filters" v-bind:key="field.uid" class=" col-xs-12 col-sm-6 col-md-6">
-        
            <HistrixField v-model="field.valor" :schema="field" clearable  filled/>
             <q-space />
             <q-btn v-if="schema.filters[0]" color="secondary" label="Buscar" icon="search" v-on:click="filterData" />          
@@ -40,10 +39,29 @@ export default {
     filterCount() {
       return this.filters.length
     },
+    filterString() {
+      let query = '';
+      this.filters.map((filter) => {
+        let value = filter.valor
+        if (filter.type == 'checkbox') {
+          value = (filter.valor)?1:0;
+        }
+        if (filter.valor) {
+          query
+            += `&_f[]=${
+              filter.campo
+            }&_o[]=${
+              filter.operador
+            }&_v[]=${
+              value}`;
+        }
+      });
+      return query;
+    },    
   },
   methods: {
     filterData() {
-      this.$emit('filter-data', this.getFilterData());
+      this.$emit('filter-data', this.filterString);
     },
     initFilters() {
       // filter local fields
@@ -57,21 +75,7 @@ export default {
         return { ...item, ...f };
       }, this);
     },
-    getFilterData() {
-      let query = '';
-      this.filters.map((filter) => {
-        if (filter.valor) {
-          query
-            += `&_f[]=${
-              filter.campo
-            }&_o[]=${
-              filter.operador
-            }&_v[]=${
-              filter.valor}`;
-        }
-      });
-      return query;
-    },
+
   },
 };
 </script>
