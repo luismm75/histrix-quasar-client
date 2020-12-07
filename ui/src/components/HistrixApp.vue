@@ -619,7 +619,21 @@ export default {
     closePopup() {
       this.$emit('closepopup');
     },
+    getDialogTitle(data) {
+      const title = []
+      const schema = this.schema
+      console.log(data)
+      const attrs = data['DT_RowAttr']      
+      Object.entries(data).map(function(value){
+        if (value[1] != '' && schema.fields[value[0]] && !schema.fields[value[0]].hidden){
+          title.push(value[1])
+        }
+      });
+      return title.join(' - ')
+    },
     showLinkDialog (data) {
+
+      const title =this.getDialogTitle(data.row);
       const link = data.link;
       //var path = (dir || this.dirname(this.path)) + link.file;
       let path = `${link.dir}/${link.file}`;
@@ -632,7 +646,7 @@ export default {
       const queryString = '{"' + decodeURI(data.parameters.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}'
       this.innerQuery = JSON.parse(queryString)
       this.linkDialog = true
-      this.dialogTitle = data.title
+      this.dialogTitle = data.title + ': ' + title
     },
     /**
      * get PDF blob data

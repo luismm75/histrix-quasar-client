@@ -116,7 +116,7 @@
               :props="props"
               :schema="schema.fields[cell.name]"
               :col="cell"
-              v-on:open-popup="bubbleLink"
+              v-on:open-popup="bubbleLink(rawData[props.key], $event)"
               v-on:closepopup="closePopup"
             />
 
@@ -170,7 +170,7 @@
               :props="props"
               :schema="schema.fields[cell.name]"
               :col="cell"
-              v-on:open-popup="bubbleLink"
+              v-on:open-popup="bubbleLink(rawData[props.key], $event)"
               v-on:closepopup="closePopup"
             />
 
@@ -561,7 +561,8 @@ export default {
 
       return rel;
     },    
-    bubbleLink(link) {
+    bubbleLink(row, link) {
+      link.row = row;
       this.$emit('open-popup', link);      
     },
     closePopup() {
