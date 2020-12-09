@@ -8,7 +8,7 @@
       <q-space />
     </q-toolbar>
     -->
-
+ 
     <q-form @submit="onSubmit" enctype="multipart/form-data">
       <div class="row">
         <div class="col">
@@ -249,6 +249,8 @@ export default {
 
     },
     postData() {
+      return this.localValues;
+      /*
       const data = this.localValues
        Object.keys(this.localValues).map(item => {
         if (typeof this.localValues[item] === 'object') {
@@ -257,6 +259,7 @@ export default {
         }
       })
       return data
+      */
     },
     canUpdate() {
       return this.resources.hasOwnProperty('PUT') && this.schema.can_update;
