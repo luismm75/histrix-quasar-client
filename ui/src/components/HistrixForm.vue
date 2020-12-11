@@ -249,17 +249,16 @@ export default {
 
     },
     postData() {
-      return this.localValues;
-      /*
+      // return this.localValues;
+      
       const data = this.localValues
        Object.keys(this.localValues).map(item => {
-        if (typeof this.localValues[item] === 'object') {
-          console.log(this.localValues[item])
+        if (typeof this.localValues[item] === 'object' && this.localValues[item]['name']) {
           data[item] = this.localValues[item]['name']
         }
       })
       return data
-      */
+      
     },
     canUpdate() {
       return this.resources.hasOwnProperty('PUT') && this.schema.can_update;
@@ -574,7 +573,7 @@ export default {
       this.submitting = true;
 
       // upload attached files
-      if (this.fields) {
+      if (this.files) {
         histrixApi.upload(this.files)
       }
 

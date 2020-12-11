@@ -3,7 +3,6 @@
     <span class="q-pa-xs text-caption" v-if="isRadio" >
       {{  label }}
     </span>
-
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
@@ -626,8 +625,9 @@ export default {
           return this.options.find(obj => obj.value == this.value);
         }
         
-        if (this.histrixType == 'q-file' && this.value === []) {
-          return null
+        if (this.histrixType == 'q-file' /* && this.value === [] */) {
+          // return null
+          return this.value.name
         }
 
         /*
@@ -642,7 +642,7 @@ export default {
         return this.value;
       },
       set(localValue) {
-        if (this.histrixType == 'q-select' && this.schema.multiple != 'multiple') {
+         if (this.histrixType == 'q-select' && this.schema.multiple != 'multiple') {
           this.$emit('input', localValue.value);
           const option = this.options.find(obj => obj.value == localValue.value);
           this.$emit('selectOption', { value: localValue.value, selected_option: option });
