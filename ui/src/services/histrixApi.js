@@ -352,6 +352,18 @@ export default {
     });
     return obj;
   },
+  getFiles(path) {
+    const url = `${this.apiUrl()}/dir/${path}`;
+    return Vue.prototype.$axios
+      .get(url, {})
+  },
+  async deleteFile(path) {
+    return Vue.prototype.$axios({
+      method: 'DELETE',
+      url: `${this.apiUrl()}/files/${path}`
+    });
+  },
+
   downloadAppData(path, query, fileFormat, fileName) {
     const url = `${this.apiUrl()}/export/${fileFormat}/${path}`;
     Vue.prototype.$axios

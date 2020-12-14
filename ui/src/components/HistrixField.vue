@@ -48,7 +48,12 @@
     >
 
       <template v-slot:before v-if="histrixType === 'q-file'" >
-        
+          <q-btn   icon="folder"  @click="fileManager = true">
+          </q-btn>
+
+    <q-dialog v-model="fileManager">            
+      <HistrixFileManager :path="path" />
+    </q-dialog>                  
         <q-avatar size="60px">
           <q-img  v-if="value" :src="thumb" spinner-color="grey"  @click="showImage = true" />
         </q-avatar>
@@ -156,6 +161,7 @@ export default {
   },
   components: {
     HistrixApp: () => import('./HistrixApp.vue'),
+    HistrixFileManager: () => import('./widgets/HistrixFileManager.vue'),
   },
   methods: {
     uploadFn (file) {
@@ -332,6 +338,7 @@ export default {
   data() {
     return {
       delayTimer: 0,
+      fileManager: false,
       helpSchema: {},
       showImage: false,
       helpFoundes: true,

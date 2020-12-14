@@ -1,0 +1,100 @@
+<template>
+  <div>
+    <q-card flat bordered>
+      <q-toolbar class="bg-orange text-white shadow-2">
+        <q-toolbar-title
+          ><q-avatar text-color="white" icon="folder" round />{{path}}</q-toolbar-title>
+      </q-toolbar>
+      <q-card-section>
+        <!--
+          <q-item v-for="(file, index) in files" v-bind:key="index">
+
+
+              <q-item-section>
+                  {{file.name}}
+              </q-item-section>
+              <q-item-section>
+                  {{file.size}}
+              </q-item-section>
+              <q-item-section>
+                  {{file.time}}
+              </q-item-section>
+          </q-item>
+          -->
+
+          
+
+      <VueFileAgent 
+      ref="fileAgent"
+      :uploadUrl="uploadUrl" 
+      :thumbnailSize="120"
+      @beforedelete="onBeforeDelete($event)"
+      @delete="onDelete($event)"
+      :deletable="true"
+      theme="list"
+      :uploadHeaders="uploadHeaders"
+      helpText="Elija o arrastre aquí sus archivos"
+      v-model="files"></VueFileAgent>
+          
+      </q-card-section>
+    </q-card>
+  </div>
+</template>
+
+<script>
+import Vue from 'vue';
+import histrixApi from '../../services/histrixApi.js'
+import  VueFileAgent from 'vue-file-agent';
+import VueFileAgentStyles from 'vue-file-agent/dist/vue-file-agent.css';
+
+Vue.use(VueFileAgent);
+
+export default {
+  name: 'HistrixFileManager',
+  props: ['path'],
+  components: {
+    
+  },
+  data() {
+    return {
+      files: [],
+      uploadHeaders: { 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')},
+      uploadUrl: histrixApi.apiUrl()+ '/files' + this.path
+    };
+  },
+  computed: {
+
+  },
+  methods: {
+    getFiles() {
+      var files = []
+        histrixApi.getFiles(this.path).then(success => {
+            files = success.data.data
+          this.files = files.map(item => {
+              const file = item.node;
+              file.name = file.basename;
+              return file;
+            }).filter(item => item.type != 'dir')
+        })
+
+
+        },
+      onBeforeDelete(fileRecord){
+        if(confirm('¿Esta seguro que desea borrar el archivo ?')){
+          this.$refs.fileAgent.deleteFileRecord(fileRecord);
+        }
+      },        
+      onDelete(fileRecord) {
+        const url = this.uploadUrl  + fileRecord.name();
+
+        this.$refs.fileAgent.deleteUpload(url, this.uploadHeaders, fileRecord);
+        histrixApi.deleteFile(this.path + fileRecord.name()).then(success => {
+          this.getFiles();
+        })
+      }    
+  },
+  mounted() {
+   this.getFiles();
+  },
+};
+</script>
