@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <div>
 
     <q-img v-if="hasThumb" :src="thumb" spinner-color="white" @click="showImage = true" />
     <q-dialog v-if="hasThumb" v-model="showImage">
@@ -16,7 +16,7 @@
       </q-card>
     </q-dialog>
     <q-btn
-      v-else-if="col.value.link && col.value.text"
+      v-else-if="(col.value.link && col.value.text) || (col.link && col.value)"
       :_to="link"
       class="fit "
       dense
@@ -37,16 +37,16 @@
           <q-badge color="transparent" text-color="black"  :label="col.value.value" />
         </div>
     </q-linear-progress>
-    <span
+    <div
       v-else
       v-html="formatedValue"
       :class="schema.class"
-    ></span>
+    ></div>
 
     <!--
        // TODO IMPLEMENT PROGRESS METER
     -->
-  </span>
+  </div>
   
 </template>
 

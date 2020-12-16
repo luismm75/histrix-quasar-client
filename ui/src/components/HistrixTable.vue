@@ -6,7 +6,8 @@
       :data="innerData"
       :columns="schema.columns"
       :pagination.sync="pagination"
-      :grid="mode == 'grid'"
+      :_grid="mode == 'grid'"
+      :grid="$q.screen.lt.sm"
       flat
       dense
       :filter="filter"
@@ -43,11 +44,13 @@
           <q-btn v-if="schema.export" flat  icon="get_app" _icon="fas fa-file-excel" title="Exportar" @click="$emit('export', fullQuery)" />
           <q-btn flat   icon="print" title="Imprimir" @click="$emit('print')" />
           <!--  <q-btn flat round dense :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" />  -->
+          <!--
           <q-btn flat  :icon="mode === 'grid' ? 'list' : 'grid_on'" @click=" mode = mode === 'grid' ? 'list' : 'grid'; separator = mode === 'grid' ? 'none' : 'horizontal';" >
             <q-tooltip :disable="$q.platform.is.mobile" v-close-popup>{{
               mode === "grid" ? "List" : "Grid"
             }}</q-tooltip>
           </q-btn>
+          -->
               </q-btn-group>
 
 
@@ -86,7 +89,7 @@
               :icon="props.expand ? 'remove' : 'add'"
             />
           </q-td>
-          <q-td key="actions" v-if="(canUpdate && !isGrid) || (schema.can_delete && canDelete )">
+          <q-td key="actions" v-if="(canUpdate && !isGrid) || (schema.can_delete && canDelete )" class="action-cell">
             <q-btn flat rounded icon="edit"   v-if="canUpdate && !isGrid" color="positive" @click="editRow(props.row)"   size="sm" no-caps />
             <q-btn flat unelevated rounded icon="delete" v-if="schema.can_delete && canDelete " color="secondary"  @click="deleteItem(props.row)" size="sm" no-caps />
           </q-td>
@@ -95,7 +98,8 @@
             v-for="cell in props.cols.filter(row => row.name)"
             :key="cell.name"
             :props="props"
-            :style="colStyle(cell)" >
+            :style="colStyle(cell)" 
+            class="histrix-cell">
 
               <HistrixField
                 v-model="rawData[props.key][cell.name]"
@@ -109,6 +113,7 @@
                 :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
                 v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
               />
+
 
             <HistrixCell
               v-else
@@ -135,6 +140,7 @@
         </q-tr>
       </template>
 
+      <!-- grid mode -->
       <template v-slot:item="props">
         <div
           class="q-pa-xs col-12 grid-style-transition"
@@ -147,33 +153,32 @@
                 v-for="cell in props.cols.filter(cell => cell.name !== 'desc')"
                 :key="cell.name"
               >
-                <q-item-section class="col-3 text-secondary">
-                  <q-item-label>{{ cell.label }}</q-item-label>
+                <q-item-section side class="col-3 text-grey-15">
+                  {{ cell.label }}
                 </q-item-section>
-                <q-item-section _side class="col-11">
+                <q-item-section _side class="col-9">
 
-              <HistrixField
-                v-model="data[props.key][cell.name]"
-                :row="rawData[props.key]"
-                :name="cell.name"
-                :schema="schema.fields[cell.name]"
-                :rowSchema="data[props.key].DT_RowAttr['attributes'][cell.name]"
-                dense
-                :error-message="errorMessage(props.key, schema.fields[cell.name])"
-                :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
+                  <HistrixField
+                    v-model="data[props.key][cell.name]"
+                    :row="rawData[props.key]"
+                    :name="cell.name"
+                    :schema="schema.fields[cell.name]"
+                    :rowSchema="data[props.key].DT_RowAttr['attributes'][cell.name]"
+                    dense
+                    :error-message="errorMessage(props.key, schema.fields[cell.name])"
+                    :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
 
-                v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
-              />
-            <HistrixCell
-              v-else
-              :path="path"
-              :props="props"
-              :schema="schema.fields[cell.name]"
-              :col="cell"
-              v-on:open-popup="bubbleLink(rawData[props.key], $event)"
-              v-on:closepopup="closePopup"
-            />
-
+                    v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
+                  />
+                <HistrixCell
+                  v-else
+                  :path="path"
+                  :props="props"
+                  :schema="schema.fields[cell.name]"
+                  :col="cell"
+                  v-on:open-popup="bubbleLink(rawData[props.key], $event)"
+                  v-on:closepopup="closePopup"
+                />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -195,7 +200,7 @@
       <template v-slot:bottom-row="props">
         <q-tr :props="props" v-if="data.length > 0">
           <q-th v-if="schema.inline_detail"/> 
-          <q-th  v-if="canUpdate || canDelete" class="bg-primary" />
+          <q-th  v-if="canUpdate || canDelete"  />
           <q-th
                 v-for="col in props.cols.filter(col => col.name !== 'desc')"
                 :key="col.name"
@@ -224,7 +229,7 @@
 
     <q-dialog v-model="dialog" position="top">
       <q-card style="auto">
-        <q-card-section class="row items-center no-wrap">
+        <q-card-section class="row items-center ">
           <div>
             <div class="text-weight-bold">{{ message }}</div>
           </div>
@@ -232,18 +237,17 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="edit" ref="formDialog" full-width> -->
-      <q-card class="row">
-        <q-card-section class="col items-center no-wrap">
+    <q-dialog v-model="edit" ref="formDialog" full-width> 
+      <q-card >
+        <q-card-section class="row items-center ">
           <HistrixForm ref="histrixForm"
           :resources="resources" :schema="schema" :path="path" :query="query" v-bind="$attrs"
-          :editedItem="editedItem" :editedIndex="editedIndex"
+          :editedItem="editedItem" :editedIndex="editedIndex" :editedRow="editedRow"
           :inner="inner"
           v-on:form-saved="formSaved"
           v-on:insert-row="rowRecived"
           :computedFields="computedFields"
           :newRecord="newRecord" />
-
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -582,7 +586,7 @@ export default {
     },
     colStyle(col) {
       const style = (col.value && col.value.style) ? col.value.style : '';
-      return `${style  };max-width:30em;`
+      return `${style};`
     },
     errorMessage(row, field) {
       const cell = this.$v.rawData.$each[row][field.name];
@@ -799,7 +803,7 @@ export default {
     editRow(row) {
       this.editedIndex = this.data.indexOf(row);
       this.newRecord = false;
-
+      this.editedRow = row;
       this.editedItem = Object.assign({}, this.getValuesFromRow(row));
       // this.editedItem = this.data[this.editedIndex]
       /*
@@ -877,6 +881,7 @@ export default {
       dialog: false,
       mode: 'list',
       editedItem: {},
+      editedRow: {},
       editedIndex: undefined,
       newRecord: false,
       defaultItem: {},
@@ -895,3 +900,17 @@ export default {
   },
 };
 </script>
+<style>
+.histrix-cell {
+  max-width: 200px ;
+}
+
+.q-table td, .q-table th {
+    /* don't shorten cell contents */
+    white-space: normal ;
+}
+
+.action-cell {
+    white-space: nowrap !important ;
+}
+</style>

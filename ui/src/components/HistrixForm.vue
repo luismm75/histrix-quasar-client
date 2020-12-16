@@ -10,6 +10,7 @@
     -->
  
     <q-form @submit="onSubmit" enctype="multipart/form-data">
+
       <div class="row">
         <div class="col">
           <q-tabs v-model="currentTab"  dense class="text-grey" active-color="primary" indicator-color="primary" align="justify" narrow-indicator>
@@ -47,6 +48,20 @@
                     </q-item-section>
                     -->
                     <q-item-section>
+
+            <q-item-label v-if="editedRow && editedRow[field.name]['link']">
+                {{field.title}}
+            </q-item-label>
+            <HistrixCell
+              v-if="editedRow && editedRow[field.name]['link']"
+              :path="path"
+              :props="editedRow[field.name]"
+              :schema="field"
+              :col="{value:editedRow[field.name]}"
+              v-on:open-popup="bubbleLink(editedRow, $event)"
+              v-on:closepopup="closePopup"
+            />
+
                       <HistrixField
                         v-model="localValues[field.name]"
                         :name="field.name"
@@ -62,12 +77,11 @@
                         dense
                         :error-message="errorMessage(field)"
                         :error="$v['localValues'][field.name].$invalid"
-                        v-if="!localSchema.readonly"
+                        v-else-if="!localSchema.readonly "
                       />
                       <div v-else>
-                        <q-item-label>ss
-                          {{ localValues[field.name] }}
-                        </q-item-label>
+                        <span v-html="localValues[field.name]" />
+                          
                       </div>
                     </q-item-section>
                   </q-item>
@@ -100,13 +114,13 @@
       </div>
 
       <div class="row">
-        <div class="col-5 "></div>
+        <div class="col-4 "></div>
         <div class="col">
 
           <span class="q-pa-sm">
             
             <q-btn label="Cancelar"  icon="close"   class="nojustify-end flat"  v-close-popup type="reset" v-if="insertButton || updateButton" />
-            <q-btn v-if="insertButton || updateButton" type="submit" label="Grabar" icon="save" class=" bg-primary text-white nojustify-end" :loading="submitting" />
+            <q-btn v-if="insertButton || updateButton" type="submit" label="Grabar" icon="save" class=" bg-positive text-white nojustify-end" :loading="submitting" />
             
             <!--
             <q-btn v-if="editedIndex == -1"_v-if="schema.insertButton"  label="Grabar" icon="save" @click="insertRow()"  />
@@ -150,11 +164,13 @@ export default {
     schema: Object,
     resources: Object,
     editedItem: null,
+    editedRow: null,
     editedIndex: null,
     computedFields: Object,
   },
   components: {
     HistrixField: () => import('./HistrixField.vue'),
+    HistrixCell: () => import('./HistrixCell.vue'),
   },
   computed: {
     insertButton() {
@@ -191,7 +207,7 @@ export default {
         }
       });
 
-      // add formValidations
+      // add formValidationscol
       if (this.localSchema.formValidations) {
         this.localSchema.formValidations.map((validation) => {
           const operatios = /[+\-\*\/\(\)]/g;
@@ -391,6 +407,14 @@ export default {
   },
 
   methods: {
+    bubbleLink(row, link) {
+      link.row = row;
+      this.$emit('open-popup', link);      
+    },
+    closePopup() {
+      this.$emit('closepopup');
+    },
+
     computedPath(field) {
       const dirValue = this.localValues[field.path] || ''
       const path = this.schema.path + '/' + dirValue + '/'
@@ -502,9 +526,9 @@ export default {
         span = field.colspan;
       }
 
-      let lg = Math.min(3 + span, 12);
-      let md = Math.min(4 + span, 12);
-      let sm = Math.min(6 + span, 12);
+      let lg = Math.min(4 + span, 12);
+      let md = Math.min(6 + span, 12);
+      let sm = 12;
       let xs = 12;
 
       // small forms

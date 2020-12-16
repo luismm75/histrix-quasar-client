@@ -34,7 +34,14 @@
       theme="list"
       :uploadHeaders="uploadHeaders"
       helpText="Elija o arrastre aquí sus archivos"
-      v-model="files"></VueFileAgent>
+      v-model="files">
+      <!--
+      <template  v-slot:file-preview-after="props">
+        <q-btn>test</q-btn>
+      </template>
+      -->
+      
+      </VueFileAgent>
           
       </q-card-section>
     </q-card>
