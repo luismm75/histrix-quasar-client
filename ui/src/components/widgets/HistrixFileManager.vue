@@ -35,12 +35,12 @@
       :uploadHeaders="uploadHeaders"
       helpText="Elija o arrastre aquí sus archivos"
       v-model="files">
-      <!--
-      <template  v-slot:file-preview-after="props">
-        <q-btn>test</q-btn>
-      </template>
-      -->
-      
+
+<!--      
+    <template v-slot:file-preview-before="{ fileRecord, index }">
+      aaa<span class="file-preview-button">Button</span>
+    </template>
+    -->  
       </VueFileAgent>
           
       </q-card-section>
@@ -105,3 +105,17 @@ export default {
   },
 };
 </script>
+<style>
+  .my-file-agent .file-preview-wrapper .file-preview {
+    width: calc(100% - 50px); /* 50px: width of the button */
+  }
+  .my-file-agent .file-preview-button {
+    position: absolute;
+    z-index: 11;
+    width: 50px;
+    height: 100%;
+    right: 0;
+    background: yellow;
+    border: 2px solid red;
+  }
+</style>

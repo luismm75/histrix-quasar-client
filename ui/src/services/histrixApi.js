@@ -228,7 +228,7 @@ export default {
     return this.getData(url);
   },
 
-  getUser(verify = false) {
+  async getUser(verify = false) {
     return this.getBasicDataUser(this)
           .then((resp) => {
             const userObject = resp.data;              
