@@ -49,11 +49,11 @@
                     -->
                     <q-item-section>
 
-            <q-item-label v-if="editedRow && editedRow[field.name]['link']">
+            <q-item-label v-if="editedRow && editedRow[field.name] && editedRow[field.name]['link']">
                 {{field.title}}
             </q-item-label>
             <HistrixCell
-              v-if="editedRow && editedRow[field.name]['link']"
+              v-if="editedRow && editedRow[field.name] && editedRow[field.name]['link']"
               :path="path"
               :props="editedRow[field.name]"
               :schema="field"

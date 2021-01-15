@@ -4,7 +4,6 @@
       {{  label }}
     </span>
 
-
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
@@ -25,6 +24,7 @@
       :toolbar="toolbar"      
       :disabled="isDisabled"
       :readonly="isDisabled"
+      counter
       :fonts="{
         arial: 'Arial',
         arial_black: 'Arial Black',
@@ -35,10 +35,9 @@
         times_new_roman: 'Times New Roman',
         verdana: 'Verdana'
       }"
-      
       :size="size"
-      :_readonly="schema.readonly == 'readonly'"
-      :multiple="schema.multiple == 'multiple'"
+
+      :multiple="isMultiple"
       :autogrow="isTextarea"
       :style="style"
       @v-on:keyup.113="showHelper()"
@@ -429,6 +428,9 @@ export default {
     size() {
       return this.schema.size.toString();
     },
+    isMultiple() {
+      return (this.rowSchema )?this.rowSchema.multiple == 1 : this.schema.multiple == 'multiple'
+    },
     isTextarea() {
       return this.schema.size > 90;
     },
@@ -630,7 +632,7 @@ export default {
         }
 
 
-        if (this.histrixType == 'q-select' && this.options && this.schema.multiple != 'multiple') {
+        if (this.histrixType == 'q-select' && this.options && !this.isMultiple) {
           return this.options.find(obj => obj.value == this.value);
         }
         
@@ -651,10 +653,10 @@ export default {
         return this.value;
       },
       set(localValue) {
-         if (this.histrixType == 'q-select' && this.schema.multiple != 'multiple') {
-          this.$emit('input', localValue.value);
-          const option = this.options.find(obj => obj.value == localValue.value);
-          this.$emit('selectOption', { value: localValue.value, selected_option: option });
+        if (this.histrixType == 'q-select' && !this.isMultiple) {
+            this.$emit('input', localValue.value);
+            const option = this.options.find(obj => obj.value == localValue.value);
+            this.$emit('selectOption', { value: localValue.value, selected_option: option });
         } else {
           if (this.isDate) {
             var fecha = new Date()
@@ -671,6 +673,7 @@ export default {
             this.$emit('input', localValue);
           }          
         }
+
       },
     },
   },
