@@ -24,7 +24,7 @@
       :toolbar="toolbar"      
       :disabled="isDisabled"
       :readonly="isDisabled"
-      counter
+      :counter="isMultiple"
       :fonts="{
         arial: 'Arial',
         arial_black: 'Arial Black',
@@ -138,6 +138,7 @@ export default {
         }
       },
     },
+
     schema: {
       handler(newVal, oldVal) {
         this.getOptions();
@@ -153,7 +154,7 @@ export default {
     options: {
       handler(newVal, oldVal) {
         if (this.options.length == 1 && this.schema.innerContainer.empty == false) {
-          this.localValue = this.options[0]
+          this.localValue = [this.options[0]]
         }
       },
       deep: true
@@ -622,6 +623,7 @@ export default {
     },
     localValue: {
       get() {
+        
         if (this.histrixType == 'check') {
           return this.value === true || this.value != 0;
         }
@@ -632,28 +634,38 @@ export default {
         }
 
 
-        if (this.histrixType == 'q-select' && this.options && !this.isMultiple) {
-          return this.options.find(obj => obj.value == this.value);
+        if (this.histrixType == 'q-select' && this.options ) {
+          if (!this.isMultiple) {
+            return this.options.find(obj => obj.value == this.value);
+          } else {
+             if (this.value) {
+               return this.value
+             } else {
+               return []
+             }
+          }
+          
         }
         
-        if (this.histrixType == 'q-file' /* && this.value === [] */) {
+        if (this.histrixType == 'q-file') {
           // return null
           return this.value.name
         }
 
-        /*
-        if (this.histrixType == 'object') {
-          return this.value;
-        }
-        */
+        
+        // if (this.histrixType == 'object') {
+        //   return this.value;
+        // }
+        
         if (this.value) {
           return (this.value.value != undefined) ? this.value.value : this.value;
         }
 
         return this.value;
+        
       },
       set(localValue) {
-        if (this.histrixType == 'q-select' && !this.isMultiple) {
+        if (this.histrixType == 'q-select'  && !this.isMultiple ) {
             this.$emit('input', localValue.value);
             const option = this.options.find(obj => obj.value == localValue.value);
             this.$emit('selectOption', { value: localValue.value, selected_option: option });
