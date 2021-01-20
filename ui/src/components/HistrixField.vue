@@ -154,7 +154,7 @@ export default {
     options: {
       handler(newVal, oldVal) {
         if (this.options.length == 1 && this.schema.innerContainer.empty == false) {
-          this.localValue = [this.options[0]]
+          this.localValue = this.options[0]
         }
       },
       deep: true
