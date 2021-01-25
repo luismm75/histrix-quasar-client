@@ -7,7 +7,7 @@
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
-      :name="schema.name"
+      :name="fieldSchema.name"
       v-bind="$attrs"
       :title="label"
       :type="inputType"
@@ -83,7 +83,7 @@
       <template v-slot:append>
         <!-- EXTERNAL HELP POPUP -->
 
-        <q-icon name="help" class="cursor-pointer" v-if="schema.helpContainer" >
+        <q-icon name="help" class="cursor-pointer" v-if="fieldSchema.helpContainer" >
           <q-popup-proxy  ref="helperProxy" anchor="bottom left" self="top right" transition-show="scale" transition-hide="scale">
             <HistrixApp  :path="helpPath" :query="query" :title="'Seleccione '+ label" v-on:select-row="selectRow" :search="true"/>
           </q-popup-proxy>
@@ -133,7 +133,7 @@ export default {
   watch: {
     localValue: {
       handler(newVal, oldVal) {
-        if (this.schema.helpContainer) {
+        if (this.fieldSchema.helpContainer) {
           this.getFieldHelpData(newVal);
         }
       },
@@ -153,7 +153,7 @@ export default {
     },
     options: {
       handler(newVal, oldVal) {
-        if (this.options.length == 1 && this.schema.innerContainer.empty == false) {
+        if (this.options.length == 1 && this.fieldt.innerContainer.empty == false) {
           this.localValue = this.options[0]
         }
       },
@@ -177,9 +177,8 @@ export default {
         })
       })
     },
-
     showHelper() {
-      if (this.schema.helpContainer) {
+      if (this.fieldSchema.helpContainer) {
         this.$refs.helperProxy.show();
       }
     },
@@ -192,13 +191,13 @@ export default {
 
       if (row) {
         const firstkey = Object.keys(row)[0];
-        targets[this.schema.name] = row[firstkey];
+        targets[this.fieldSchema.name] = row[firstkey];
         this.helpFounded = true;
       } else {
         this.helpFounded = false;
       }
 
-      Object.entries(schema.fields).filter(field => field[1].detail.length != 0).map((field) => {
+      Object.entries(fieldSchema.fields).filter(field => field[1].detail.length != 0).map((field) => {
         field[1].detail.map((target) => {
           targets[target] = (row) ? row[field[0]] : '';
         });
@@ -281,7 +280,7 @@ export default {
       clearTimeout(this.delayTimer);
 
       const params = this.query;
-      const helpKey = this.schema.help_key;
+      const helpKey = this.fieldSchema.help_key;
       params[helpKey] = newVal;
 
       const that = this;
@@ -313,7 +312,7 @@ export default {
                     console.log(e)
                   });
         } else {
-          this.options = this.mapOptions(this.schema.options);
+          this.options = this.mapOptions(this.fieldSchema.options);
         }
       }
     },
@@ -332,7 +331,7 @@ export default {
               console.log(e);
             });
         } else {
-          this.options = this.mapOptions(this.schema.options);
+          this.options = this.mapOptions(this.fieldSchema.options);
         }
       }
     },
@@ -364,11 +363,14 @@ export default {
     this.getHelpSchema();
   },
   computed: {
+    fieldSchema() {
+      return {...this.schema, ...this.rowSchema}
+    },
     clearable() {
-      return this.fieldComponent == 'q-select' && this.schema.innerContainer.empty == true
+      return this.fieldComponent == 'q-select' && this.fieldSchema.innerContainer.empty == true
     },
     inputClass() {
-      return `text-${this.schema.align}`;
+      return `text-${this.fieldSchema.align}`;
     },
     fieldMask() {
       let mask = '';
@@ -393,16 +395,19 @@ export default {
       if (this.histrixType == 'object') {
         return false;
       }
-      if (this.schema.enabler) {
-        return this.row[this.schema.enabler] == 0 || this.row[this.schema.enabler] == 'false';
+      if (this.fieldSchema.enabler) {
+        return this.row[this.fieldSchema.enabler] == 0 || this.row[this.fieldSchema.enabler] == 'false';
       }
-      return (this.schema.disabled == 'disabled');
+      if (this.fieldSchema.deshabilitado == 'true') {
+        return true;
+      }
+      return (this.fieldSchema.disabled == 'disabled');
     },
     hasOptions() {
-      return this.schema.options && Object.keys(this.schema.options).length !== 0 || this.schema.isSelect;
+      return this.fieldSchema.options && Object.keys(this.fieldSchema.options).length !== 0 || this.fieldSchema.isSelect;
     },
     renderHelper() {
-      return this.schema.innerContainer && !this.hasOptions;
+      return this.fieldSchema.innerContainer && !this.hasOptions;
     },
     headers() {
       return [{name: 'Authorization', value: 'Bearer ' + localStorage.accessToken}]
@@ -415,41 +420,38 @@ export default {
       return histrixApi.apiUrl() + '/thumb' + this.path + this.value;
     },
     helperPath() {
-      const helper = this.schema.innerContainer;
+      const helper = this.fieldSchema.innerContainer;
       const url = `${helper.dir}/${helper.xml}`;
       return url.replace('//', '/');
     },
     helpPath() {
-      if (this.schema.helpContainer) {
-        const helper = this.schema.helpContainer;
+      if (this.fieldSchema.helpContainer) {
+        const helper = this.fieldSchema.helpContainer;
         return `${helper.dir}/${helper.xml}`;
       }
       return null;
     },
     size() {
-      return this.schema.size.toString();
+      return this.fieldSchema.size.toString();
     },
     isMultiple() {
       return (this.rowSchema )?this.rowSchema.multiple == 1 : this.schema.multiple == 'multiple'
     },
     isTextarea() {
-      return this.schema.size > 90;
+      return this.fieldSchema.size > 90;
     },
     isDate() {
       return this.schema['data-role'] == 'datebox' || this.histrixType == 'date';
     },
     isTime() {
-      return this.schema.histrix_type == 'Time' || this.histrixType == 'time';
+      return this.fieldSchema.histrix_type == 'Time' || this.histrixType == 'time';
     },
     label() {
       // if (!this.isDisabled) {
-      if (this.schema.label || this.schema.title) {
-        return this.schema.label || this.schema.title  
+      if (this.fieldSchema.label || this.fieldSchema.title) {
+        return this.fieldSchema.label || this.fieldSchema.title  
       }
 
-      if (this.rowSchema) {
-        return  this.rowSchema.label;
-      }
       // }
     },
     fieldComponent() {
@@ -567,26 +569,26 @@ export default {
       return (this.histrixType == 'radio');
     },
     inputType() {
-     if (this.schema.histrix_type == 'File') {
-       return this.schema.histrix_type
+     if (this.fieldSchema.histrix_type == 'File') {
+       return this.fieldSchema.histrix_type
      }
       if (this.histrixType == 'radio') {
         return this.histrixType;
       }
-      return this.schema.type;
+      return this.fieldSchema.type;
     },
     histrixType() {
       let { type } = this;
 
       if (this.hasOptions) {
         type = 'q-select';
-        if (this.schema.histrix_type == 'Radio') {
+        if (this.fieldSchema.histrix_type == 'Radio') {
           type = 'radio';
         }
       }
 
-      if (this.rowSchema && this.rowSchema.TipoDato) {
-        type = this.rowSchema.TipoDato
+      if (this.fieldSchema.TipoDato) {
+        type = this.fieldSchema.TipoDato
       }
 
       if (type == 'select') {
@@ -597,24 +599,24 @@ export default {
         type = 'object';
       }
 
-      if (this.schema.histrix_type == 'File') {
+      if (this.fieldSchema.histrix_type == 'File') {
         type = 'q-file';
       }
 
-      if (this.schema.histrix_type == 'Editor') {
+      if (this.fieldSchema.histrix_type == 'Editor') {
         type = 'q-editor';
       }
 
-      if (this.schema.histrix_type == 'Check') {
+      if (this.fieldSchema.histrix_type == 'Check') {
         type = 'check';
       }
 
       return type;
     },
     style() {
-      let style = this.schema.style || '';
-      if (this.schema.label) {
-        style += `min-width:${this.schema.label.length * 2}em`;
+      let style = this.fieldSchema.style || '';
+      if (this.fieldSchema.label) {
+        style += `min-width:${this.fieldSchema.label.length * 2}em`;
       }
       return style;
     },
