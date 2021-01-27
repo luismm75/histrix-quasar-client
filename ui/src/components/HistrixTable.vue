@@ -60,6 +60,7 @@
       </template>
 
       <!-- TABLE HEADER -->
+      
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width class="bg-primary" v-if="schema.inline_detail">1</q-th> 
@@ -154,10 +155,10 @@
                 v-for="cell in props.cols.filter(cell => cell.name !== 'desc')"
                 :key="cell.name"
               >
-                <q-item-section side class="col-3 text-grey-15">
+                <q-item-section side class="col-2 text-grey-15" v-if="!getFieldAttribute(props.key, cell.name, 'editable') && isGrid">
                   {{ cell.label }}
                 </q-item-section>
-                <q-item-section _side class="col-9">
+                <q-item-section _side class="col">
 
                   <HistrixField
                     v-model="data[props.key][cell.name]"
@@ -184,7 +185,7 @@
               </q-item>
             </q-list>
             <q-separator />
-            <q-card-section class="row q-pa-xs">
+            <q-card-section class="row q-pa-xs" v-if="(canUpdate && !isGrid ) || schema.can_delete && canDelete">
 
               <!-- <q-checkbox dense v-model="props.selected" :label="props.row.name" /> -->
             <q-item class="col-9">

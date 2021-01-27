@@ -52,6 +52,7 @@
             <q-item-label v-if="editedRow && editedRow[field.name] && editedRow[field.name]['link']">
                 {{field.title}}
             </q-item-label>
+            
             <HistrixCell
               v-if="editedRow && editedRow[field.name] && editedRow[field.name]['link']"
               :path="path"
@@ -61,7 +62,6 @@
               v-on:open-popup="bubbleLink(editedRow, $event)"
               v-on:closepopup="closePopup"
             />
-
                       <HistrixField
                         v-model="localValues[field.name]"
                         :name="field.name"

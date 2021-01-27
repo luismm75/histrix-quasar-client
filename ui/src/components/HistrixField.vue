@@ -1,5 +1,6 @@
 <template>
 <div>
+  
     <span class="q-pa-xs text-caption" v-if="isRadio" >
       {{  label }}
     </span>
@@ -9,7 +10,7 @@
       v-model="localValue"
       :name="fieldSchema.name"
       v-bind="$attrs"
-      :title="label"
+      
       :type="inputType"
       :path="helperPath"
       :headers="headers"
@@ -467,6 +468,9 @@ export default {
         case 'check':
           component = 'q-checkbox';
           break;
+        case 'toggle':
+          component = 'q-toggle';
+          break;
         case 'q-editor':
           component = 'q-editor';
           this.toolbar = [
@@ -612,6 +616,9 @@ export default {
         type = 'check';
       }
 
+      if (this.fieldSchema.histrix_type == 'Flipswitch') {
+        type = 'toggle';
+      }
       return type;
     },
     style() {
