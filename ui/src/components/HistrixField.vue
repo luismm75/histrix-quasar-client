@@ -23,6 +23,7 @@
       :filled="!isDisabled"
       :toolbar="toolbar"      
       :disabled="isDisabled"
+      :disable="isDisabled"
       :readonly="isDisabled"
       :counter="isMultiple"
       :fonts="{

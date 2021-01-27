@@ -19,6 +19,7 @@
       :hide-bottom="data.length < pagination.rowsPerPage"
       :_hide-top="data.length < pagination.rowsPerPage"
       v-on:closepopup="closePopup"
+
     >
     <!-- TOP LEFT: FILTERS -->
     <template v-slot:top-left="props">
