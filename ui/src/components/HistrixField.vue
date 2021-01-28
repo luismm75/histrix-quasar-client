@@ -403,6 +403,9 @@ export default {
       if (this.fieldSchema.deshabilitado == 'true') {
         return true;
       }
+      if (this.fieldSchema.deshabilitado == 'false') {
+        return false;
+      }      
       return (this.fieldSchema.disabled == 'disabled');
     },
     hasOptions() {

@@ -754,6 +754,7 @@ export default {
         histrixApi.deleteAppData(this.xmlUrl(), this.getKeys(item))
           .then((response) => {
             this.removeItem(item);
+            this.refresh();
           })
           .catch((e) => {
             console.log(e);
