@@ -1,10 +1,31 @@
 <template>
 <div>
-  
     <span class="q-pa-xs text-caption" v-if="isRadio" >
+
       {{  label }}
     </span>
+    <!--
+<picture-input 
+    v-if="histrixType === 'q-file'" 
+      ref="pictureInput"
+      width="300" 
+      height="300"
+      
+      margin="16" 
+      accept="image/jpeg,image/png" 
+      size="10" 
+      buttonClass="button-shadow  rounded-borders	 bg-primary text-white"
+       :removable="true"
+      :custom-strings="{
 
+      change: 'Cambiar Imagen',
+      remove: 'Quitar Imagen',
+      upload: 'Su dispositivo no soporta subir imágenes',
+        drag: 'Arrastre imagen aqui'
+      }"
+      @change="onImageChange">
+    </picture-input>
+    -->
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
@@ -49,16 +70,19 @@
       inline
       dense
     >
-
       <template v-slot:before v-if="histrixType === 'q-file'" >
-          <q-btn   icon="folder"  @click="fileManager = true">
-          </q-btn>
 
-    <q-dialog v-model="fileManager">            
-      <HistrixFileManager :path="path" />
-    </q-dialog>                  
-        <q-avatar size="60px">
-          <q-img  v-if="value" :src="thumb" spinner-color="grey"  @click="showImage = true" />
+
+        <!--<q-btn   icon="folder"  @click="fileManager = true" />
+
+        <q-dialog v-model="fileManager">            
+          <HistrixFileManager :path="path" />
+        </q-dialog>                  
+        -->
+        <q-avatar size="100px">
+          
+          <q-img :src="previewUrl" v-if="previewUrl" @click="showImage = true" />
+          <q-img  _v-else-if="value" :src="thumb" spinner-color="grey"  @click="showImage = true" />
         </q-avatar>
         <q-dialog  v-model="showImage">
           <q-card style="width:700px; max-width: 80vw;">
@@ -67,9 +91,9 @@
               <q-btn icon="close" flat round dense v-close-popup />
             </q-card-section>        
             <q-card-section>
-                <q-img  :src="thumb" spinner-color="grey" >
+              <q-img :src="previewUrl" v-if="previewUrl" spinner-color="grey" />
+                <q-img  :src="thumb" v-else spinner-color="grey" >
                 </q-img>
-
             </q-card-section>
           </q-card>
         </q-dialog>        
@@ -120,6 +144,7 @@ import Vue from 'vue';
 import { date } from 'quasar';
 
 import histrixApi from '../services/histrixApi.js'
+import PictureInput from 'vue-picture-input'
 
 export default {
   name: 'HistrixField',
@@ -138,7 +163,11 @@ export default {
         if (this.fieldSchema.helpContainer) {
           this.getFieldHelpData(newVal);
         }
+        if (this.fieldSchema.histrix_type == 'File') {
+          this.onFileChange(newVal)
+        }
       },
+      deep: true
     },
 
     schema: {
@@ -155,7 +184,7 @@ export default {
     },
     options: {
       handler(newVal, oldVal) {
-        if (this.options.length == 1 && this.fieldt.innerContainer.empty == false) {
+        if (this.options.length == 1 && this.fieldSchema.innerContainer.empty == false) {
           this.localValue = this.options[0]
         }
       },
@@ -166,6 +195,7 @@ export default {
   components: {
     HistrixApp: () => import('./HistrixApp.vue'),
     HistrixFileManager: () => import('./widgets/HistrixFileManager.vue'),
+    PictureInput
   },
   methods: {
     uploadFn (file) {
@@ -184,6 +214,25 @@ export default {
         this.$refs.helperProxy.show();
       }
     },
+    onImageChange(image) {
+      console.log(image)
+    },
+    onFileChange: function (file) {
+      this.previewUrl = 'entra'
+        //const file = files[0]
+        if (!file) {
+          return false
+        }
+        if (!file.type.match('image.*')) {
+          return false
+        }
+        const reader = new FileReader()
+        const that = this
+        reader.onload = function (e) {
+          that.previewUrl = e.target.result
+        }
+        reader.readAsDataURL(file)
+    },    
     onComputedTotal(data) {
       this.$emit('computed-total', data);
     },
@@ -241,7 +290,6 @@ export default {
         return data;
       }
     },
-
     mapOptions(options) {
       const data = [];
       if (options) {
@@ -341,6 +389,7 @@ export default {
   data() {
     return {
       delayTimer: 0,
+      previewUrl: '--',
       fileManager: false,
       helpSchema: {},
       showImage: false,
@@ -422,7 +471,7 @@ export default {
       return histrixApi.apiUrl() + '/files/' + this.path ;
     },
     thumb() {
-      return histrixApi.apiUrl() + '/thumb' + this.path + this.value;
+      return histrixApi.apiUrl() + '/thumb/' + this.path + this.value;
     },
     helperPath() {
       const helper = this.fieldSchema.innerContainer;
@@ -590,9 +639,10 @@ export default {
 
       if (this.hasOptions) {
         type = 'q-select';
-        if (this.fieldSchema.histrix_type == 'Radio') {
-          type = 'radio';
-        }
+      }
+
+      if (this.fieldSchema.histrix_type == 'Radio') {
+        type = 'radio';
       }
 
       if (this.fieldSchema.TipoDato) {
@@ -659,12 +709,12 @@ export default {
           }
           
         }
-        
+      /*        
         if (this.histrixType == 'q-file') {
-          // return null
+           return null
           return this.value.name
         }
-
+*/
         
         // if (this.histrixType == 'object') {
         //   return this.value;

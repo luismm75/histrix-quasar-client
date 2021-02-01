@@ -288,7 +288,7 @@ export default {
       .get(`${this.apiUrl()}/pdf/${path}`, { params, responseType: 'arraybuffer' });
   },
   upload(files) {
-    files.map(file => {
+    files.filter(file => file.data.name).map(file => {
       let formData = new FormData();
       formData.append('file', file.data);      
       Vue.prototype.$axios({

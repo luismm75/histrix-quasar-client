@@ -54,6 +54,7 @@
     "http-vue-loader": "^1.4.2",
     "vue-echarts-v3": "^2.0.1",
     "vue-file-agent": "github:safrazik/vue-file-agent",
+    "vue-picture-input": "^2.1.6",
     "vuelidate": "^0.7.6"
   }
 }

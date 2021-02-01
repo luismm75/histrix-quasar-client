@@ -8,9 +8,7 @@
       <q-space />
     </q-toolbar>
     -->
- 
     <q-form @submit="onSubmit" enctype="multipart/form-data">
-
       <div class="row">
         <div class="col">
           <q-tabs v-model="currentTab"  dense class="text-grey" active-color="primary" indicator-color="primary" align="justify" narrow-indicator>
@@ -567,6 +565,12 @@ export default {
     },
     processData() {
       this.submitting = true;
+
+      // upload attached files
+      if (this.files) {
+        histrixApi.upload(this.files)
+      }
+
       histrixApi.processAppForm(this.xmlUrl(), this.postData)
         .then((response) => {
           this.submitting = false;
