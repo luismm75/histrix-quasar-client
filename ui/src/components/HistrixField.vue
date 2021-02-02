@@ -144,7 +144,7 @@ import Vue from 'vue';
 import { date } from 'quasar';
 
 import histrixApi from '../services/histrixApi.js'
-import PictureInput from 'vue-picture-input'
+// import PictureInput from 'vue-picture-input'
 
 export default {
   name: 'HistrixField',
@@ -195,7 +195,7 @@ export default {
   components: {
     HistrixApp: () => import('./HistrixApp.vue'),
     HistrixFileManager: () => import('./widgets/HistrixFileManager.vue'),
-    PictureInput
+    // PictureInput
   },
   methods: {
     uploadFn (file) {
