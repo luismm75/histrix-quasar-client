@@ -1,5 +1,6 @@
 <template>
 <div>
+
     <span class="q-pa-xs text-caption" v-if="isRadio" >
 
       {{  label }}
@@ -687,7 +688,7 @@ export default {
     localValue: {
       get() {
         
-        if (this.histrixType == 'check') {
+        if (this.histrixType == 'check' || this.histrixType == 'toggle') {
           return this.value === true || this.value != 0;
         }
         if (this.isDate) {
