@@ -43,10 +43,10 @@
       :class="schema.class"
     ></div>
 
-    <q-btn icon="add" v-if="isAwsUploader"
-    @click="$emit('open-popup', {url: awsUrl, title: 'Upload'})" 
+    <q-btn icon="cloud_upload" v-if="isAwsUploader"
+    @click="$emit('open-popup', {url: awsData.url, title: awsData.title})" 
     >
-      Subir
+      {{awsData.title}}
     </q-btn>
     <!--
        // TODO IMPLEMENT PROGRESS METER
@@ -131,14 +131,18 @@ export default {
     isAwsUploader() {
       return this.col.value._.indexOf('awsuploader') !== -1
     },
-    awsUrl() {
+    awsData() {
           const test_element = document.createElement('div');
           test_element.innerHTML = this.col.value._;
           if (test_element.childNodes[1]) {
             const element = test_element.childNodes[1];
-            const table = element.getAttributeNode("data-table").value
-            const recid = element.getAttributeNode("data-recid").value
-            return `${histrixApi.host()}/uploader/?table=${table}&recid=${recid}&db=${histrixApi.currentDb()}`
+            let aws = {table: element.getAttributeNode("data-table").value,
+                         recid: element.getAttributeNode("data-recid").value,
+                         title: element.innerText
+            }
+            
+            aws.url =  `${histrixApi.host()}/uploader/?table=${aws.table}&recid=${aws.recid}&db=${histrixApi.currentDb()}`
+            return aws
           }
     },
     formatedValue() {
