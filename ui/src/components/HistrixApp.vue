@@ -192,6 +192,12 @@
     </q-banner>
 -->
 
+    <q-dialog   v-model="showIframe" full-width  :auto-close="false" transition-show="slide-down" transition-hide="slide-up" >
+      <q-card>
+      <iframe :src="iframe" width="100%" height="500px">
+      </iframe>
+      </q-card>
+    </q-dialog>
     <q-dialog   v-model="linkDialog" full-width  transition-show="slide-down" transition-hide="slide-up" @before-hide="closePopup">
       <q-layout view="Lhh lpR fff" container class="bg-white">
         <q-header class="bg-primary">
@@ -639,6 +645,13 @@ export default {
     },
     showLinkDialog (data) {
 
+      if (data.url) {
+        this.iframe = data.url
+        this.dialogTitle = data.title + ': ' + title
+        this.showIframe = true
+        return
+      }
+
       const title =this.getDialogTitle(data.row);
       const link = data.link;
       //var path = (dir || this.dirname(this.path)) + link.file;
@@ -768,6 +781,8 @@ export default {
       exportQuery: null,
       exportDialog: false,  // show export Dialog
       linkDialog: false,    // show inner link Dialog
+      iframe: null, //  iframe url
+      showIframe: false,    // show inner link Dialog
       dialogTitle: '',
       innerPath: '',    //  inner link 
       innerQuery: '',    //  inner link 

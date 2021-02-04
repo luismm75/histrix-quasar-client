@@ -38,11 +38,16 @@
         </div>
     </q-linear-progress>
     <div
-      v-else
+      v-else-if="!isAwsUploader"
       v-html="formatedValue"
       :class="schema.class"
     ></div>
 
+    <q-btn icon="add" v-if="isAwsUploader"
+    @click="$emit('open-popup', {url: awsUrl, title: 'Upload'})" 
+    >
+      Subir
+    </q-btn>
     <!--
        // TODO IMPLEMENT PROGRESS METER
     -->
@@ -123,7 +128,19 @@ export default {
 
       return this.col.value;
     },
-
+    isAwsUploader() {
+      return this.col.value._.indexOf('awsuploader') !== -1
+    },
+    awsUrl() {
+          const test_element = document.createElement('div');
+          test_element.innerHTML = this.col.value._;
+          if (test_element.childNodes[1]) {
+            const element = test_element.childNodes[1];
+            const table = element.getAttributeNode("data-table").value
+            const recid = element.getAttributeNode("data-recid").value
+            return `${histrixApi.host()}/uploader/?table=${table}&recid=${recid}&db=${histrixApi.currentDb()}`
+          }
+    },
     formatedValue() {
       if (this.schema.histrix_type === 'Numeric') {
         return parseFloat(this.col.value._ || 0).toLocaleString('es-AR', { style: 'decimal', maximumFractionDigits: 2, minimumFractionDigits: 2 });
