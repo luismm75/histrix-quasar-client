@@ -51,15 +51,16 @@
               v-on:input="$emit('input', localValue)"
               v-on:validity="onValidityChange"
               v-on:advance-step="$emit('advance-step')"
-              v-on:process-finish="$emit('process-finish', true)"
+              v-on:process-finish="refreshMaster"
             ></component>
             <div class="row justify-center">
               <div class="q-pa-sm ">
                   <q-btn
                     icon="thumb_up"
+                    :disable="!validity"
                     label="procesar "
                     class=" bg-secondary text-white nojustify-end"
-                    @click="$refs.main.processData()"
+                    @click="process"
                     v-if="schema.can_process && !inner"
                   />
               </div>
@@ -572,9 +573,9 @@ export default {
         });
       }
     },
-
     refreshMaster (doRefresh) {
-      this.$refs.main.refresh()
+      //this.$refs.main.refresh()
+      this.$emit('process-finish', true)
     },
     onValidityChange (validity) {
       this.validity = validity
@@ -605,6 +606,10 @@ export default {
       this.detailQuery = qs.parse($rowAttr['detailquery']);
       this.detailPath = $rowAttr['detailpath']
       this.isDetailOpened = true
+    },
+    process() {
+      this.validity = false
+      this.$refs.main.processData()
     },
     closeDetail () {
       this.isDetailOpened = false

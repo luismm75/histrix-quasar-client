@@ -368,23 +368,12 @@ export default {
     },
   },
   mounted() {
-    this.localSchema = this.schema;
-    this.localValues = this.editedItem;
-
-    
-    Object.keys(this.query).map((key) => {
-        this.localValues[key] = this.query[key];
-    });
-
-
-    if (this.query && this.localSchema.preFetch != false  && !this.editedItem  ) {
-      this.getData();
-    }
+    this.refresh()
   },
   watch: {
     editedItem:  {
       handler(data) {
-          this.localValues = this.editedItem;
+          this.localValues = {...this.editedItem, ...{}};
         },
       deep: true,
     },
@@ -405,6 +394,18 @@ export default {
   },
 
   methods: {
+    refresh() {
+      this.localSchema = this.schema;
+      this.localValues = {...this.editedItem, ...{}};
+      
+      Object.keys(this.query).map((key) => {
+          this.localValues[key] = this.query[key];
+      });
+
+      if (this.query && this.localSchema.preFetch != false  && !this.editedItem  ) {
+        this.getData();
+      }
+    },
     bubbleLink(row, link) {
       link.row = row;
       this.$emit('open-popup', link);      
@@ -475,7 +476,7 @@ export default {
       }
     },
     reset() {
-      this.localValues = this.editedItem;
+      this.localValues = {...this.editedItem, ...{}};
       this.setDefaultValues();
     },
     /*
@@ -574,9 +575,22 @@ export default {
       histrixApi.processAppForm(this.xmlUrl(), this.postData)
         .then((response) => {
           this.submitting = false;
-          this.localValues = this.editedItem;
+          this.localValues = {...this.editedItem, ...{} };
+
+          this.$q.notify({
+            message: "PROCESO FINALIZADO",
+            type: "success",
+            textColor: "white",
+            color: "success",
+            icon: "info",
+            closeBtn: "cerrar",
+            position: "top"
+          });
+
 
           // this.$router.back();
+          this.reset()
+          this.refresh()
           this.$emit('process-finish', true);
           this.$emit('closepopup');          
         })
