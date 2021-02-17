@@ -109,7 +109,7 @@
                 :query="fieldQuerys(cell.name, rawData[props.key])"
                 :name="cell.name"
                 :schema="schema.fields[cell.name]"
-                :rowSchema="data[props.key].DT_RowAttr['attributes'][cell.name]"
+                :rowSchema="getRowSchema(props.key, cell.name)"
                 dense
                 :error-message="errorMessage(props.key, schema.fields[cell.name])"
                 :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
@@ -486,6 +486,12 @@ export default {
 
   },
   methods: {
+    getRowSchema(index, cell) {
+      if (this.data[index].DT_RowAttr['attributes']) {
+        return this.data[index].DT_RowAttr['attributes'][cell]
+      }
+      else []
+    },
     fieldQuerys(fieldname, row) {
       const fieldQuerys = {};
     
@@ -673,10 +679,11 @@ export default {
     },
     processData() {
       this.submitting = true;
-      histrixApi.processApp(this.xmlUrl, this.rawData)
+      histrixApi.processApp(this.xmlUrl(), this.rawData)
         .then((response) => {
           this.submitting = false;
           this.$emit('closepopup')
+          this.refresh();
         })
         .catch((e) => {
           this.submitting = false;
