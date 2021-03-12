@@ -134,16 +134,25 @@ export default {
     awsData() {
           const test_element = document.createElement('div');
           test_element.innerHTML = this.col.value._;
-          if (test_element.childNodes[1]) {
-            const element = test_element.childNodes[1];
-            let aws = {table: element.getAttributeNode("data-table").value,
+          let aws = {title:' '}
+
+          if (test_element.childNodes[0]) {
+            const element = test_element.childNodes[0];
+            aws = {table: element.getAttributeNode("data-table").value,
                          recid: element.getAttributeNode("data-recid").value,
                          title: element.innerText
             }
-            
             aws.url =  `${histrixApi.host()}/uploader/?table=${aws.table}&recid=${aws.recid}&db=${histrixApi.currentDb()}`
-            return aws
           }
+          if (test_element.childNodes[1]) {
+            const element = test_element.childNodes[1];
+            aws = {table: element.getAttributeNode("data-table").value,
+                         recid: element.getAttributeNode("data-recid").value,
+                         title: element.innerText
+            }
+            aws.url =  `${histrixApi.host()}/uploader/?table=${aws.table}&recid=${aws.recid}&db=${histrixApi.currentDb()}`
+          }          
+          return aws
     },
     formatedValue() {
       if (this.schema.histrix_type === 'Numeric') {
