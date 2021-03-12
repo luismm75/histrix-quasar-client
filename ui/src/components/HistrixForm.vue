@@ -50,7 +50,6 @@
             <q-item-label v-if="editedRow && editedRow[field.name] && editedRow[field.name]['link']">
                 {{field.title}}
             </q-item-label>
-            
             <HistrixCell
               v-if="editedRow && editedRow[field.name] && editedRow[field.name]['link']"
               :path="path"

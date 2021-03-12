@@ -2,7 +2,6 @@
 <div>
 
     <span class="q-pa-xs text-caption" v-if="isRadio" >
-
       {{  label }}
     </span>
     <!--

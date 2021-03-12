@@ -132,6 +132,7 @@ export default {
 
       histrixApi.login(this.form.email, this.form.password, this.redirect)
       .then((success) => {
+        this.$events.fire('loaded-user');
         this.$router.push(success)
         this.btnLoading = false;
       }).catch((error) => {
