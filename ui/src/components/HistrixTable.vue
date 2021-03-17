@@ -115,17 +115,15 @@
                 :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
                 v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
               />
-
-
-            <HistrixCell
-              v-else
-              :path="path"
-              :props="props"
-              :schema="schema.fields[cell.name]"
-              :col="cell"
-              v-on:open-popup="bubbleLink(rawData[props.key], $event)"
-              v-on:closepopup="closePopup"
-            />
+              <HistrixCell
+                v-else
+                :path="path"
+                :props="props"
+                :schema="schema.fields[cell.name]"
+                :col="cell"
+                v-on:open-popup="bubbleLink(rawData[props.key], $event)"
+                v-on:closepopup="closePopup"
+              />
 
           </q-td>
 
@@ -145,42 +143,43 @@
       <!-- grid mode -->
       <template v-slot:item="props">
         <div
-          class="q-pa-xs col-12 grid-style-transition"
+        :class="rowClass(props) + 'q-pa-xs col-12 grid-style-transition'"
+
           :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
           <q-card :class="props.selected ? 'bg-grey-2' : ''">
 
             <q-list dense>
               <q-item
-                v-for="cell in props.cols.filter(cell => cell.name !== 'desc')"
+                v-for="cell in props.cols.filter(row => row.name)"
                 :key="cell.name"
+                class="histrix-cell"
               >
                 <q-item-section side class="col-2 text-grey-15" v-if="!getFieldAttribute(props.key, cell.name, 'editable') && isGrid">
                   {{ cell.label }}
                 </q-item-section>
                 <q-item-section _side class="col">
-
-                  <HistrixField
-                    v-model="data[props.key][cell.name]"
-                    :row="rawData[props.key]"
-                    :name="cell.name"
-                    :schema="schema.fields[cell.name]"
-                    :rowSchema="data[props.key].DT_RowAttr['attributes'][cell.name]"
-                    dense
-                    :error-message="errorMessage(props.key, schema.fields[cell.name])"
-                    :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
-
-                    v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
-                  />
-                <HistrixCell
-                  v-else
-                  :path="path"
-                  :props="props"
-                  :schema="schema.fields[cell.name]"
-                  :col="cell"
-                  v-on:open-popup="bubbleLink(rawData[props.key], $event)"
-                  v-on:closepopup="closePopup"
-                />
+              <HistrixField
+                v-model="rawData[props.key][cell.name]"
+                :row="rawData[props.key]"                
+                :query="fieldQuerys(cell.name, rawData[props.key])"
+                :name="cell.name"
+                :schema="schema.fields[cell.name]"
+                :rowSchema="getRowSchema(props.key, cell.name)"
+                dense
+                :error-message="errorMessage(props.key, schema.fields[cell.name])"
+                :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
+                v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
+              />
+              <HistrixCell
+                v-else
+                :path="path"
+                :props="props"
+                :schema="schema.fields[cell.name]"
+                :col="cell"
+                v-on:open-popup="bubbleLink(rawData[props.key], $event)"
+                v-on:closepopup="closePopup"
+              />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -195,6 +194,27 @@
               <q-btn flat unelevated rounded icon="delete" v-if="schema.can_delete && canDelete " color="secondary"  @click="deleteItem(props.row)" size="sm" no-caps />
             </q-item>
             </q-card-section>
+            <q-card-section v-if="hasDetail(props)">
+              <q-btn
+              size="xs"
+              color="accent"
+
+              dense
+              @click="props.expand = !props.expand"
+              :icon="props.expand ? 'remove' : 'add'"
+            />
+            </q-card-section>  
+            <q-card-section v-if="props.expand" :props="props">
+
+                <div class="bg-grey-12 qa-pa-xs">
+                  <HistrixApp
+                    name="detail"
+                    inner="true"
+                    :path="detailPath(props)"
+                    :query="detailQuery(props)"
+                  />
+                </div>
+            </q-card-section>            
           </q-card>
         </div>
       </template>

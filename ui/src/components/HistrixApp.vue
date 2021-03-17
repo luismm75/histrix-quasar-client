@@ -199,7 +199,9 @@
       </iframe>
       </q-card>
     </q-dialog>
-    <q-dialog   v-model="linkDialog" full-width  transition-show="slide-down" transition-hide="slide-up" @before-hide="closePopup">
+    <q-dialog   v-model="linkDialog" full-width
+    :maximized="$q.platform.is.mobile?true:false"
+      transition-show="slide-down" transition-hide="slide-up" @before-hide="closePopup">
       <q-layout view="Lhh lpR fff" container class="bg-white">
         <q-header class="bg-primary">
           <q-toolbar>

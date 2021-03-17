@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="coso">
     <!--
      <q-toolbar class="text-primary " borderer _flat>
       <q-toolbar-title>
@@ -28,7 +28,7 @@
           </q-tabs>
 
           <q-tab-panels v-model="currentTab" animated>
-            <q-tab-panel  name="mainTab"  >
+            <q-tab-panel  name="mainTab" class="q-pl-none q-pr-none" >
               <div class="row">
                 <div
                   v-for="field in editables"
