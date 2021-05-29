@@ -1,16 +1,10 @@
 <template>
 <div>
-
-    <span class="q-pa-xs text-caption" v-if="isRadio" >
-      {{  label }}
-    </span>
     <!--
-<picture-input 
-    v-if="histrixType === 'q-file'" 
+    <picture-input v-if="histrixType === 'q-file'" 
       ref="pictureInput"
       width="300" 
       height="300"
-      
       margin="16" 
       accept="image/jpeg,image/png" 
       size="10" 
@@ -27,17 +21,22 @@
     </picture-input>
     -->
     <component
-      v-bind:is="fieldComponent"
+      v-bind:is="fieldComponent"          
       v-model="localValue"
-      :name="fieldSchema.name"
       v-bind="$attrs"
+      v-on:computed-total="onComputedTotal"
+      @v-on:keyup.113="showHelper()"
+      
+      :name="fieldSchema.name"
       
       :type="inputType"
+      
       :path="helperPath"
       :headers="headers"
       :url="uploadUrl"
       :query="query"
       :options="options"
+    
       :rules="rules"
       :label="label"
       :inner="true"
@@ -59,16 +58,15 @@
         verdana: 'Verdana'
       }"
       :size="size"
-
+      
       :multiple="isMultiple"
       :autogrow="isTextarea"
       :style="style"
-      @v-on:keyup.113="showHelper()"
+    
       :input-class="inputClass"
-      v-on:computed-total="onComputedTotal"
       :clearable="clearable"
       inline
-      dense
+      :borderless="isDisabled"
     >
       <template v-slot:before v-if="histrixType === 'q-file'" >
 
@@ -102,6 +100,10 @@
 
       <template v-slot:prepend>
          <q-icon v-if="histrixType === 'q-file'" name="attach_file" />
+        <span class="q-pa-xs text-caption" v-if="isRadio" >
+          {{  label }}
+        </span>
+
       </template>
 
 
@@ -134,7 +136,6 @@
             </q-popup-proxy>
           </q-icon>
       </template>
-
     </component>
 </div>
 </template>
@@ -148,6 +149,7 @@ import histrixApi from '../services/histrixApi.js'
 
 export default {
   name: 'HistrixField',
+   inheritAttrs: false,
   props: {
     schema: Object,
     rowSchema: Object,

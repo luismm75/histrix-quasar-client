@@ -101,9 +101,9 @@
             :key="cell.name"
             :props="props"
             :style="colStyle(cell)" 
-            class="histrix-cell">
-
-              <HistrixField
+            class="histrix-cell"
+            >
+            <HistrixField
                 v-model="rawData[props.key][cell.name]"
                 :row="rawData[props.key]"                
                 :query="fieldQuerys(cell.name, rawData[props.key])"
@@ -111,8 +111,10 @@
                 :schema="schema.fields[cell.name]"
                 :rowSchema="getRowSchema(props.key, cell.name)"
                 dense
+                hide-bottom-space
                 :error-message="errorMessage(props.key, schema.fields[cell.name])"
                 :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
+                
                 v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
               />
               <HistrixCell
@@ -149,16 +151,16 @@
         >
           <q-card :class="props.selected ? 'bg-grey-2' : ''">
 
-            <q-list dense>
               <q-item
                 v-for="cell in props.cols.filter(row => row.name)"
                 :key="cell.name"
-                class="histrix-cell"
+                class=""
+                dense
               >
-                <q-item-section side class="col-2 text-grey-15" v-if="!getFieldAttribute(props.key, cell.name, 'editable') && isGrid">
+                <q-item-section side class="col-4 text-grey-15" v-if="!getFieldAttribute(props.key, cell.name, 'editable') ">
                   {{ cell.label }}
                 </q-item-section>
-                <q-item-section _side class="col">
+                <q-item-section  class="col">
               <HistrixField
                 v-model="rawData[props.key][cell.name]"
                 :row="rawData[props.key]"                
@@ -182,7 +184,7 @@
               />
                 </q-item-section>
               </q-item>
-            </q-list>
+
             <q-separator />
             <q-card-section class="row q-pa-xs" v-if="(canUpdate && !isGrid ) || schema.can_delete && canDelete">
 
