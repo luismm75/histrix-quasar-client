@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-select
+    <q-select map-options
      v-model="localValue" :options="dbinfo" v-bind="$attrs" :disabled="state == 'error'" map-options
      />
     <q-banner dense inline-actions class="bg-red text-white" v-if="state == 'error'">
@@ -18,8 +18,8 @@ import histrixApi from '../../services/histrixApi.js'
 export default {
   name: 'DatabaseSelector',
   props: {
-    host: String,
-    value: String,
+    host: null,
+    value: {},
   },
   data() {
     return {
@@ -29,9 +29,7 @@ export default {
     };
   },
   mounted() {
-    if (this.host) {
       this.getData(this.host);
-    }
   },
   computed: {
     localValue: {
@@ -42,6 +40,7 @@ export default {
   watch: {
     host(newVal, oldVal) {
       this.getData(newVal);
+      
     },
   },
   methods: {
@@ -49,7 +48,8 @@ export default {
       histrixApi.getHostDb(host)
         .then((response) => {
           const data = [];
-          Object.entries(response.data).map((info) => {
+          console.log(response.data);
+          Object.entries(response.data).filter(data => data[1].hidden !== "true").map((info) => {
             data.push({
               value: info[1].id,
               label: info[1].description,
@@ -65,9 +65,6 @@ export default {
           this.message = 'No Histrix Server Available';
         });
     },
-  },
-  mounted() {
-    this.getData(host);
-  },
+  }
 };
 </script>

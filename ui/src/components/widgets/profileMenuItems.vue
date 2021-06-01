@@ -49,12 +49,14 @@ export default {
           caption: 'Datos personales',
           to: { name: 'profile' }
         },
+        /*
         {
           icon: 'settings',
           label: 'Settings',
           caption: 'Configuración',
           to: { name: 'systemSettings' }
         },
+        */
         {
           icon: 'info',
           label: 'Acerca',

@@ -26,9 +26,7 @@
       <div v-if="!inner" class="row">
           <HistrixFilters v-if="schema.filters.length" dense :schema="schema" v-on:filter-data="histrixFilter" :show="openFilter"/>
           <q-item v-else _class="text-body1">
-
             {{ schema.title }}
-
           </q-item>
           <q-input v-if="search" v-model="searchStr" type="search"  dense label="Buscar" >
             <template v-slot:append >
@@ -40,8 +38,7 @@
 
     <!-- TOP right: BUTTONS -->
       <template v-slot:top-right="props">
-          <q-btn-group dense flat  v-if="!inner">
-
+        <q-btn-group dense flat  v-if="!inner">
           <q-btn v-if="schema.export" flat  icon="get_app" _icon="fas fa-file-excel" title="Exportar" @click="$emit('export', fullQuery)" />
           <q-btn flat   icon="print" title="Imprimir" @click="$emit('print')" />
           <!--  <q-btn flat round dense :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" />  -->
@@ -52,7 +49,7 @@
             }}</q-tooltip>
           </q-btn>
           -->
-              </q-btn-group>
+        </q-btn-group>
 
 
         <q-btn fab color="positive" icon="add" title="Nuevo" v-if="schema.can_insert && canInsert" @click="addItem()" no-caps >
@@ -72,6 +69,7 @@
             :props="props"
             :style="schema.fields[col.name]['column_style'] + 'text-align:center;'"
           >
+            <HistrixField standout dense_v-model="field.valor" :schema="schema.fields[col.name]" clearable  />
             {{ col.label }}
           </q-th>
         </q-tr>

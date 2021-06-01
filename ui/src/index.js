@@ -1,5 +1,6 @@
 import { version } from '../package.json'
 
+import HistrixApi from './services/histrixApi.js';
 import ExportForm from './components/ExportForm.vue';
 import HistrixApp from './components/HistrixApp.vue';
 import HistrixCalendar from './components/HistrixCalendar.vue';
@@ -28,6 +29,7 @@ import profileMenuItems from './components/widgets/profileMenuItems.vue';
 
 export {
   version,
+  HistrixApi,
   ExportForm,
   HistrixApp,
   HistrixCalendar,

@@ -5,13 +5,11 @@
       v-if="isPdf"
       style="position:absolute;"
     >
-      <q-pdfviewer
-        v-bind="$attrs"
-        v-model="show"
-        :src="pdfSrc"
-        type="html5"
-      />
+      <q-pdfviewer v-bind="$attrs" v-model="show" :src="pdfSrc" type="html5" />
     </div>
+    <q-dialog class="fit" v-model="showPdfPopup">
+      <q-pdfviewer v-bind="$attrs" v-model="showPdfPopup" :src="pdfSrc" type="html5"/>
+    </q-dialog>    
     <template v-if="!isPdf">
 
       <q-splitter
@@ -261,6 +259,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <!--
     <q-footer v-if="pdf">
       <q-toolbar v-if="pdf">
         <q-toolbar-title>
@@ -271,12 +270,11 @@
             @click="togglePdf()"
             v-if="pdf"
           />
-          <!--
           <q-btn icon="thumb_up" label="procesar " class=" bg-secondary text-white nojustify-end" @click="$refs.main.processData()" v-if="schema.can_process" />
-          -->
         </q-toolbar-title>
       </q-toolbar>
     </q-footer>
+    -->
 
   </div>
 </template>
@@ -528,10 +526,8 @@ export default {
       }
     },
     isPdf () {
-      var type = this.schema.type;
-      if (this.schema.pdf || this.pdf) {
+      if (this.schema.pdf ) {
         this.fetchPDF();
-        type = "pdf";
         return true;
       }
       return false;
@@ -618,8 +614,8 @@ export default {
     },
 
     togglePdf () {
-      //      this.$router.push(this.$router.currentRoute)
-      this.pdf = !this.pdf
+      this.fetchPDF();
+      this.showPdfPopup = true
     },
 
     showExportForm (query) {
@@ -780,6 +776,7 @@ export default {
     return {
       step: 1,  // default initial Step
       validity: true,
+      showPdfPopup: false,
       pdf: false,
       pdfSrc: "",
       show: true,

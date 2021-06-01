@@ -51,18 +51,37 @@
                                 color="positive" size="md" label="Ingresar"
                                   >
                           </q-btn>
-                          <q-btn v-if="!login" sixe="sm" flat class="q-ma-md bg-accent" color="white" align="left"
-                              :to="{ name: 'register', query: { t: new Date().getTime() }}">
-                              <span class="q-ml-xs">Registrarme</span>
-                          </q-btn>
+                          <div class="row text-center"> 
+                            <q-btn v-if="!login" size="sm"  flat class="col q-ma-md bg-accent" color="white" 
+                                :to="{ name: 'register', query: { t: new Date().getTime() }}">
+                                <span class="q-ml-xs">Registrarme</span>
+                            </q-btn>
 
-                          <q-btn sixe="sm" flat class="q-ma-md" color="primary" align="left"
-                            v-close-popup
-                              :to="{ name: 'mail-reset-password' }">
-                              <span class="q-ml-xs">Recuperar contraseña</span>
-                          </q-btn>
+                            <q-btn size="sm" flat class="q-ma-md col" color="primary" 
+                              v-close-popup
+                                :to="{ name: 'mail-reset-password' }" >
+                                <span class="q-ml-xs">Recuperar contraseña</span>
+                            </q-btn>
+
+                            <q-btn v-if="settings"
+                              icon="settings"
+                              @click="config = true"
+                              class="col-1"
+                              color="primary"
+                              flat
+                            />
+                          </div>
+
                         </div>
                   </div>                  
+
+                  <q-dialog  v-model="config">
+                    <q-card style="width: 700px; max-width: 80vw;">
+                      <HistrixConnectionSettings v-on:change-database="$emit('change-database')" />
+                    </q-card>
+                  </q-dialog>
+
+
                 </q-form>
             </q-card-section>
         </q-card>
@@ -78,10 +97,10 @@ import { required, email } from 'vuelidate/lib/validators'
 import histrixApi from '../services/histrixApi.js'
 
 export default {
-  props: ['nextUrl', 'login'],
+  props: ['nextUrl', 'login', 'settings'],
   name: 'LoginForm',
   components: {
-
+    HistrixConnectionSettings:() => import('./widgets/HistrixConnectionSettings.vue'),
   },
   mixins: [],
   data() {
@@ -90,6 +109,7 @@ export default {
         email: null,
         password: null,
       },
+      config: false,
       btnLoading: false,
       showRecaptcha: false,
       processEnv: process.env,

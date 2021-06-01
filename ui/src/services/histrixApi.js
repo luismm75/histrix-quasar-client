@@ -14,10 +14,12 @@ export default {
     return localStorage.getItem('database') || process.env.DB;
   },
   async info() {
-    return this.getData('/api/info/');
+    const host = this.host();
+    return this.getData(`${host}/api/info/`);
   },
   async getDatabaseInfo(db) {
-    return this.getData(`/api/db/${db}`);
+    const host = this.host();
+    return this.getData(`${host}/api/db/${db}`);
   },
   host () {
     return localStorage.getItem('host') || process.env.MAIN_URL
@@ -198,10 +200,6 @@ export default {
   async getData(url) {
     return Vue.prototype.$axios
       .get(url)
-      .then(response => response)
-      .catch((error) => {
-        console.log(error);
-      });
   },
   /**
    * System Methods
