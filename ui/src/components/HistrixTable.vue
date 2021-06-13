@@ -69,7 +69,7 @@
             :props="props"
             :style="schema.fields[col.name]['column_style'] + 'text-align:center;'"
           >
-            <HistrixField standout dense_v-model="field.valor" :schema="schema.fields[col.name]" clearable  />
+           <!-- <HistrixField standout dense class="bg-grey text-white" v-model="field.valor" :schema="schema.fields[col.name]" clearable  /> -->
             {{ col.label }}
           </q-th>
         </q-tr>
@@ -259,13 +259,14 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="edit" ref="formDialog" full-width> 
+    <q-dialog v-model="edit" ref="formDialog" _full-width> 
       <q-card >
         <q-card-section class="row items-center ">
           <HistrixForm ref="histrixForm"
           :resources="resources" :schema="schema" :path="path" :query="query" v-bind="$attrs"
           :editedItem="editedItem" :editedIndex="editedIndex" :editedRow="editedRow"
           :inner="inner"
+          v-on:open-popup="bubbleLink(editedItem, $event)"
           v-on:form-saved="formSaved"
           v-on:insert-row="rowRecived"
           :computedFields="computedFields"
