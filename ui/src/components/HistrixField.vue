@@ -1,5 +1,6 @@
 <template>
 <div>
+  
     <!--
     <picture-input v-if="histrixType === 'q-file'" 
       ref="pictureInput"
@@ -20,13 +21,14 @@
       @change="onImageChange">
     </picture-input>
     -->
+
     <component
       v-bind:is="fieldComponent"          
       v-model="localValue"
       v-bind="$attrs"
       v-on:computed-total="onComputedTotal"
       @v-on:keyup.113="showHelper()"
-      
+      bottom-slots
       :name="fieldSchema.name"
       
       :type="inputType"
@@ -36,7 +38,8 @@
       :url="uploadUrl"
       :query="query"
       :options="options"
-    
+      
+      
       :rules="rules"
       :label="label"
       :inner="true"
@@ -68,6 +71,12 @@
       inline
       :borderless="isDisabled"
     >
+
+      <span v-if="histrixType === 'check'" v-html="hint" class="text-blue text-bold text-caption q-ml-md "></span>
+      <template v-slot:hint>
+        <div v-html="hint" :title="hint" class="text-blue text-bold " ></div>
+      </template>
+        
       <template v-slot:before v-if="histrixType === 'q-file'" >
 
 
@@ -109,6 +118,7 @@
 
       <!-- in control button -->
       <template v-slot:append>
+        
         <!-- EXTERNAL HELP POPUP -->
 
         <q-icon name="help" class="cursor-pointer" v-if="fieldSchema.helpContainer" >
@@ -135,6 +145,7 @@
               <q-time  v-model="localValue" @input="() => $refs.timeProxy.hide()" />
             </q-popup-proxy>
           </q-icon>
+
       </template>
     </component>
 </div>
@@ -416,6 +427,9 @@ export default {
     this.getHelpSchema();
   },
   computed: {
+    hint() {
+      return (this.fieldSchema.placeholder !=  this.fieldSchema.title)?this.fieldSchema.placeholder:''
+    },
     fieldSchema() {
       return {...this.schema, ...this.rowSchema}
     },

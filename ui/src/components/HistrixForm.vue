@@ -1,5 +1,5 @@
 <template>
-  <div class="coso">
+  <div class="q-pa-sm">
     <!--
      <q-toolbar class="text-primary " borderer _flat>
       <q-toolbar-title>
@@ -62,6 +62,7 @@
                       <HistrixField
                         v-model="localValues[field.name]"
                         :name="field.name"
+                        :row="localValues"
                         :schema="field"
                         :path="computedPath(field)"                        
                         :submitting="submitting"
@@ -109,12 +110,10 @@
 
         </div>
       </div>
+      <q-separator />
+      <div class="row ">
 
-      <div class="row">
-        <div class="col-4 "></div>
-        <div class="col">
-
-          <span class="q-pa-sm">
+          <span class="q-pa-sm col-12 text-center">
             
             <q-btn label="Cancelar"  icon="close"   class="nojustify-end flat"  v-close-popup type="reset" v-if="insertButton || updateButton" />
             <q-btn v-if="insertButton || updateButton" type="submit" label="Grabar" icon="save" class=" bg-positive text-white nojustify-end" :loading="submitting" />
@@ -134,7 +133,6 @@
               v-if="localSchema.can_process && !inner && !schema.process_next_step && !$attrs.finalStep"
             />
             -->
-        </div>
       </div>
     </q-form>
 
