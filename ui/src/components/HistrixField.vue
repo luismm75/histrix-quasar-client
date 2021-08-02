@@ -20,7 +20,7 @@
       @change="onImageChange">
     </picture-input>
     -->
-    <component
+       <component
       v-bind:is="fieldComponent"          
       v-model="localValue"
       v-bind="$attrs"
@@ -448,7 +448,7 @@ export default {
       if (this.histrixType == 'object') {
         return false;
       }
-      if (this.fieldSchema.enabler) {
+      if (this.row && this.fieldSchema.enabler) {
         return this.row[this.fieldSchema.enabler] == 0 || this.row[this.fieldSchema.enabler] == 'false';
       }
       if (this.fieldSchema.deshabilitado == 'true') {

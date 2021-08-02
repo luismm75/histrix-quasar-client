@@ -63,6 +63,7 @@
                         v-model="localValues[field.name]"
                         :name="field.name"
                         :schema="field"
+                        :row="localValues"
                         :path="computedPath(field)"                        
                         :submitting="submitting"
                         :query="fieldQuerys[field.name]"
@@ -92,7 +93,7 @@
                   :name="field.name"
                   :schema="field"
                   :path="computedPath(field)"
-                  
+                  :row="localValues"
                   :submitting="submitting"
                   :query="fieldQuerys[field.name]"
                   :readonly="localSchema.readonly"
