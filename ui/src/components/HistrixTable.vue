@@ -259,9 +259,8 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="edit" ref="formDialog" _full-width> 
+    <q-dialog v-model="edit" ref="formDialog" full-width> 
       <q-card >
-        <q-card-section class="row items-center ">
           <HistrixForm ref="histrixForm"
           :resources="resources" :schema="schema" :path="path" :query="query" v-bind="$attrs"
           :editedItem="editedItem" :editedIndex="editedIndex" :editedRow="editedRow"
@@ -271,7 +270,6 @@
           v-on:insert-row="rowRecived"
           :computedFields="computedFields"
           :newRecord="newRecord" />
-        </q-card-section>
       </q-card>
     </q-dialog>
 
