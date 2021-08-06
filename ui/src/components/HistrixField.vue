@@ -21,6 +21,7 @@
       @change="onImageChange">
     </picture-input>
     -->
+    
     <component
       v-bind:is="fieldComponent"          
       v-model="localValue"
@@ -37,8 +38,10 @@
       :url="uploadUrl"
       :query="query"
       :options="options"
-      
-      
+
+        emit-value
+        map-options
+
       :rules="rules"
       :label="label"
       :inner="true"
@@ -395,6 +398,8 @@ export default {
         } else {
           this.options = this.mapOptions(this.fieldSchema.options);
         }
+        const option = this.options.find(obj => obj.value == localValue);        
+        this.$emit('selectOption', { value: this.localValue, selected_option: option });
       }
     },
   },
@@ -699,9 +704,10 @@ export default {
     dateMask() {
       return 'DD/MM/YYYY';
     },
+    
     localValue: {
       get() {
-        
+
         if (this.histrixType == 'check' || this.histrixType == 'toggle') {
           return this.value === true || this.value != 0;
         }
@@ -714,29 +720,32 @@ export default {
 
         if (this.histrixType == 'q-select' && this.options ) {
           if (!this.isMultiple) {
-            return this.options.find(obj => obj.value == this.value);
+            return this.value
+            // return this.options.find(obj => obj.value == this.value);
           } else {
+            
             if (this.value === '' || this.value === null) {
-              return []
+              return undefined
             }
+            
             if (typeof this.value === 'string' || this.value instanceof String) {
-              const items =  JSON.parse(this.value)
-              return items.map(item => {
-                return this.options.find(obj => obj.value == item);
-              })
+              console.log(this.value)
+              let items =  JSON.parse(this.value)
+              if (!Array.isArray(items)) {
+                  items = [this.value]
+              }
+              return items;
             }
-
-             
 
           }
           
         }
-      /*        
-        if (this.histrixType == 'q-file') {
-           return null
-          return this.value.name
-        }
-*/
+
+       // if (this.histrixType == 'q-file') {
+        //   return null
+        //  return this.value.name
+        // }
+
         
         // if (this.histrixType == 'object') {
         //   return this.value;
@@ -750,12 +759,36 @@ export default {
         
       },
       set(localValue) {
-        console.log(localValue);
-        if (this.histrixType == 'q-select'   && !this.isMultiple  ) {
-            this.$emit('input', localValue.value);
-            const option = this.options.find(obj => obj.value == localValue.value);
-            this.$emit('selectOption', { value: localValue.value, selected_option: option });
-          
+                      console.log('PUTO VALOR DE ENTRADA');
+
+
+        if (this.histrixType == 'q-select'   ) {
+          this.$emit('input', localValue)
+          const option = this.options.find(obj => obj.value == localValue);
+          //this.$emit('selectOption', { value: localValue, selected_option: option });
+          /*
+                        console.log('select');
+
+            if (this.isMultiple) {
+              // this.$emit('input', localValue );
+
+              const values = localValue.map(item =>  {
+                 console.log(item) ;
+                return item.value })
+
+              this.$emit('input', values);
+
+            } else {
+              console.log('PUTO VALOR DE ENTRADA');
+              console.log(localValue)
+              this.$emit('input', localValue);
+            
+              const option = this.options.find(obj => obj.value == localValue);
+       
+        //      this.$emit('selectOption', { value: localValue, selected_option: option });
+              
+            }
+            */
         } else {
           if (this.isDate) {
             var fecha = new Date()
@@ -772,9 +805,10 @@ export default {
             this.$emit('input', localValue);
           }          
         }
+        
         this.$emit('field-change', this.row);
       },
-    },
+    }, 
   },
 };
 </script>

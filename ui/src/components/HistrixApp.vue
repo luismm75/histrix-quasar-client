@@ -11,7 +11,6 @@
       <q-pdfviewer v-bind="$attrs" v-model="showPdfPopup" :src="pdfSrc" type="html5"/>
     </q-dialog>    
     <template v-if="!isPdf">
-
       <q-splitter
         v-model="finalSplitterModel"
         class="fit" style="overflow:hidden;"

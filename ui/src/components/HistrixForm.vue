@@ -8,6 +8,8 @@
       <q-space />
     </q-toolbar>
     -->
+
+
     <q-form @submit="onSubmit" enctype="multipart/form-data">
       <div class="row">
         <div class="col">
@@ -59,6 +61,7 @@
               v-on:open-popup="bubbleLink(editedRow, $event)"
               v-on:closepopup="closePopup"
             />
+           
                       <HistrixField
                         v-model="localValues[field.name]"
                         :name="field.name"
@@ -337,13 +340,15 @@ export default {
               rel[relation.field] = query;
               fieldQuerys[relation.parentField] = rel;
             } else {
-              fieldQuerys[relation.field][relation.field] = query;
+              fieldQuerys[relation.field][relation.field] =  query;
             }
           } else if (fieldQuerys[relation.field] == undefined) {
-            rel[relation.targetField] = this.localValues[field.name];
+            rel[relation.targetField] =  this.localValues[field.name];
             fieldQuerys[relation.field] = rel;
           } else {
-            fieldQuerys[relation.field][relation.targetField] = this.localValues[field.name];
+            let data = this.localValues[field.name];
+  
+            fieldQuerys[relation.field][relation.targetField] =  data.value || data;
           }
         }, this);
       }, this);
