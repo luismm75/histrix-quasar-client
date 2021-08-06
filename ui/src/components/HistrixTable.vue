@@ -77,7 +77,7 @@
 
       <!--- TABLE BODY -->
       <template v-slot:body="props" >
-        <q-tr :props="props" @click="selectRow(props)"  :class="rowClass(props)" >
+        <q-tr :props="props" @click="selectRow(props)"  :class="rowClass(props)"  >
           <q-td  style="width:10px;" v-if="schema.inline_detail">
             <q-btn
               v-if="hasDetail(props)"
@@ -112,7 +112,7 @@
                 hide-bottom-space
                 :error-message="errorMessage(props.key, schema.fields[cell.name])"
                 :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
-                
+                v-on:field-change="rowChange"
                 v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
               />
               <HistrixCell
@@ -221,8 +221,10 @@
 
       <template v-slot:bottom-row="props">
         <q-tr :props="props" v-if="data.length > 0">
-          <q-th v-if="schema.inline_detail"/> 
-          <q-th  v-if="canUpdate || canDelete"  />
+
+          <q-th auto-width   v-if="schema.inline_detail"> </q-th> 
+          <q-th auto-width v-if="(canUpdate && !isGrid) || (schema.can_delete && canDelete ) " class="bg-primary text-white" ></q-th> 
+
           <q-th
                 v-for="col in props.cols.filter(col => col.name !== 'desc')"
                 :key="col.name"
@@ -473,13 +475,13 @@ export default {
       return this.data.filter((row) => !row.value);
     },
     isGrid() {
-      return this.schema.type == 'grid';
+      return this.schema.type == 'grid' || this.schema.type == 'liveGrid';
     },
     canInsert() {
       return this.resources.hasOwnProperty('POST');
     },
     canUpdate() {
-      return this.resources.hasOwnProperty('PUT');
+      return this.resources.hasOwnProperty('PUT') && this.schema.can_update;
     },
     canDelete() {
       return this.resources.hasOwnProperty('DELETE');
@@ -602,6 +604,11 @@ export default {
     refresh() {
       this.getData();
     },
+    rowChange(row) {
+      if (this.schema.type === 'liveGrid') {
+        this.updateLiveRow(row);        
+      }
+    },
     
     getFieldAttribute(rowIndex, name, attr) {
       if (this.data[rowIndex].DT_RowAttr && this.data[rowIndex].DT_RowAttr['attributes']
@@ -677,6 +684,37 @@ export default {
       this.editedItem = item;
       this.edit = true;
     },
+    getKeys(row) {
+      const keyFields = Object.entries(this.schema.fields).filter(field => field[1].esClave == 'true');
+      const keyData = {};
+      keyFields.forEach((key) => {
+        keyData[key[0]] = row[key[0]];
+      });
+      return keyData;
+    },    
+    updateLiveRow(row) {
+      const postData = {
+          keys: this.getKeys(row),
+          data: this.getValuesFromRow(row),
+        };     
+      const that = this 
+      histrixApi.updateAppData( this.xmlUrl(),postData)
+        .then((response) => {
+          that.$q.notify({
+            message: "Dato Guardado",
+            type: "accept",
+            textColor: "white",
+            color: "info",
+            icon: "info",
+            closeBtn: "cerrar",
+            position: "bottom right"
+          });
+
+        })
+        .catch((e) => {
+          console.log(e);
+        })
+    },    
     /**
      * Executed when row is inserted by Form
      */
@@ -762,10 +800,11 @@ export default {
       }
     },
     getKeys(item) {
+      
       const keyFields = Object.entries(this.schema.fields).filter((field) => field[1].esClave == 'true');
       let keyData = {};
       keyFields.forEach((key) => {
-        keyData[key[0]] = item[key[0]].value || item[key[0]]._;
+        keyData[key[0]] = item[key[0]];
       });
       return keyData;
     },

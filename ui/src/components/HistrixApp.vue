@@ -511,6 +511,7 @@ export default {
           case "abm":
           case "ing":
           case "grid":
+          case "liveGrid":
           case "help":
           case "ayuda":
           case "abm-mini":

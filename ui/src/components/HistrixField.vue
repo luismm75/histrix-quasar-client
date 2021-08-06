@@ -1,6 +1,6 @@
 <template>
 <div>
-  
+
     <!--
     <picture-input v-if="histrixType === 'q-file'" 
       ref="pictureInput"
@@ -21,7 +21,6 @@
       @change="onImageChange">
     </picture-input>
     -->
-
     <component
       v-bind:is="fieldComponent"          
       v-model="localValue"
@@ -505,7 +504,7 @@ export default {
       return this.fieldSchema.size.toString();
     },
     isMultiple() {
-      return (this.rowSchema )?this.rowSchema.multiple == 1 : this.schema.multiple == 'multiple'
+      return (this.fieldSchema )?this.fieldSchema.multiple == 1 : this.schema.multiple == 'multiple'
     },
     isTextarea() {
       return this.fieldSchema.size > 90;
@@ -717,11 +716,18 @@ export default {
           if (!this.isMultiple) {
             return this.options.find(obj => obj.value == this.value);
           } else {
-             if (this.value) {
-               return this.value
-             } else {
-               return []
-             }
+            if (this.value === '' || this.value === null) {
+              return []
+            }
+            if (typeof this.value === 'string' || this.value instanceof String) {
+              const items =  JSON.parse(this.value)
+              return items.map(item => {
+                return this.options.find(obj => obj.value == item);
+              })
+            }
+
+             
+
           }
           
         }
@@ -744,10 +750,12 @@ export default {
         
       },
       set(localValue) {
-        if (this.histrixType == 'q-select'  && !this.isMultiple ) {
+        console.log(localValue);
+        if (this.histrixType == 'q-select'   && !this.isMultiple  ) {
             this.$emit('input', localValue.value);
             const option = this.options.find(obj => obj.value == localValue.value);
             this.$emit('selectOption', { value: localValue.value, selected_option: option });
+          
         } else {
           if (this.isDate) {
             var fecha = new Date()
@@ -764,7 +772,7 @@ export default {
             this.$emit('input', localValue);
           }          
         }
-
+        this.$emit('field-change', this.row);
       },
     },
   },
