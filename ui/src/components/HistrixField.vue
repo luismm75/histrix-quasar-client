@@ -21,6 +21,7 @@
       @change="onImageChange">
     </picture-input>
     -->
+    {{localValue}}
     <component
       v-bind:is="fieldComponent"          
       v-model="localValue"
@@ -780,7 +781,11 @@ export default {
 
 
         if (this.histrixType == 'q-select'   ) {
+          if (localValue.value) {
+           this.$emit('input', localValue.value) 
+          } else {
            this.$emit('input', localValue)
+           }
           // const option = this.options.find(obj => obj.value == localValue);
           //this.$emit('selectOption', { value: localValue, selected_option: option });
           /*
