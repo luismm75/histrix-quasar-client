@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    
     <q-img v-if="hasThumb" :src="thumb" spinner-color="white" @click="showImage = true" />
     <q-dialog v-if="hasThumb" v-model="showImage">
       <q-card style="width: 700px; max-width: 80vw;">
@@ -26,7 +26,7 @@
       @click="$emit('open-popup', {link: col.value.link, title: col.value.text ,parameters: col.value['linkParameters']})" >
       {{text}} 
     </q-btn>
-
+    
     <q-icon
       v-else-if="isCheck"
       :name="checkIcon"

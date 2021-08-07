@@ -5,6 +5,7 @@
       v-if="isPdf"
       style="position:absolute;"
     >
+
       <q-pdfviewer v-bind="$attrs" v-model="show" :src="pdfSrc" type="html5" />
     </div>
     <q-dialog class="fit" v-model="showPdfPopup">
@@ -674,7 +675,7 @@ export default {
      * get PDF blob data
      */
     fetchPDF () {
-      histrixApi.getAppPdf(this.path, this.queryString)
+      histrixApi.getAppPdf(this.path, this.query)
           .then(res => {
       // create the blob
       const blob = new Blob([res.data], {
