@@ -463,7 +463,7 @@ export default {
         return false;
       }
       if (this.fieldSchema.enabler) {
-        return this.row[this.fieldSchema.enabler] == 0 || this.row[this.fieldSchema.enabler] == 'false';
+        return this.row[this.fieldSchema.enabler] == '0' || this.row[this.fieldSchema.enabler] == 0 || this.row[this.fieldSchema.enabler] == 'false';
       }
       if (this.fieldSchema.deshabilitado == 'true') {
         return true;
