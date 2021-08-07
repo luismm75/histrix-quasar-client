@@ -21,7 +21,6 @@
       @change="onImageChange">
     </picture-input>
     -->
-    {{localValue}}
     <component
       v-bind:is="fieldComponent"          
       v-model="localValue"
