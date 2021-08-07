@@ -21,7 +21,6 @@
       @change="onImageChange">
     </picture-input>
     -->
-    
     <component
       v-bind:is="fieldComponent"          
       v-model="localValue"
@@ -193,7 +192,9 @@ export default {
     },
     query: {
       handler(newVal, oldVal) {
-        this.getOptions();
+        if (!this.shallowEqual(newVal, oldVal)) {
+          this.getOptions();
+        }
       },
       deep: true
     },
@@ -213,6 +214,22 @@ export default {
     // PictureInput
   },
   methods: {
+    shallowEqual(object1, object2) {
+      const keys1 = Object.keys(object1);
+      const keys2 = Object.keys(object2);
+
+      if (keys1.length !== keys2.length) {
+        return false;
+      }
+
+      for (let key of keys1) {
+        if (object1[key] !== object2[key]) {
+          return false;
+        }
+      }
+
+      return true;
+    },    
     uploadFn (file) {
       return new Promise((resolve, reject) => {
         // Retrieve JWT token from your store.
@@ -398,8 +415,8 @@ export default {
         } else {
           this.options = this.mapOptions(this.fieldSchema.options);
         }
-        const option = this.options.find(obj => obj.value == localValue);        
-        this.$emit('selectOption', { value: this.localValue, selected_option: option });
+        //const option = this.options.find(obj => obj.value == localValue);        
+        //this.$emit('selectOption', { value: this.localValue, selected_option: option });
       }
     },
   },
@@ -727,7 +744,7 @@ export default {
             if (this.value === '' || this.value === null) {
               return undefined
             }
-            
+        
             if (typeof this.value === 'string' || this.value instanceof String) {
               console.log(this.value)
               let items =  JSON.parse(this.value)
@@ -763,8 +780,8 @@ export default {
 
 
         if (this.histrixType == 'q-select'   ) {
-          this.$emit('input', localValue)
-          const option = this.options.find(obj => obj.value == localValue);
+           this.$emit('input', localValue)
+          // const option = this.options.find(obj => obj.value == localValue);
           //this.$emit('selectOption', { value: localValue, selected_option: option });
           /*
                         console.log('select');
@@ -806,7 +823,7 @@ export default {
           }          
         }
         
-        this.$emit('field-change', this.row);
+       // this.$emit('field-change', this.row);
       },
     }, 
   },
