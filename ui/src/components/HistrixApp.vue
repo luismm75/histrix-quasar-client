@@ -303,6 +303,7 @@ export default {
     styles: String,
     title: String,
     inner: Boolean,
+    pdf: Boolean,
     value: null,
     database: {
       type: String,
@@ -527,7 +528,7 @@ export default {
       }
     },
     isPdf () {
-      if (this.schema.pdf ) {
+      if (this.schema.pdf || this.pdf) {
         this.fetchPDF();
         return true;
       }

@@ -415,8 +415,9 @@ export default {
         } else {
           this.options = this.mapOptions(this.fieldSchema.options);
         }
-        //const option = this.options.find(obj => obj.value == localValue);        
-        //this.$emit('selectOption', { value: this.localValue, selected_option: option });
+        const val = this.localValue.value || this.localValue
+        const option = this.options.find(obj => obj.value == val);        
+        this.$emit('selectOption', { value: val, selected_option: option });
       }
     },
   },
