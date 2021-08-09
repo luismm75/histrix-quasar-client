@@ -62,7 +62,7 @@
         verdana: 'Verdana'
       }"
       :size="size"
-      
+       :use-chips="isMultiple"
       :multiple="isMultiple"
       :autogrow="isTextarea"
       :style="style"
