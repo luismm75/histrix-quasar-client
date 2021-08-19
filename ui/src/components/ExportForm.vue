@@ -6,6 +6,7 @@
       </q-card-section>
       <q-separator />
       <div class="row">
+
         <q-item tag="label" v-ripple v-for="format in formats" v-bind:key="format.format" class="col-12">
           <q-item-section avatar>
             <q-radio v-model="fileFormat" :val="format.format" />
@@ -87,8 +88,8 @@ export default {
   },
   computed: {
     params() {
-      const params = histrixApi.queryStringToObject(this.exportQuery)
-      return { ...this.query, ...params };
+      // const params = histrixApi.queryStringToObject(this.exportQuery)
+      return { ...this.query, ...this.exportQuery };
     }
   },
   methods: {
