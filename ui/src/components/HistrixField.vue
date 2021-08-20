@@ -780,8 +780,8 @@ export default {
                       console.log('PUTO VALOR DE ENTRADA');
 
 
-        if (this.histrixType == 'q-select'   ) {
-          if (localValue.value) {
+        if (this.histrixType == 'q-select') {
+          if (localValue && localValue.value) {
            this.$emit('input', localValue.value) 
           } else {
            this.$emit('input', localValue)
