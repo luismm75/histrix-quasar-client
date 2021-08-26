@@ -303,7 +303,10 @@ export default {
     styles: String,
     title: String,
     inner: Boolean,
-    pdf: Boolean,
+    pdf: {
+      type: Boolean,
+      default: false
+    },
     value: null,
     database: {
       type: String,
@@ -779,7 +782,7 @@ export default {
       step: 1,  // default initial Step
       validity: true,
       showPdfPopup: false,
-      pdf: false,
+      // pdf: false, // ya estaba en props deje ahi default false
       pdfSrc: "",
       show: true,
       message: null,

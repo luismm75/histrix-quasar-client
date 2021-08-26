@@ -19,7 +19,7 @@
       :hide-bottom="data.length < pagination.rowsPerPage"
       :_hide-top="data.length < pagination.rowsPerPage"
       v-on:closepopup="closePopup"
-
+      @update:pagination="updatePagination"
     >
     <!-- TOP LEFT: FILTERS -->
     <template v-slot:top-left="props">
@@ -513,6 +513,11 @@ export default {
       }
       else []
     },
+    updatePagination(pagination) {
+      const descending = pagination.descending ? 'desc' : 'asc'
+      this.localFilters._sortBy = `${pagination.sortBy}|${descending}`
+      this.getData()
+    },
     fieldQuerys(fieldname, row) {
       const fieldQuerys = {};
     
@@ -909,7 +914,9 @@ export default {
     },   
     getData(index) {
       const url = this.xmlUrl(this.fullQuery)
-      histrixApi.getAppData(url, this.query)
+      const filters = { ...this.query, ...this.localFilters}
+
+      histrixApi.getAppData(url, filters)
         .then((response) => {
           const {data} = response.data;
           data.map((element) => {
@@ -940,6 +947,9 @@ export default {
   },
   data() {
     return {
+      localFilters: {
+        _sortBy: ''
+      },
       edit: false,
       filter: '',
       fullQuery: this.query,

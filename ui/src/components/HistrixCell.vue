@@ -16,14 +16,14 @@
       </q-card>
     </q-dialog>
     <q-btn
-      v-else-if="(col.value.link && col.value.text) || (col.link && col.value)"
+      v-else-if="(col.value && col.value.link && col.value.text) || (col.link && col.value)"
       :_to="link"
       class="fit "
       dense
       size="sm"
       :style="col.value.button_style "
       :icon="icon"
-      @click="$emit('open-popup', {link: col.value.link, title: col.value.text ,parameters: col.value['linkParameters']})" >
+      @click="$emit('open-popup', {link: col.value && col.value.link ? col.value.link : null, title: col.value.text ,parameters: col.value['linkParameters']})" >
       {{text}} 
     </q-btn>
     
@@ -77,10 +77,10 @@ export default {
       return this.schema.histrix_type === 'Grafico';
     },
     hasThumb() {
-      return (this.col && this.col.value.thumb)?true:false
+      return (this.col && this.col.value && this.col.value.thumb)?true:false
     },
     link() {
-      if (this.col && (this.col.value != undefined) && this.col.value.link) {
+      if (this.col && this.col.value && this.col.value.link) {
         const { link } = this.col.value;
         // var path = (dir || this.dirname(this.path)) + link.file;
         let path = `${link.dir}/${link.file}`;
@@ -112,7 +112,8 @@ export default {
       return this.col.value;
     },
     displayValue() {
-      let value = (this.col.value && this.col.value.value != undefined) ? this.col.value.value : this.col.value._;
+      let value = (this.col.value && this.col.value.value != undefined) ? this.col.value.value : 
+        (this.col.value && this.col.value._ ? this.col.value._ : null);
       value = (value !== undefined) ? value : this.col.value;
       if (this.hasOptions) {
         const option = this.hasOptions[value];
@@ -129,7 +130,7 @@ export default {
       return this.col.value;
     },
     isAwsUploader() {
-      return this.col.value._.indexOf('awsuploader') !== -1
+      return this.col.value && this.col.value._ ? (this.col.value._.indexOf('awsuploader') !== -1) : false
     },
     awsData() {
           const test_element = document.createElement('div');
