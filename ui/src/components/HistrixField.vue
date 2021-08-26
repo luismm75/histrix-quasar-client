@@ -402,22 +402,27 @@ export default {
     getOptions() {
       // this.$emit("refreshFieldSchema", {value: localValue.value, selected_option: option})
       // this.getFieldSchema(query)
+      const val = (this.localValue)? this.localValue.value || this.localValue : null
+
       if (this.hasOptions) {
         if (this.query != undefined && Object.entries(this.query).length !== 0) {
           histrixApi.getAppData(this.innerContainerUrl, this.query)
             .then((response) => {
               // this.options = this.mapOptions(response.data.data);
               this.options = this.mapRemoteOptions(response.data.data);
+
+              const option = this.options.find(obj => obj.value == val);        
+              this.$emit('selectOption', { value: val, selected_option: option });
             })
             .catch((e) => {
               console.log(e);
             });
         } else {
           this.options = this.mapOptions(this.fieldSchema.options);
+
+          const option = this.options.find(obj => obj.value == val);        
+          this.$emit('selectOption', { value: val, selected_option: option });
         }
-        const val = this.localValue.value || this.localValue
-        const option = this.options.find(obj => obj.value == val);        
-        this.$emit('selectOption', { value: val, selected_option: option });
       }
     },
   },
@@ -777,9 +782,6 @@ export default {
         
       },
       set(localValue) {
-                      console.log('PUTO VALOR DE ENTRADA');
-
-
         if (this.histrixType == 'q-select') {
           if (localValue && localValue.value) {
            this.$emit('input', localValue.value) 
