@@ -21,6 +21,7 @@
       @change="onImageChange">
     </picture-input>
     -->
+    
     <component
       v-bind:is="fieldComponent"          
       v-model="localValue"
@@ -146,6 +147,38 @@
               <q-time  v-model="localValue" @input="() => $refs.timeProxy.hide()" />
             </q-popup-proxy>
           </q-icon>
+<!--
+            <q-icon name="event" class="cursor-pointer" v-if="isDateTime">
+            <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+              <q-date mask="YYYY-MM-DD HH:mm:ss" :locale="dateLocale" v-model="localValue" @input="() => $refs.qDateProxy.hide()" />
+
+            </q-popup-proxy>
+          </q-icon>
+            <q-icon name="access_time" class="cursor-pointer" v-if="isDateTime">
+            <q-popup-proxy ref="timeProxy" transition-show="scale" transition-hide="scale">
+              <q-time mask="YYYY-MM-DD HH:mm:ss" v-model="localValue" @input="() => $refs.timeProxy.hide()" format24h />
+            </q-popup-proxy>
+          </q-icon>
+-->
+        <q-icon name="event" class="cursor-pointer" v-if="isDateTime">
+          <q-popup-proxy transition-show="scale" transition-hide="scale">
+            <q-date v-model="localValue" mask="YYYY-MM-DD HH:mm:ss">
+              <div class="row items-center justify-end">
+                <q-btn v-close-popup label="Cerrar" color="primary" flat />
+              </div>
+            </q-date>
+          </q-popup-proxy>
+        </q-icon>
+
+        <q-icon name="access_time" class="cursor-pointer" v-if="isDateTime">
+          <q-popup-proxy transition-show="scale" transition-hide="scale">
+            <q-time v-model="localValue" mask="YYYY-MM-DD HH:mm:ss" format24h>
+              <div class="row items-center justify-end">
+                <q-btn v-close-popup label="Cerrar" color="primary" flat />
+              </div>
+            </q-time>
+          </q-popup-proxy>
+        </q-icon>
 
       </template>
     </component>
@@ -475,6 +508,9 @@ export default {
       if (this.isTime) {
         mask = 'time';
       }
+      if (this.isDateTime) {
+        mask = '####-##-## ##:##:##';
+      }      
       return mask;
     },
     innerContainerUrl() {
@@ -543,6 +579,9 @@ export default {
     isTime() {
       return this.fieldSchema.histrix_type == 'Time' || this.histrixType == 'time';
     },
+    isDateTime() {
+      return this.fieldSchema.histrix_type == 'Datetime' || this.histrixType == 'datetime';
+    },    
     label() {
       // if (!this.isDisabled) {
       if (this.fieldSchema.label || this.fieldSchema.title) {
@@ -675,6 +714,9 @@ export default {
       if (this.histrixType == 'radio') {
         return this.histrixType;
       }
+      if (this.isDateTime) {
+        return 'text';
+      }      
       return this.fieldSchema.type;
     },
     histrixType() {
