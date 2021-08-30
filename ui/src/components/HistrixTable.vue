@@ -1,7 +1,6 @@
 <template>
   <div>
     <HistrixApp v-if="schema.header" :path="headerPath" :query="this.$route.query" :title="this.title" class="col"/>
-
     <q-table
       :data="innerData"
       :columns="schema.columns"
@@ -111,7 +110,7 @@
                 dense
                 hide-bottom-space
                 :error-message="errorMessage(props.key, schema.fields[cell.name])"
-                :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
+                :error="$v['rawData']['$each'][props.key][cell.name].$invalid || customError(props.key, schema.fields[cell.name])"
                 v-on:field-change="rowChange"
                 v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
               />
@@ -168,7 +167,7 @@
                 :rowSchema="getRowSchema(props.key, cell.name)"
                 dense
                 :error-message="errorMessage(props.key, schema.fields[cell.name])"
-                :error="$v['rawData']['$each'][props.key][cell.name].$invalid"
+                :error="$v['rawData']['$each'][props.key][cell.name].$invalid || customError(props.key, cell.name)"
                 v-if="getFieldAttribute(props.key, cell.name, 'editable') && isGrid"
               />
               <HistrixCell
@@ -350,6 +349,45 @@ export default {
     },
   },
   computed: {
+    /*
+    localTableValidations() {
+      const tableValidations = this.rawData.map((row, index) => {
+        // const rowSchema = {...this.schema.fields, ...this.data[index].DT_RowAttr['attributes'] }
+
+        let localValidations = {};
+        Object.entries(this.schema.fields).map((fieldArray) => {
+          const field = fieldArray[1];
+          const fieldData = {...field, ...this.data[index].DT_RowAttr['attributes'][field.name]}
+          localValidations[field.name] = {};
+
+          if (fieldData.required == 'required') {
+            localValidations[field.name].required = required;
+          }
+
+          // add validations
+          if (fieldData.maxlength) {
+            localValidations[field.name].maxLength = maxLength(fieldData.maxlength);
+          }
+
+          switch (fieldData.histrix_type) {
+            case 'Numeric':
+            case 'CustomNumeric':
+
+              localValidations[fieldData.name].decimal = decimal;
+              break;
+            case 'Email':
+              localValidations[fieldData.name].email = email;
+              break;
+            default:
+              break;
+          }
+        });
+        return localValidations
+
+      })
+      return { rawData: { $each: tableValidations } }
+    },
+    */
     localValidations() {
       let localValidations = {};
       Object.entries(this.schema.fields).map((fieldArray) => {
@@ -378,25 +416,8 @@ export default {
             break;
         }
       });
-      /*
-      // add formValidations
-      if (this.localSchema.formValidations) {
-        this.localSchema.formValidations.map((validation) => {
-          const operatios = /[+\-\*\/\(\)]/g;
-          const keys = validation.condition.split(operatios);
 
-          keys.map((key) => {
-            let k = key.trim()
-            if (k  && this.localValues[k] !== undefined && validation.condition) {
-              localValidations[k]['customValidation'] = (value) =>  !this.processOperation(validation.condition)
-              this.errorMessages[k] ={ customError: validation.message }
-            }
-          }, this);
-        }, this)
-      }
-      */
       return { rawData: { $each: localValidations } };
-
     },
     headerPath() {
       if (this.schema.header) {
@@ -627,8 +648,17 @@ export default {
       const style = (col.value && col.value.style) ? col.value.style : '';
       return `${style};`
     },
+    customError(row, field) {
+      const cell = { ...this.schema.fields[field.name], ...this.getRowSchema(row, field.name) };
+      
+      if (cell.required && cell.required === 'required' && ( this.rawData[row][field.name] == '' || this.rawData[row][field.name] == undefined ) ) {
+        return true;
+      }
+      return false
+    },
     errorMessage(row, field) {
-      const cell = this.$v.rawData.$each[row][field.name];
+      const cell = { ...this.$v.rawData.$each[row][field.name], ...this.getRowSchema(row, field.name) };
+      
       if (cell.customValidation != undefined && !cell.customValidation) {
         return this.errorMessages[field.name].customError
       }

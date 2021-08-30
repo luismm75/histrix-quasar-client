@@ -21,7 +21,6 @@
       @change="onImageChange">
     </picture-input>
     -->
-    
     <component
       v-bind:is="fieldComponent"          
       v-model="localValue"
@@ -351,7 +350,10 @@ export default {
             data: optionData,
           });
         });
-        data.sort((a, b) => ((a.label > b.label) ? 1 : -1));
+        if (this.fieldSchema.sortable !== false) {
+          data.sort((a, b) => ((a.label > b.label) ? 1 : -1));
+        }
+
         return data;
       }
     },
