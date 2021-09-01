@@ -8,8 +8,6 @@
       <q-space />
     </q-toolbar>
     -->
-
-
     <q-form @submit="onSubmit" enctype="multipart/form-data">
       <div class="row">
         <div class="col">

@@ -829,17 +829,15 @@ export default {
       return `${this.path}?&_dt=table${filterQuery}`;
 },
     deleteItem(item) {
-      const index = this.data.indexOf(item);
       if (confirm('¿Realmente desea borrar este elemento?')) {
         this.delete(item);
       }
     },
     getKeys(item) {
-      
       const keyFields = Object.entries(this.schema.fields).filter((field) => field[1].esClave == 'true');
       let keyData = {};
       keyFields.forEach((key) => {
-        keyData[key[0]] = item[key[0]];
+        keyData[key[0]] = (item[key[0]]._)?item[key[0]]._:item[key[0]];
       });
       return keyData;
     },
@@ -851,14 +849,16 @@ export default {
       if (item._ajax_ == false) {
         this.removeItem(item);
       } else {
-        histrixApi.deleteAppData(this.xmlUrl(), this.getKeys(item))
-          .then((response) => {
-            this.removeItem(item);
-            this.refresh();
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+        if (this.getKeys(item).length != 0) {
+          histrixApi.deleteAppData(this.xmlUrl(), this.getKeys(item))
+            .then((response) => {
+              this.removeItem(item);
+              this.refresh();
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        }
       }
     },
 
@@ -904,7 +904,8 @@ export default {
       */
     },
     editRow(row) {
-      this.editedIndex = this.data.indexOf(row);
+      // this.editedIndex = this.data.indexOf(row);
+      this.editedIndex = row ;
       this.newRecord = false;
       this.editedRow = row;
       this.editedItem = Object.assign({}, this.getValuesFromRow(row));
