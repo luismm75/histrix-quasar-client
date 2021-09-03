@@ -15,7 +15,7 @@
                               icon: 'person',
                               }
                           ]"
-                        
+
                           >
                           <template v-slot:prepend>
                             <q-icon name="email" />
@@ -29,7 +29,7 @@
                               v-model="form.password"
                               name="password" class="full-width"
                               :before="[{ icon: 'lock' }]"
-                        
+
                         >
                           <template v-slot:prepend>
                             <q-icon name="vpn_key" />
@@ -51,13 +51,13 @@
                                 color="positive" size="md" label="Ingresar"
                                   >
                           </q-btn>
-                          <div class="row text-center"> 
-                            <q-btn v-if="!login" size="sm"  flat class="col q-ma-md bg-accent" color="white" 
+                          <div class="row text-center">
+                            <q-btn v-if="!login" size="sm"  flat class="col q-ma-md bg-accent" color="white"
                                 :to="{ name: 'register', query: { t: new Date().getTime() }}">
                                 <span class="q-ml-xs">Registrarme</span>
                             </q-btn>
 
-                            <q-btn size="sm" flat class="q-ma-md col" color="primary" 
+                            <q-btn size="sm" flat class="q-ma-md col" color="primary"
                               v-close-popup
                                 :to="{ name: 'mail-reset-password' }" >
                                 <span class="q-ml-xs">Recuperar contraseña</span>
@@ -73,7 +73,7 @@
                           </div>
 
                         </div>
-                  </div>                  
+                  </div>
 
                   <q-dialog  v-model="config">
                     <q-card style="width: 700px; max-width: 80vw;">
@@ -147,13 +147,17 @@ export default {
       if (this.showRecaptcha && !this.recaptcha()) {
         return;
       }
-      
+
       this.btnLoading = true;
 
       histrixApi.login(this.form.email, this.form.password, this.redirect)
       .then((success) => {
         this.$events.fire('loaded-user');
-        this.$router.push(success)
+        if (this.eventAfter) {
+          this.$events.fire(this.eventAfter)
+        } else {
+          this.$router.push(success)
+        }
         this.btnLoading = false;
       }).catch((error) => {
         this.btnLoading = false;
@@ -166,7 +170,7 @@ export default {
 
       })
       this.form.password = null;
-  
+
     },
   },
   events: {
@@ -175,8 +179,9 @@ export default {
       this.getUser(true);
     },
     */
-    'login-modal': function (redirect) {
-      this.redirect = redirect;
+    'login-modal': function (redirect = null, eventAfter = null) {
+      this.redir = redirect;
+      this.eventAfter = eventAfter
     },
   },
 };
