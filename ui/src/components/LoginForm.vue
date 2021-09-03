@@ -150,10 +150,11 @@ export default {
       }
 
       this.btnLoading = true;
-
+      debugger
       histrixApi.login(this.form.email, this.form.password, this.redirect)
       .then((success) => {
         this.$events.fire('loaded-user');
+        debugger
         if (this.eventAfter) {
           this.$events.fire(this.eventAfter)
           this.eventAfter = null
@@ -181,10 +182,14 @@ export default {
       this.getUser(true);
     },
     */
-    'login-modal': function (redirect = null, eventAfter = null) {
+    'login-modal' (redirect = null, eventAfter = null) {
       this.redir = redirect;
       this.eventAfter = eventAfter
     },
+    'event-after' (eventAfter) {
+      this.redir = false
+      this.eventAfter = eventAfter
+    }
   },
 };
 </script>
