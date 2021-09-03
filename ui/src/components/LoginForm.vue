@@ -110,6 +110,7 @@ export default {
         password: null,
       },
       config: false,
+      eventAfter: null,
       btnLoading: false,
       showRecaptcha: false,
       processEnv: process.env,
@@ -155,6 +156,7 @@ export default {
         this.$events.fire('loaded-user');
         if (this.eventAfter) {
           this.$events.fire(this.eventAfter)
+          this.eventAfter = null
         } else {
           this.$router.push(success)
         }
