@@ -345,8 +345,9 @@ export default {
             fieldQuerys[relation.field] = rel;
           } else {
             let data = this.localValues[field.name];
-  
-            fieldQuerys[relation.field][relation.targetField] =  data.value || data;
+            if (data) {
+              fieldQuerys[relation.field][relation.targetField] =  data.value || data;
+            }  
           }
         }, this);
       }, this);
