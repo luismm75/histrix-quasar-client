@@ -30,7 +30,7 @@
       @filter="filterFn"
       bottom-slots
       :name="fieldSchema.name"
-      
+      use-input
       :type="inputType"
       
       :path="helperPath"
@@ -736,7 +736,10 @@ export default {
       }
       if (this.isDateTime) {
         return 'text';
-      }      
+      }
+      if(this.fieldComponent === 'q-select' && this.hasOptions === true) {
+        return 'text'
+      }
       return this.fieldSchema.type;
     },
     histrixType() {
