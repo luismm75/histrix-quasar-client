@@ -27,6 +27,7 @@
       v-bind="$attrs"
       v-on:computed-total="onComputedTotal"
       @v-on:keyup.113="showHelper()"
+      @filter="filterFn"
       bottom-slots
       :name="fieldSchema.name"
       
@@ -180,6 +181,15 @@
         </q-icon>
 
       </template>
+
+      <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              No resultado
+            </q-item-section>
+          </q-item>
+        </template>
+
     </component>
 </div>
 </template>
@@ -261,7 +271,13 @@ export default {
       }
 
       return true;
-    },    
+    },
+    filterFn(val, update, about) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.optionFixed.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
     uploadFn (file) {
       return new Promise((resolve, reject) => {
         // Retrieve JWT token from your store.
@@ -353,7 +369,7 @@ export default {
         if (this.fieldSchema.sortable !== false) {
           data.sort((a, b) => ((a.label > b.label) ? 1 : -1));
         }
-
+        this.optionFixed = data;
         return data;
       }
     },
@@ -379,6 +395,7 @@ export default {
         });
         data.sort((a, b) => ((a.label > b.label) ? 1 : -1));
       }
+      this.optionFixed = data;
       return data;
     },
     getHelpSchema(url) {
@@ -470,6 +487,7 @@ export default {
       showImage: false,
       helpFoundes: true,
       options: [],
+      optionFixed: [],
       rules: [],
       toolbar: [],
       type: 'q-input',
