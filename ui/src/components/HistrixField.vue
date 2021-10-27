@@ -274,6 +274,7 @@ export default {
     },
     filterFn(val, update, about) {
       update(() => {
+        if (!val) return
         const needle = val.toLowerCase()
         this.options = this.optionFixed.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
       })
