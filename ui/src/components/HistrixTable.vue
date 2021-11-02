@@ -37,6 +37,51 @@
 
     <!-- TOP right: BUTTONS -->
       <template v-slot:top-right="props">
+      <div v-if="data.length !== 0" style="display: flex; align-items: center; justify-content: center; text-align: center;">
+      <span style="text-align: center; font-size: 0.8rem;">Cantidad por pagina: </span>
+      <q-select :options="optionsPagination" hide-bottom-space dense item-aligned emit-value map-options v-model="pagination.rowsPerPage" />
+          <q-btn
+          v-if="props.pagesNumber > 2"
+          icon="first_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="props.isFirstPage"
+          @click="props.firstPage"
+        />
+
+        <q-btn
+          icon="chevron_left"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="props.isFirstPage"
+          @click="props.prevPage"
+        />
+
+        <q-btn
+          icon="chevron_right"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="props.isLastPage"
+          @click="props.nextPage"
+        />
+
+        <q-btn
+          v-if="props.pagesNumber > 2"
+          icon="last_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="props.isLastPage"
+          @click="props.lastPage"
+        />
+        </div>
         <q-btn-group dense flat  v-if="!inner">
           <q-btn v-if="schema.export" flat  icon="get_app" _icon="fas fa-file-excel" title="Exportar" @click="$emit('export', fullQuery)" />
           <q-btn flat   icon="print" title="Imprimir" @click="$emit('print')" />
@@ -995,6 +1040,7 @@ export default {
       newRecord: false,
       defaultItem: {},
       dataContainer: null,
+      optionsPagination: [{label: '5', value: 5},{label: '10', value: 10},{label: '15', value: 15},{label: '20', value: 20},{label: '25', value: 25},{label: '50', value: 50},{label: 'Todos', value: 0}],
       data: [],
       openFilter: false,
       searchStr: '',
