@@ -741,6 +741,9 @@ export default {
       if(this.fieldComponent === 'q-select' && this.hasOptions === true) {
         return 'text'
       }
+      if (this.fieldSchema.TipoDato == 'integer') {
+        return 'number'
+      }      
       return this.fieldSchema.type;
     },
     histrixType() {
