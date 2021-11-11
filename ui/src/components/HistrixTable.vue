@@ -1,6 +1,7 @@
 <template>
   <div>
     <HistrixApp v-if="schema.header" :path="headerPath" :query="this.$route.query" :title="this.title" class="col"/>
+
     <q-table
       :data="innerData"
       :columns="schema.columns"
@@ -145,6 +146,7 @@
             :style="colStyle(cell)" 
             class="histrix-cell"
             >
+            
             <HistrixField
                 v-model="rawData[props.key][cell.name]"
                 :row="rawData[props.key]"                
@@ -394,7 +396,7 @@ export default {
     },
   },
   computed: {
-    /*
+    
     localTableValidations() {
       const tableValidations = this.rawData.map((row, index) => {
         // const rowSchema = {...this.schema.fields, ...this.data[index].DT_RowAttr['attributes'] }
@@ -432,7 +434,7 @@ export default {
       })
       return { rawData: { $each: tableValidations } }
     },
-    */
+    
     localValidations() {
       let localValidations = {};
       Object.entries(this.schema.fields).map((fieldArray) => {
@@ -696,7 +698,7 @@ export default {
     customError(row, field) {
       const cell = { ...this.schema.fields[field.name], ...this.getRowSchema(row, field.name) };
       
-      if (cell.required && cell.required === 'required' && ( this.rawData[row][field.name] == '' || this.rawData[row][field.name] == undefined ) ) {
+      if (cell.required && (cell.required === 'required' || cell.required === 'true')  && ( this.rawData[row][field.name] == '' || this.rawData[row][field.name] == undefined ) ) {
         return true;
       }
       return false
