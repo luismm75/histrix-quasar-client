@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <q-img v-if="hasThumb" :src="thumb" spinner-color="white" @click="showImage = true" />
     <q-dialog v-if="hasThumb" v-model="showImage">
       <q-card style="width: 700px; max-width: 80vw;">

@@ -112,7 +112,7 @@
             v-for="col in props.cols"
             :key="col.name"
             :props="props"
-            :style="schema.fields[col.name]['column_style'] + 'text-align:center;'"
+            :style="schema.fields[col.name]['column_style'] + ';text-align:center;'"
           >
            <!-- <HistrixField standout dense class="bg-grey text-white" v-model="field.valor" :schema="schema.fields[col.name]" clearable  /> -->
             {{ col.label }}
@@ -557,7 +557,7 @@ export default {
     visibleColumns() {
       return this.schema.columns
         .filter((column) => {
-          return !column.hidden;
+          return !column.hidden && !column.style.includes('display:none;');
         })
         .map((column, index, array) => {
           return column.name;

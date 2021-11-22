@@ -115,7 +115,6 @@
       <div class="row ">
 
           <span class="q-pa-sm col-12 text-center">
-            
             <q-btn label="Cancelar"  icon="close"   class="nojustify-end flat"  v-close-popup type="reset" v-if="insertButton || updateButton" />
             <q-btn v-if="insertButton || updateButton" type="submit" label="Grabar" icon="save" class=" bg-positive text-white nojustify-end" :loading="submitting" />
             
@@ -238,13 +237,13 @@ export default {
     editables() {
       return this.filter(
         this.localSchema.fields,
-        field => field.hidden || (this.schema.type != 'fichaing' && this.schema.type != 'cabecera' && field.innerContainer && !field.options && field.editable === false),
+        field => field.hidden || (this.schema.type != 'fichaing' && this.schema.type != 'cabecera' && field.innerContainer && !field.isSelect && field.editable === false),
       );
     },
     innerTabs() {
       return this.filter(
         this.localSchema.fields,
-        field => (this.schema.type == 'fichaing' || this.schema.type == 'cabecera' || (!field.innerContainer || field.options)),
+        field => (this.schema.type == 'fichaing' || this.schema.type == 'cabecera' || (!field.innerContainer || field.isSelect)),
       );
     },
     dateFields() {
