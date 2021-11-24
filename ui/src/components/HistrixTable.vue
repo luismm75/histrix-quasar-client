@@ -323,7 +323,7 @@
             >
               <!-- <q-checkbox dense v-model="props.selected" :label="props.row.name" /> -->
               <q-item class="col-9"> </q-item>
-              <q-item>
+              <q-item style="align-items: center;">
                 <q-btn
                   flat
                   rounded
@@ -348,16 +348,16 @@
                   padding="4px 5px"
                   style="margin-left: 0.5rem;"
                 />
+                <q-btn
+                  color="accent"
+                  v-if="hasDetail(props)"
+                  padding="4px 8px"
+                  dense
+                  @click="props.expand = !props.expand"
+                  :icon="props.expand ? 'remove' : 'add'"
+                  style="font-size: 0.6rem; height:1.5rem; margin-left: 0.5rem;"
+                />
               </q-item>
-              <q-btn
-                color="accent"
-                v-if="hasDetail(props)"
-                padding="4px 8px"
-                dense
-                @click="props.expand = !props.expand"
-                :icon="props.expand ? 'remove' : 'add'"
-                style="font-size: 0.6rem; height:1.5rem; margin-left: 0.5rem;"
-              />
             </q-card-section>
             <q-card-section v-if="props.expand" :props="props">
               <div class="bg-grey-12 qa-pa-xs">
