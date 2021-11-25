@@ -1,6 +1,5 @@
 <template>
-<div>
-
+  <div>
     <!--
     <picture-input v-if="histrixType === 'q-file'" 
       ref="pictureInput"
@@ -22,7 +21,7 @@
     </picture-input>
     -->
     <component
-      v-bind:is="fieldComponent"          
+      v-bind:is="fieldComponent"
       v-model="localValue"
       v-bind="$attrs"
       v-on:computed-total="onComputedTotal"
@@ -32,22 +31,19 @@
       :name="fieldSchema.name"
       use-input
       :type="inputType"
-      
       :path="helperPath"
       :headers="headers"
       :url="uploadUrl"
       :query="query"
       :options="options"
-
-        emit-value
-        map-options
-
+      emit-value
+      map-options
       :rules="rules"
       :label="label"
       :inner="true"
       :mask="fieldMask"
       :filled="!isDisabled"
-      :toolbar="toolbar"      
+      :toolbar="toolbar"
       :disabled="isDisabled"
       :disable="isDisabled"
       :readonly="isDisabled"
@@ -60,28 +56,28 @@
         impact: 'Impact',
         lucida_grande: 'Lucida Grande',
         times_new_roman: 'Times New Roman',
-        verdana: 'Verdana'
+        verdana: 'Verdana',
       }"
       :size="size"
-       :use-chips="isMultiple"
+      :use-chips="isMultiple"
       :multiple="isMultiple"
       :autogrow="isTextarea"
       :style="style"
-    
       :input-class="inputClass"
       :clearable="clearable"
       inline
       :borderless="isDisabled"
     >
-
-      <span v-if="histrixType === 'check'" v-html="hint" class="text-blue text-bold text-caption q-ml-md "></span>
+      <span
+        v-if="histrixType === 'check'"
+        v-html="hint"
+        class="text-blue text-bold text-caption q-ml-md "
+      ></span>
       <template v-slot:hint>
-        <div v-html="hint" :title="hint" class="text-blue text-bold " ></div>
+        <div v-html="hint" :title="hint" class="text-blue text-bold "></div>
       </template>
-        
-      <template v-slot:before v-if="histrixType === 'q-file'" >
 
-
+      <template v-slot:before v-if="histrixType === 'q-file'">
         <!--<q-btn   icon="folder"  @click="fileManager = true" />
 
         <q-dialog v-model="fileManager">            
@@ -89,65 +85,104 @@
         </q-dialog>                  
         -->
         <q-avatar size="100px">
-          
-          <q-img :src="previewUrl" v-if="previewUrl" @click="showImage = true" />
-          <q-img  _v-else-if="value" :src="thumb" spinner-color="grey"  @click="showImage = true" />
+          <q-img
+            :src="previewUrl"
+            v-if="previewUrl"
+            @click="showImage = true"
+          />
+          <q-img
+            _v-else-if="value"
+            :src="thumb"
+            spinner-color="grey"
+            @click="showImage = true"
+          />
         </q-avatar>
-        <q-dialog  v-model="showImage">
+        <q-dialog v-model="showImage">
           <q-card style="width:700px; max-width: 80vw;">
-          <q-card-section class="row items-center q-pb-none">
+            <q-card-section class="row items-center q-pb-none">
               <q-space />
               <q-btn icon="close" flat round dense v-close-popup />
-            </q-card-section>        
+            </q-card-section>
             <q-card-section>
               <q-img :src="previewUrl" v-if="previewUrl" spinner-color="grey" />
-                <q-img  :src="thumb" v-else spinner-color="grey" >
-                </q-img>
+              <q-img :src="thumb" v-else spinner-color="grey"> </q-img>
             </q-card-section>
           </q-card>
-        </q-dialog>        
+        </q-dialog>
       </template>
-
 
       <template v-slot:prepend>
-         <q-icon v-if="histrixType === 'q-file'" name="attach_file" />
-        <span class="q-pa-xs text-caption" v-if="isRadio" >
-          {{  label }}
+        <q-icon v-if="histrixType === 'q-file'" name="attach_file" />
+        <span class="q-pa-xs text-caption" v-if="isRadio">
+          {{ label }}
         </span>
-
       </template>
-
 
       <!-- in control button -->
       <template v-slot:append>
-        
         <!-- EXTERNAL HELP POPUP -->
 
-        <q-icon name="help" class="cursor-pointer" v-if="fieldSchema.helpContainer" >
-          <q-popup-proxy  ref="helperProxy" anchor="bottom left" self="top right" transition-show="scale" transition-hide="scale">
-            <HistrixApp  :path="helpPath" :query="query" :title="'Seleccione '+ label" v-on:select-row="selectRow" :search="true"/>
+        <q-icon
+          name="help"
+          class="cursor-pointer"
+          v-if="fieldSchema.helpContainer"
+        >
+          <q-popup-proxy
+            ref="helperProxy"
+            anchor="bottom left"
+            self="top right"
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            <HistrixApp
+              :path="helpPath"
+              :query="query"
+              :title="'Seleccione ' + label"
+              v-on:select-row="selectRow"
+              :search="true"
+            />
           </q-popup-proxy>
         </q-icon>
 
         <!-- DATE CONTROL POPUP -->
-        <q-icon name="event" class="cursor-pointer"  v-if="isDate">
-          <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale" >
-            <q-date mask="DD/MM/YYYY" :locale="dateLocale" v-model="localValue" @input="() => $refs.qDateProxy.hide()"
+        <q-icon name="event" class="cursor-pointer" v-if="isDate">
+          <q-popup-proxy
+            ref="qDateProxy"
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            <q-date
+              mask="DD/MM/YYYY"
+              :locale="dateLocale"
+              v-model="localValue"
+              @input="() => $refs.qDateProxy.hide()"
             />
           </q-popup-proxy>
         </q-icon>
 
         <!-- IMAGE FOLDER -->
-           <q-icon   v-if="histrixType === 'q-file'" name="close" @click.stop="localValue = null" class="cursor-pointer" /> 
-          <!-- <q-icon name="create_new_folder" @click.stop v-if="histrixType === 'q-file'" /> -->
+        <q-icon
+          v-if="histrixType === 'q-file'"
+          name="close"
+          @click.stop="localValue = null"
+          class="cursor-pointer"
+        />
+        <!-- <q-icon name="create_new_folder" @click.stop v-if="histrixType === 'q-file'" /> -->
 
         <!-- TIME CONTROL POPUP -->
         <q-icon name="access_time" class="cursor-pointer" v-if="isTime">
-            <q-popup-proxy ref="timeProxy" transition-show="scale" transition-hide="scale">
-              <q-time  v-model="localValue" @input="() => $refs.timeProxy.hide()" />
-            </q-popup-proxy>
-          </q-icon>
-<!--
+          <q-popup-proxy
+            ref="timeProxy"
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            <q-time
+              v-model="localValue"
+              @input="() => $refs.timeProxy.hide()"
+            />
+          </q-popup-proxy>
+        </q-icon>
+        <!--
             <q-icon name="event" class="cursor-pointer" v-if="isDateTime">
             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
               <q-date mask="YYYY-MM-DD HH:mm:ss" :locale="dateLocale" v-model="localValue" @input="() => $refs.qDateProxy.hide()" />
@@ -179,31 +214,29 @@
             </q-time>
           </q-popup-proxy>
         </q-icon>
-
       </template>
 
       <template v-slot:no-option>
-          <q-item>
-            <q-item-section class="text-grey">
-              No resultado
-            </q-item-section>
-          </q-item>
-        </template>
-
+        <q-item>
+          <q-item-section class="text-grey">
+            No resultado
+          </q-item-section>
+        </q-item>
+      </template>
     </component>
-</div>
+  </div>
 </template>
 
 <script>
 import Vue from 'vue';
 import { date } from 'quasar';
 
-import histrixApi from '../services/histrixApi.js'
+import histrixApi from '../services/histrixApi.js';
 // import PictureInput from 'vue-picture-input'
 
 export default {
   name: 'HistrixField',
-   inheritAttrs: false,
+  inheritAttrs: false,
   props: {
     schema: Object,
     rowSchema: Object,
@@ -211,7 +244,7 @@ export default {
     value: null,
     row: null,
     submitting: null,
-    path: null
+    path: null,
   },
   watch: {
     localValue: {
@@ -220,17 +253,17 @@ export default {
           this.getFieldHelpData(newVal);
         }
         if (this.fieldSchema.histrix_type == 'File') {
-          this.onFileChange(newVal)
+          this.onFileChange(newVal);
         }
       },
-      deep: true
+      deep: true,
     },
 
     schema: {
       handler(newVal, oldVal) {
         this.getOptions();
       },
-      deep: true
+      deep: true,
     },
     query: {
       handler(newVal, oldVal) {
@@ -238,17 +271,19 @@ export default {
           this.getOptions();
         }
       },
-      deep: true
+      deep: true,
     },
     options: {
       handler(newVal, oldVal) {
-        if (this.options.length == 1 && this.fieldSchema.innerContainer.empty == false) {
-          this.localValue = this.options[0]
+        if (
+          this.options.length == 1 &&
+          this.fieldSchema.innerContainer.empty == false
+        ) {
+          this.localValue = this.options[0];
         }
       },
-      deep: true
-    }
-
+      deep: true,
+    },
   },
   components: {
     HistrixApp: () => import('./HistrixApp.vue'),
@@ -274,21 +309,45 @@ export default {
     },
     filterFn(val, update, about) {
       update(() => {
-        if (!val) return
-        const needle = val.toLowerCase()
-        this.options = this.optionFixed.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
-      })
+        if (!val) return;
+        const accent_map = {
+          á: 'a',
+          é: 'e',
+          è: 'e',
+          í: 'i',
+          ó: 'o',
+          ú: 'u',
+          Á: 'a',
+          É: 'e',
+          è: 'e',
+          Í: 'i',
+          Ó: 'o',
+          Ú: 'u',
+        };
+        const accent_fold = (data) => {
+          let ret = '';
+          for (let i = 0; i < data.length; i++) {
+            ret += accent_map[data.charAt(i)] || data.charAt(i);
+          }
+          return ret;
+        };
+        const needle = accent_fold(val.toLowerCase());
+        this.options = this.optionFixed.filter((v) => {
+          const notAccent = accent_fold(v.label.toLowerCase());
+          return notAccent.indexOf(needle) > -1;
+        });
+      });
     },
-    uploadFn (file) {
+    uploadFn(file) {
       return new Promise((resolve, reject) => {
         // Retrieve JWT token from your store.
         // const token = "myToken";
         resolve({
           url: this.uploadUrl,
           method: 'POST',
-          headers: this.headers
-        })
-      })
+          headers: this.headers,
+        });
+      });
     },
     showHelper() {
       if (this.fieldSchema.helpContainer) {
@@ -296,24 +355,24 @@ export default {
       }
     },
     onImageChange(image) {
-      console.log(image)
+      console.log(image);
     },
-    onFileChange: function (file) {
-      this.previewUrl = 'entra'
-        //const file = files[0]
-        if (!file) {
-          return false
-        }
-        if (!file.type.match('image.*')) {
-          return false
-        }
-        const reader = new FileReader()
-        const that = this
-        reader.onload = function (e) {
-          that.previewUrl = e.target.result
-        }
-        reader.readAsDataURL(file)
-    },    
+    onFileChange: function(file) {
+      this.previewUrl = 'entra';
+      //const file = files[0]
+      if (!file) {
+        return false;
+      }
+      if (!file.type.match('image.*')) {
+        return false;
+      }
+      const reader = new FileReader();
+      const that = this;
+      reader.onload = function(e) {
+        that.previewUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
     onComputedTotal(data) {
       this.$emit('computed-total', data);
     },
@@ -329,18 +388,20 @@ export default {
         this.helpFounded = false;
       }
 
-      Object.entries(fieldSchema.fields).filter(field => field[1].detail.length != 0).map((field) => {
-        field[1].detail.map((target) => {
-          targets[target] = (row) ? row[field[0]] : '';
+      Object.entries(fieldSchema.fields)
+        .filter((field) => field[1].detail.length != 0)
+        .map((field) => {
+          field[1].detail.map((target) => {
+            targets[target] = row ? row[field[0]] : '';
+          });
         });
-      });
 
       this.$emit('fill-fields', targets);
       this.$refs.helperProxy.hide();
     },
     setRules() {
       if (this.helpPath) {
-        this.rules.push(val => this.helpFounded || 'Código Incorrecto');
+        this.rules.push((val) => this.helpFounded || 'Código Incorrecto');
       }
     },
     mapRemoteOptions(options) {
@@ -368,7 +429,7 @@ export default {
           });
         });
         if (this.fieldSchema.sortable !== false) {
-          data.sort((a, b) => ((a.label > b.label) ? 1 : -1));
+          data.sort((a, b) => (a.label > b.label ? 1 : -1));
         }
         this.optionFixed = data;
         return data;
@@ -381,8 +442,8 @@ export default {
           const key = option[0];
           let label = option[1];
           if (
-            (typeof label === 'object' || typeof label === 'function')
-            && label !== null
+            (typeof label === 'object' || typeof label === 'function') &&
+            label !== null
           ) {
             label = label[Object.keys(label)[0]];
           }
@@ -394,14 +455,15 @@ export default {
             data: option[1],
           });
         });
-        data.sort((a, b) => ((a.label > b.label) ? 1 : -1));
+        data.sort((a, b) => (a.label > b.label ? 1 : -1));
       }
       this.optionFixed = data;
       return data;
     },
     getHelpSchema(url) {
       if (this.helpPath) {
-        histrixApi.getAppSchema(this.helpPath)
+        histrixApi
+          .getAppSchema(this.helpPath)
           .then((response) => {
             this.helpSchema = response.data.schema;
           })
@@ -421,7 +483,8 @@ export default {
       const that = this;
 
       this.delayTimer = setTimeout(() => {
-        histrixApi.getAppData(this.helpPath, params)
+        histrixApi
+          .getAppData(this.helpPath, params)
           .then((response) => {
             const row = response.data.data[0];
             const schema = that.helpSchema;
@@ -455,17 +518,26 @@ export default {
     getOptions() {
       // this.$emit("refreshFieldSchema", {value: localValue.value, selected_option: option})
       // this.getFieldSchema(query)
-      const val = (this.localValue)? this.localValue.value || this.localValue : null
+      const val = this.localValue
+        ? this.localValue.value || this.localValue
+        : null;
 
       if (this.hasOptions) {
-        if (this.query != undefined && Object.entries(this.query).length !== 0) {
-          histrixApi.getAppData(this.innerContainerUrl, this.query)
+        if (
+          this.query != undefined &&
+          Object.entries(this.query).length !== 0
+        ) {
+          histrixApi
+            .getAppData(this.innerContainerUrl, this.query)
             .then((response) => {
               // this.options = this.mapOptions(response.data.data);
               this.options = this.mapRemoteOptions(response.data.data);
 
-              const option = this.options.find(obj => obj.value == val);        
-              this.$emit('selectOption', { value: val, selected_option: option });
+              const option = this.options.find((obj) => obj.value == val);
+              this.$emit('selectOption', {
+                value: val,
+                selected_option: option,
+              });
             })
             .catch((e) => {
               console.log(e);
@@ -473,7 +545,7 @@ export default {
         } else {
           this.options = this.mapOptions(this.fieldSchema.options);
 
-          const option = this.options.find(obj => obj.value == val);        
+          const option = this.options.find((obj) => obj.value == val);
           this.$emit('selectOption', { value: val, selected_option: option });
         }
       }
@@ -496,10 +568,14 @@ export default {
         /* starting with Sunday */
         days: 'Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado'.split('_'),
         daysShort: 'Dom_Lun_Mar_Mié_Jue_Vie_Sáb'.split('_'),
-        months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
-        monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
-        firstDayOfWeek: 1
-      }      
+        months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split(
+          '_'
+        ),
+        monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split(
+          '_'
+        ),
+        firstDayOfWeek: 1,
+      },
     };
   },
   mounted() {
@@ -509,13 +585,18 @@ export default {
   },
   computed: {
     hint() {
-      return (this.fieldSchema.placeholder !=  this.fieldSchema.title)?this.fieldSchema.placeholder:''
+      return this.fieldSchema.placeholder != this.fieldSchema.title
+        ? this.fieldSchema.placeholder
+        : '';
     },
     fieldSchema() {
-      return {...this.schema, ...this.rowSchema}
+      return { ...this.schema, ...this.rowSchema };
     },
     clearable() {
-      return this.fieldComponent == 'q-select' && this.fieldSchema.innerContainer.empty == true
+      return (
+        this.fieldComponent == 'q-select' &&
+        this.fieldSchema.innerContainer.empty == true
+      );
     },
     inputClass() {
       return `text-${this.fieldSchema.align}`;
@@ -531,7 +612,7 @@ export default {
       }
       if (this.isDateTime) {
         mask = '####-##-## ##:##:##';
-      }      
+      }
       return mask;
     },
     innerContainerUrl() {
@@ -547,28 +628,37 @@ export default {
         return false;
       }
       if (this.row && this.fieldSchema.enabler) {
-        return this.row[this.fieldSchema.enabler] == '0' || this.row[this.fieldSchema.enabler] == 0 || this.row[this.fieldSchema.enabler] == 'false';
+        return (
+          this.row[this.fieldSchema.enabler] == '0' ||
+          this.row[this.fieldSchema.enabler] == 0 ||
+          this.row[this.fieldSchema.enabler] == 'false'
+        );
       }
       if (this.fieldSchema.deshabilitado == 'true') {
         return true;
       }
       if (this.fieldSchema.deshabilitado == 'false') {
         return false;
-      }      
-      return (this.fieldSchema.disabled == 'disabled');
+      }
+      return this.fieldSchema.disabled == 'disabled';
     },
     hasOptions() {
-      return this.fieldSchema.options && Object.keys(this.fieldSchema.options).length !== 0 || this.fieldSchema.isSelect;
+      return (
+        (this.fieldSchema.options &&
+          Object.keys(this.fieldSchema.options).length !== 0) ||
+        this.fieldSchema.isSelect
+      );
     },
     renderHelper() {
       return this.fieldSchema.innerContainer && !this.hasOptions;
     },
     headers() {
-      return [{name: 'Authorization', value: 'Bearer ' + localStorage.accessToken}]
-
+      return [
+        { name: 'Authorization', value: 'Bearer ' + localStorage.accessToken },
+      ];
     },
     uploadUrl() {
-      return histrixApi.apiUrl() + '/files/' + this.path ;
+      return histrixApi.apiUrl() + '/files/' + this.path;
     },
     thumb() {
       return histrixApi.apiUrl() + '/thumb/' + this.path + this.value;
@@ -589,24 +679,33 @@ export default {
       return this.fieldSchema.size.toString();
     },
     isMultiple() {
-      return (this.fieldSchema )?this.fieldSchema.multiple == 1 : this.schema.multiple == 'multiple'
+      return this.fieldSchema
+        ? this.fieldSchema.multiple == 1
+        : this.schema.multiple == 'multiple';
     },
     isTextarea() {
       return this.fieldSchema.size > 90;
     },
     isDate() {
-      return this.schema['data-role'] == 'datebox' || this.histrixType == 'date';
+      return (
+        this.schema['data-role'] == 'datebox' || this.histrixType == 'date'
+      );
     },
     isTime() {
-      return this.fieldSchema.histrix_type == 'Time' || this.histrixType == 'time';
+      return (
+        this.fieldSchema.histrix_type == 'Time' || this.histrixType == 'time'
+      );
     },
     isDateTime() {
-      return this.fieldSchema.histrix_type == 'Datetime' || this.histrixType == 'datetime';
-    },    
+      return (
+        this.fieldSchema.histrix_type == 'Datetime' ||
+        this.histrixType == 'datetime'
+      );
+    },
     label() {
       // if (!this.isDisabled) {
       if (this.fieldSchema.label || this.fieldSchema.title) {
-        return this.fieldSchema.label || this.fieldSchema.title  
+        return this.fieldSchema.label || this.fieldSchema.title;
       }
 
       // }
@@ -619,7 +718,7 @@ export default {
           break;
         case 'q-file':
           component = 'q-file';
-          break;          
+          break;
         case 'check':
           component = 'q-checkbox';
           break;
@@ -635,10 +734,17 @@ export default {
                 icon: this.$q.iconSet.editor.align,
                 fixedLabel: true,
                 list: 'only-icons',
-                options: ['left', 'center', 'right', 'justify']
+                options: ['left', 'center', 'right', 'justify'],
               },
             ],
-            ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
+            [
+              'bold',
+              'italic',
+              'strike',
+              'underline',
+              'subscript',
+              'superscript',
+            ],
             ['token', 'hr', 'link', 'custom_btn'],
             ['print', 'fullscreen'],
             [
@@ -646,16 +752,7 @@ export default {
                 label: this.$q.lang.editor.formatting,
                 icon: this.$q.iconSet.editor.formatting,
                 list: 'no-icons',
-                options: [
-                  'p',
-                  'h1',
-                  'h2',
-                  'h3',
-                  'h4',
-                  'h5',
-                  'h6',
-                  'code'
-                ]
+                options: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code'],
               },
               {
                 label: this.$q.lang.editor.fontSize,
@@ -670,8 +767,8 @@ export default {
                   'size-4',
                   'size-5',
                   'size-6',
-                  'size-7'
-                ]
+                  'size-7',
+                ],
               },
               {
                 label: this.$q.lang.editor.defaultFont,
@@ -687,15 +784,15 @@ export default {
                   'impact',
                   'lucida_grande',
                   'times_new_roman',
-                  'verdana'
-                ]
+                  'verdana',
+                ],
               },
-              'removeFormat'
+              'removeFormat',
             ],
             ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
 
             ['undo', 'redo'],
-            ['viewsource']
+            ['viewsource'],
           ];
           /*
           :fonts="{
@@ -726,24 +823,24 @@ export default {
       return component;
     },
     isRadio() {
-      return (this.histrixType == 'radio');
+      return this.histrixType == 'radio';
     },
     inputType() {
-     if (this.fieldSchema.histrix_type == 'File') {
-       return this.fieldSchema.histrix_type
-     }
+      if (this.fieldSchema.histrix_type == 'File') {
+        return this.fieldSchema.histrix_type;
+      }
       if (this.histrixType == 'radio') {
         return this.histrixType;
       }
       if (this.isDateTime) {
         return 'text';
       }
-      if(this.fieldComponent === 'q-select' && this.hasOptions === true) {
-        return 'text'
+      if (this.fieldComponent === 'q-select' && this.hasOptions === true) {
+        return 'text';
       }
       if (this.fieldSchema.TipoDato == 'integer') {
-        return 'number'
-      }      
+        return 'number';
+      }
       return this.fieldSchema.type;
     },
     histrixType() {
@@ -758,7 +855,7 @@ export default {
       }
 
       if (this.fieldSchema.TipoDato) {
-        type = this.fieldSchema.TipoDato
+        type = this.fieldSchema.TipoDato;
       }
 
       if (type == 'select') {
@@ -796,67 +893,63 @@ export default {
     dateMask() {
       return 'DD/MM/YYYY';
     },
-    
+
     localValue: {
       get() {
-
         if (this.histrixType == 'check' || this.histrixType == 'toggle') {
           return this.value === true || this.value != 0;
         }
         if (this.isDate) {
-          let fecha = new Date(this.value)
-          fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
-          return date.formatDate(fecha, this.dateMask)
+          let fecha = new Date(this.value);
+          fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
+          return date.formatDate(fecha, this.dateMask);
         }
 
-
-        if (this.histrixType == 'q-select' && this.options ) {
+        if (this.histrixType == 'q-select' && this.options) {
           if (!this.isMultiple) {
-            return this.value
+            return this.value;
             // return this.options.find(obj => obj.value == this.value);
           } else {
-            
             if (this.value === '' || this.value === null) {
-              return undefined
+              return undefined;
             }
-        
-            if (typeof this.value === 'string' || this.value instanceof String) {
-              console.log(this.value)
-              let items =  JSON.parse(this.value)
+
+            if (
+              typeof this.value === 'string' ||
+              this.value instanceof String
+            ) {
+              console.log(this.value);
+              let items = JSON.parse(this.value);
               if (!Array.isArray(items)) {
-                  items = [this.value]
+                items = [this.value];
               }
               return items;
             }
-
           }
-          
         }
 
-       // if (this.histrixType == 'q-file') {
+        // if (this.histrixType == 'q-file') {
         //   return null
         //  return this.value.name
         // }
 
-        
         // if (this.histrixType == 'object') {
         //   return this.value;
         // }
-        
+
         if (this.value) {
-          return (this.value.value != undefined) ? this.value.value : this.value;
+          return this.value.value != undefined ? this.value.value : this.value;
         }
 
         return this.value;
-        
       },
       set(localValue) {
         if (this.histrixType == 'q-select') {
           if (localValue && localValue.value) {
-           this.$emit('input', localValue.value) 
+            this.$emit('input', localValue.value);
           } else {
-           this.$emit('input', localValue)
-           }
+            this.$emit('input', localValue);
+          }
           // const option = this.options.find(obj => obj.value == localValue);
           //this.$emit('selectOption', { value: localValue, selected_option: option });
           /*
@@ -884,24 +977,25 @@ export default {
             */
         } else {
           if (this.isDate) {
-            var fecha = new Date()
+            var fecha = new Date();
             if (this.dateMask === 'DD/MM/YYYY') {
-              fecha = new Date(localValue.replace( /(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"))
-              fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
+              fecha = new Date(
+                localValue.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')
+              );
+              fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
             } else {
-              fecha = new Date(localValue)
-              fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
+              fecha = new Date(localValue);
+              fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
             }
             this.$emit('input', date.formatDate(fecha, 'YYYY-MM-DD'));
-
           } else {
             this.$emit('input', localValue);
-          }          
+          }
         }
-        
-       // this.$emit('field-change', this.row);
+
+        // this.$emit('field-change', this.row);
       },
-    }, 
+    },
   },
 };
 </script>
