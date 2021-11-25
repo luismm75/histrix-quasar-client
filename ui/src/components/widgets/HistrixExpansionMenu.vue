@@ -55,7 +55,7 @@
 
 
       </q-expansion-item>
-      <q-item v-else :to="nodeUri(node)" _dense>
+      <q-item v-else :to="nodeUri(node)" _dense @click="refrest(nodeUri(node))">
         <q-item-section avatar  v-if="node.icon">
           <q-icon    :name="node.icon" style="font-size: 2rem;" />
        </q-item-section >
@@ -88,7 +88,8 @@ export default {
       filterString: '',
       data: [],
       expanded: [],
-      loading: true
+      loading: true,
+      locationCurrent: ''
     };
   },
   computed: {
@@ -113,7 +114,18 @@ export default {
           this.data = response.data.tree;
         })
         .catch(console.log);
-    }
+    },
+    refrest(url) {
+        const localitation = location.hash
+        const queryIndex =  localitation.indexOf('?')
+        const newLocation = localitation.slice(1,queryIndex)
+      if(newLocation === this.locationCurrent) {
+        this.$router.replace({...url, hash: '#update'})
+        this.$router.replace({...url, hash: ' ', params: {a: 100} })
+        return
+      }
+      this.locationCurrent = url.path
+    },
   },
   mounted() {
     if (this.tree) {
