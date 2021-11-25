@@ -309,7 +309,10 @@ export default {
     },
     filterFn(val, update, about) {
       update(() => {
-        if (!val) return;
+        if (!val) {
+          this.options = this.optionFixed;
+          return;
+        }
         const accent_map = {
           á: 'a',
           é: 'e',
