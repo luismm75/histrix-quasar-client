@@ -996,7 +996,7 @@ export default {
           }
         }
 
-        // this.$emit('field-change', this.row);
+         this.$emit('field-change', this.row);
       },
     },
   },

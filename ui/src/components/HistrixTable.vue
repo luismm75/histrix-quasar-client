@@ -831,6 +831,7 @@ export default {
       this.getData();
     },
     rowChange(row) {
+      console.log('CHANGE ROW');
       if (this.schema.type === 'liveGrid') {
         this.updateLiveRow(row);
       }
