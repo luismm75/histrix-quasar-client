@@ -441,6 +441,33 @@ export default {
     mapOptions(options) {
       const data = [];
       if (options) {
+        options.map((option) => {
+          const key = String(option._id);
+          //const key = option[0];
+          let label = option;
+          if (
+            (typeof label === 'object' || typeof label === 'function') &&
+            label !== null
+          ) {
+            label = label[Object.keys(label)[0]];
+          }
+          data.push({
+            value: key,
+            label: label,
+            description: label,
+            data: option,
+          });
+        });
+        if (this.fieldSchema.sortable !== false) {
+           data.sort((a, b) => (a.label > b.label ? 1 : -1));
+        }
+      }
+      this.optionFixed = data;
+      return data;
+    },    
+    mapOptionsOld(options) {
+      const data = [];
+      if (options) {
         Object.entries(options).map((option) => {
           const key = option[0];
           let label = option[1];
@@ -449,8 +476,7 @@ export default {
             label !== null
           ) {
             label = label[Object.keys(label)[0]];
-          }
-
+          } 
           data.push({
             value: key,
             label,
@@ -546,10 +572,17 @@ export default {
               console.log(e);
             });
         } else {
-          this.options = this.mapOptions(this.fieldSchema.options);
-
+          if (this.fieldSchema.full_options) {
+            this.options = this.mapOptions(this.fieldSchema.full_options);
+          } else {
+            this.options = this.mapOptionsOld(this.fieldSchema.options);
+          }
+        
           const option = this.options.find((obj) => obj.value == val);
-          this.$emit('selectOption', { value: val, selected_option: option });
+          if (option) {
+            this.$emit('selectOption', { value: val, selected_option: option });
+          }
+          
         }
       }
     },
@@ -583,8 +616,8 @@ export default {
   },
   mounted() {
     this.setRules();
-    this.getOptions();
     this.getHelpSchema();
+    this.getOptions();    
   },
   computed: {
     hint() {
@@ -921,7 +954,6 @@ export default {
               typeof this.value === 'string' ||
               this.value instanceof String
             ) {
-              console.log(this.value);
               let items = JSON.parse(this.value);
               if (!Array.isArray(items)) {
                 items = [this.value];
@@ -947,14 +979,18 @@ export default {
         return this.value;
       },
       set(localValue) {
+
         if (this.histrixType == 'q-select') {
+          let val = localValue
           if (localValue && localValue.value) {
             this.$emit('input', localValue.value);
+            let val = localValue.value
           } else {
             this.$emit('input', localValue);
           }
-          // const option = this.options.find(obj => obj.value == localValue);
-          //this.$emit('selectOption', { value: localValue, selected_option: option });
+
+          const option = this.options.find(obj => obj.value == val);
+          this.$emit('selectOption', { value: localValue, selected_option: option });
           /*
                         console.log('select');
 
