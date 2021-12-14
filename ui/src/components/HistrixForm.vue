@@ -11,24 +11,42 @@
     <q-form @submit="onSubmit" enctype="multipart/form-data">
       <div class="row">
         <div class="col">
-          <q-tabs v-model="currentTab"  dense class="text-grey" active-color="primary" indicator-color="primary" align="justify" narrow-indicator>
-            <q-tab  v-if="Object.keys(innerTabs).length != 0" name="mainTab"  :label="localSchema.title" class="bg-primary text-white" >
+          <q-tabs
+            v-model="currentTab"
+            dense
+            class="text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="justify"
+            narrow-indicator
+          >
+            <q-tab
+              v-if="Object.keys(innerTabs).length != 0"
+              name="mainTab"
+              :label="localSchema.title"
+              class="bg-primary text-white"
+            >
               <q-tooltip anchor="top middle" self="bottom middle">
-                  Solapa principal {{ localSchema.title }}
+                Solapa principal {{ localSchema.title }}
               </q-tooltip>
             </q-tab>
-            <span v-else >
-            {{ localSchema.title }}
+            <span v-else>
+              {{ localSchema.title }}
             </span>
-            <q-tab v-for="tab in innerTabs" :name="tab.name" v-bind:key="tab.name" :label="tab.title || tab.name" >
-                <q-tooltip anchor="top middle" self="bottom middle">
-                  Click para mas información con respecto a {{tab.title}}
+            <q-tab
+              v-for="tab in innerTabs"
+              :name="tab.name"
+              v-bind:key="tab.name"
+              :label="tab.title || tab.name"
+            >
+              <q-tooltip anchor="top middle" self="bottom middle">
+                Click para mas información con respecto a {{ tab.title }}
               </q-tooltip>
             </q-tab>
           </q-tabs>
 
           <q-tab-panels v-model="currentTab" animated>
-            <q-tab-panel  name="mainTab" class="q-pl-none q-pr-none" >
+            <q-tab-panel name="mainTab" class="q-pl-none q-pr-none">
               <div class="row">
                 <div
                   v-for="field in editables"
@@ -36,8 +54,7 @@
                   :name="field.name"
                   :class="fieldClass(field)"
                 >
-        
-                  <q-item dense >
+                  <q-item dense>
                     <!--
                     <q-item-section style="text-align:right">
                       <q-item-label caption>{{
@@ -46,26 +63,35 @@
                     </q-item-section>
                     -->
                     <q-item-section>
+                      <q-item-label
+                        v-if="
+                          editedRow &&
+                            editedRow[field.name] &&
+                            editedRow[field.name]['link']
+                        "
+                      >
+                        {{ field.title }}
+                      </q-item-label>
+                      <HistrixCell
+                        v-if="
+                          editedRow &&
+                            editedRow[field.name] &&
+                            editedRow[field.name]['link']
+                        "
+                        :path="path"
+                        :props="editedRow[field.name]"
+                        :schema="field"
+                        :col="{ value: editedRow[field.name] }"
+                        v-on:open-popup="bubbleLink(editedRow, $event)"
+                        v-on:closepopup="closePopup"
+                      />
 
-            <q-item-label v-if="editedRow && editedRow[field.name] && editedRow[field.name]['link']">
-                {{field.title}}
-            </q-item-label>
-            <HistrixCell
-              v-if="editedRow && editedRow[field.name] && editedRow[field.name]['link']"
-              :path="path"
-              :props="editedRow[field.name]"
-              :schema="field"
-              :col="{value:editedRow[field.name]}"
-              v-on:open-popup="bubbleLink(editedRow, $event)"
-              v-on:closepopup="closePopup"
-            />
-           
                       <HistrixField
                         v-model="localValues[field.name]"
                         :name="field.name"
                         :row="localValues"
                         :schema="field"
-                        :path="computedPath(field)"                        
+                        :path="computedPath(field)"
                         :submitting="submitting"
                         :query="fieldQuerys[field.name]"
                         :readonly="localSchema.readonly"
@@ -76,54 +102,67 @@
                         dense
                         :error-message="errorMessage(field)"
                         :error="$v['localValues'][field.name].$invalid"
-                        v-else-if="!localSchema.readonly "
+                        v-else-if="!localSchema.readonly"
                       />
                       <div v-else>
                         <span v-html="localValues[field.name]" />
-                          
                       </div>
                     </q-item-section>
                   </q-item>
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel v-for="field in innerTabs" :name="field.name" v-bind:key="field.name"  >
-
-                <HistrixField
-                  v-model="localValues[field.name]"
-                  :name="field.name"
-                  :schema="field"
-                  :path="computedPath(field)"
-                  :row="localValues"
-                  :submitting="submitting"
-                  :query="fieldQuerys[field.name]"
-                  :readonly="localSchema.readonly"
-                  :disabled="localSchema.readonly"
-                  v-on:selectOption="onSelectOption"
-                  v-on:fill-fields="fillFields"
-                  v-on:computed-total="onComputedTotal"
-
-                  dense
-                  v-if="!localSchema.readonly"
-                />
+            <q-tab-panel
+              v-for="field in innerTabs"
+              :name="field.name"
+              v-bind:key="field.name"
+            >
+              <HistrixField
+                v-model="localValues[field.name]"
+                :name="field.name"
+                :schema="field"
+                :path="computedPath(field)"
+                :row="localValues"
+                :submitting="submitting"
+                :query="fieldQuerys[field.name]"
+                :readonly="localSchema.readonly"
+                :disabled="localSchema.readonly"
+                v-on:selectOption="onSelectOption"
+                v-on:fill-fields="fillFields"
+                v-on:computed-total="onComputedTotal"
+                dense
+                v-if="!localSchema.readonly"
+              />
             </q-tab-panel>
           </q-tab-panels>
-
         </div>
       </div>
       <q-separator />
       <div class="row ">
+        <span class="q-pa-sm col-12 text-center">
+          <q-btn
+            label="Cancelar"
+            icon="close"
+            class="nojustify-end flat"
+            @click="closePopup"
+            type="reset"
+            v-if="insertButton || updateButton"
+          />
+          <q-btn
+            v-if="insertButton || updateButton"
+            type="submit"
+            label="Grabar"
+            icon="save"
+            class=" bg-positive text-white nojustify-end"
+            :loading="submitting"
+          />
 
-          <span class="q-pa-sm col-12 text-center">
-            <q-btn label="Cancelar"  icon="close"   class="nojustify-end flat"  v-close-popup type="reset" v-if="insertButton || updateButton" />
-            <q-btn v-if="insertButton || updateButton" type="submit" label="Grabar" icon="save" class=" bg-positive text-white nojustify-end" :loading="submitting" />
-            
-            <!--
+          <!--
             <q-btn v-if="editedIndex == -1"_v-if="schema.insertButton"  label="Grabar" icon="save" @click="insertRow()"  />
             <q-btn label="guardar"   icon="save" :disable="$v.$invalid" class=" bg-primary text-white nojustify-end" @click="saveForm()" :loading="submitting" v-if="updateButton" />
             -->
-          </span>
-          <!--
+        </span>
+        <!--
             <q-btn
               icon="thumb_up"
               label="CONFIRMAR"
@@ -135,16 +174,13 @@
             -->
       </div>
     </q-form>
-
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
 import { date } from 'quasar';
-import {
-  required, maxLength, decimal, email,
-} from 'vuelidate/lib/validators';
+import { required, maxLength, decimal, email } from 'vuelidate/lib/validators';
 import histrixApi from '../services/histrixApi.js';
 
 export default {
@@ -169,10 +205,19 @@ export default {
   },
   computed: {
     insertButton() {
-      return this.schema.insertButton && (this.editedIndex == -1 || this.editedIndex == null)
+      return (
+        this.schema.insertButton &&
+        (this.editedIndex == -1 || this.editedIndex == null)
+      );
     },
     updateButton() {
-      return this.canUpdate && !this.localSchema.readonly && !this.localSchema.can_process && !this.insertButton && this.schema.updateButton
+      return (
+        this.canUpdate &&
+        !this.localSchema.readonly &&
+        !this.localSchema.can_process &&
+        !this.insertButton &&
+        this.schema.updateButton
+      );
     },
     localValidations() {
       const localValidations = {};
@@ -210,11 +255,19 @@ export default {
 
           keys.map((key) => {
             const k = key.trim();
-            if (k && this.localValues[k] !== undefined && validation.condition) {
+            if (
+              k &&
+              this.localValues[k] !== undefined &&
+              validation.condition
+            ) {
               if (localValidations[k]) {
-                localValidations[k].customValidation = value => !this.processOperation(validation.condition);
+                localValidations[k].customValidation = (value) =>
+                  !this.processOperation(validation.condition);
               } else {
-                localValidations[k] = { customValidation: value => !this.processOperation(validation.condition) };
+                localValidations[k] = {
+                  customValidation: (value) =>
+                    !this.processOperation(validation.condition),
+                };
               }
 
               this.errorMessages[k] = { customError: validation.message };
@@ -231,45 +284,62 @@ export default {
     fieldsWithContainers() {
       return this.filter(
         this.localSchema.fields,
-        field => !field.innerContainer && !field.options,
+        (field) => !field.innerContainer && !field.options
       );
     },
     editables() {
       return this.filter(
         this.localSchema.fields,
-        field => field.hidden || (this.schema.type != 'fichaing' && this.schema.type != 'cabecera' && field.innerContainer && !field.isSelect && field.editable === false),
+        (field) =>
+          field.hidden ||
+          (this.schema.type != 'fichaing' &&
+            this.schema.type != 'cabecera' &&
+            field.innerContainer &&
+            !field.isSelect &&
+            field.editable === false)
       );
     },
     innerTabs() {
       return this.filter(
         this.localSchema.fields,
-        field => (this.schema.type == 'fichaing' || this.schema.type == 'cabecera' || (!field.innerContainer || field.isSelect)),
+        (field) =>
+          this.schema.type == 'fichaing' ||
+          this.schema.type == 'cabecera' ||
+          !field.innerContainer || field.isSelect
       );
     },
     dateFields() {
-      return this.filter(this.localSchema.fields, field => (field['data-role'] != 'datebox'));
+      return this.filter(
+        this.localSchema.fields,
+        (field) => field['data-role'] != 'datebox'
+      );
     },
     files() {
-       const data = []
-       Object.keys(this.localValues).map(item => {
+      const data = [];
+      Object.keys(this.localValues).map((item) => {
         if (typeof this.localValues[item] === 'object') {
-          data.push({name: item, data: this.localValues[item], path: this.computedPath(this.schema.fields[item])})
+          data.push({
+            name: item,
+            data: this.localValues[item],
+            path: this.computedPath(this.schema.fields[item]),
+          });
         }
-      })
-      return data
-
+      });
+      return data;
     },
     postData() {
       // return this.localValues;
-      
-      const data = this.localValues
-       Object.keys(this.localValues).map(item => {
-        if (typeof this.localValues[item] === 'object' && this.localValues[item]['name']) {
-          data[item] = this.localValues[item]['name']
+
+      const data = this.localValues;
+      Object.keys(this.localValues).map((item) => {
+        if (
+          typeof this.localValues[item] === 'object' &&
+          this.localValues[item]['name']
+        ) {
+          data[item] = this.localValues[item]['name'];
         }
-      })
-      return data
-      
+      });
+      return data;
     },
     canUpdate() {
       return this.resources.hasOwnProperty('PUT') && this.schema.can_update;
@@ -277,7 +347,7 @@ export default {
     visibleColumns() {
       if (this.localSchema.columns) {
         return this.localSchema.columns
-          .filter(column => !column.hidden)
+          .filter((column) => !column.hidden)
           .map((column, index, array) => column.name);
       }
     },
@@ -288,16 +358,19 @@ export default {
         Object.keys(this.fieldsWithContainers).map((target) => {
           const field = this.fieldsWithContainers[target];
 
-         const rel = {};
+          const rel = {};
           /**
-          * Read initial container conditions
-          */
+           * Read initial container conditions
+           */
           if (field.innerContainer.schema) {
-            Object.entries(field.innerContainer.schema.conditions).map((conditions) => {
-              Object.entries(conditions[1]).map((condition) => {
-                rel[conditions[0]] = condition[1].valor;
-              });
-            }, this);
+            Object.entries(field.innerContainer.schema.conditions).map(
+              (conditions) => {
+                Object.entries(conditions[1]).map((condition) => {
+                  rel[conditions[0]] = condition[1].valor;
+                });
+              },
+              this
+            );
             fieldQuerys[field.name] = rel;
           }
 
@@ -305,12 +378,15 @@ export default {
            * Read Relationships
            */
           if (field.innerContainer.relationship) {
-            Object.entries(field.innerContainer.relationship).map((relationship) => {
-              const localtarget = relationship[0];
-              const source = relationship[1];
+            Object.entries(field.innerContainer.relationship).map(
+              (relationship) => {
+                const localtarget = relationship[0];
+                const source = relationship[1];
 
-              rel[localtarget] = this.localValues[source.valor];
-            }, this);
+                rel[localtarget] = this.localValues[source.valor];
+              },
+              this
+            );
 
             fieldQuerys[field.name] = rel;
           }
@@ -337,16 +413,17 @@ export default {
               rel[relation.field] = query;
               fieldQuerys[relation.parentField] = rel;
             } else {
-              fieldQuerys[relation.field][relation.field] =  query;
+              fieldQuerys[relation.field][relation.field] = query;
             }
           } else if (fieldQuerys[relation.field] == undefined) {
-            rel[relation.targetField] =  this.localValues[field.name];
+            rel[relation.targetField] = this.localValues[field.name];
             fieldQuerys[relation.field] = rel;
           } else {
             let data = this.localValues[field.name];
             if (data) {
-              fieldQuerys[relation.field][relation.targetField] =  data.value || data;
-            }  
+              fieldQuerys[relation.field][relation.targetField] =
+                data.value || data;
+            }
           }
         }, this);
       }, this);
@@ -364,17 +441,20 @@ export default {
       return fieldQuerys;
     },
     updatedFields() {
-      return this.filter(this.localSchema.fields, field => !field.update_fields);
+      return this.filter(
+        this.localSchema.fields,
+        (field) => !field.update_fields
+      );
     },
   },
   mounted() {
-    this.refresh()
+    this.refresh();
   },
   watch: {
-    editedItem:  {
+    editedItem: {
       handler(data) {
-          this.localValues = {...this.editedItem, ...{}};
-        },
+        this.localValues = { ...this.editedItem, ...{} };
+      },
       deep: true,
     },
     localValues: {
@@ -396,28 +476,32 @@ export default {
   methods: {
     refresh() {
       this.localSchema = this.schema;
-      this.localValues = {...this.editedItem, ...{}};
-      
+      this.localValues = { ...this.editedItem, ...{} };
+
       Object.keys(this.query).map((key) => {
-          this.localValues[key] = this.query[key];
+        this.localValues[key] = this.query[key];
       });
 
-      if (this.query && this.localSchema.preFetch != false  && !this.editedItem  ) {
+      if (
+        this.query &&
+        this.localSchema.preFetch != false &&
+        !this.editedItem
+      ) {
         this.getData();
       }
     },
     bubbleLink(row, link) {
       link.row = row;
-      this.$emit('open-popup', link);      
+      this.$emit('open-popup', link);
     },
     closePopup() {
       this.$emit('closepopup');
     },
 
     computedPath(field) {
-      const dirValue = this.localValues[field.path] || ''
-      const path = this.schema.path + '/' + dirValue + '/'
-      return path.replaceAll('//', '/').replaceAll('//', '/')
+      const dirValue = this.localValues[field.path] || '';
+      const path = this.schema.path + '/' + dirValue + '/';
+      return path.replaceAll('//', '/').replaceAll('//', '/');
     },
     errorMessage(field) {
       const cell = this.$v.localValues[field.name];
@@ -476,7 +560,7 @@ export default {
       }
     },
     reset() {
-      this.localValues = {...this.editedItem, ...{}};
+      this.localValues = { ...this.editedItem, ...{} };
       this.setDefaultValues();
     },
     /*
@@ -531,7 +615,10 @@ export default {
       let xs = 12;
 
       // small forms
-      if (this.visibleColumns.length < 6 /* || (field.innerContainer && !field.options) */) {
+      if (
+        this.visibleColumns.length <
+        6 /* || (field.innerContainer && !field.options) */
+      ) {
         const all = 12;
         lg = all;
         md = all;
@@ -543,8 +630,8 @@ export default {
     },
 
     filter(obj, predicate) {
-      const result = {}; let
-        key;
+      const result = {};
+      let key;
       for (key in obj) {
         if (obj.hasOwnProperty(key) && !predicate(obj[key])) {
           result[key] = obj[key];
@@ -557,7 +644,9 @@ export default {
       return `${this.path}?`;
     },
     getKeys(item) {
-      const keyFields = Object.entries(this.localSchema.fields).filter(field => field[1].esClave == 'true');
+      const keyFields = Object.entries(this.localSchema.fields).filter(
+        (field) => field[1].esClave == 'true'
+      );
       const keyData = {};
       keyFields.forEach((key) => {
         keyData[key[0]] = this.localValues[key[0]];
@@ -569,30 +658,30 @@ export default {
 
       // upload attached files
       if (this.files) {
-        histrixApi.upload(this.files)
+        histrixApi.upload(this.files);
       }
 
-      histrixApi.processAppForm(this.xmlUrl(), this.postData)
+      histrixApi
+        .processAppForm(this.xmlUrl(), this.postData)
         .then((response) => {
           this.submitting = false;
-          this.localValues = {...this.editedItem, ...{} };
+          this.localValues = { ...this.editedItem, ...{} };
 
           this.$q.notify({
-            message: "PROCESO FINALIZADO",
-            type: "success",
-            textColor: "white",
-            color: "success",
-            icon: "info",
-            closeBtn: "cerrar",
-            position: "top"
+            message: 'PROCESO FINALIZADO',
+            type: 'success',
+            textColor: 'white',
+            color: 'success',
+            icon: 'info',
+            closeBtn: 'cerrar',
+            position: 'top',
           });
 
-
           // this.$router.back();
-          this.reset()
-          this.refresh()
+          this.reset();
+          this.refresh();
           this.$emit('process-finish', true);
-          this.$emit('closepopup');          
+          this.$emit('closepopup');
         })
         .catch((e) => {
           this.submitting = false;
@@ -601,13 +690,13 @@ export default {
     },
     onSubmit() {
       if (this.editedIndex == -1) {
-        this.insertRow()
+        this.insertRow();
       } else {
-        this.saveForm()
+        this.saveForm();
       }
     },
     insertRow() {
-      this.newRecord = true
+      this.newRecord = true;
       this.saveForm();
     },
     saveForm() {
@@ -616,27 +705,30 @@ export default {
 
       // upload attached files
       if (this.files) {
-        histrixApi.upload(this.files)
+        histrixApi.upload(this.files);
       }
 
       const postData = {
-            keys: this.getKeys(this.editedItem),
-            data: this.postData,
-          };
+        keys: this.getKeys(this.editedItem),
+        data: this.postData,
+      };
       // if this is a new record Insert
-      if (this.newRecord) {        
-        histrixApi.insertAppData( this.xmlUrl(), postData)
+      if (this.newRecord) {
+        histrixApi
+          .insertAppData(this.xmlUrl(), postData)
           .then((response) => {
             this.submitting = false;
             this.$emit('closepopup');
             this.$emit('form-saved', this.localValues, response.data.id);
             this.$emit('insert-row', this.localValues, response.data.id);
-          }).catch((e) => {
+          })
+          .catch((e) => {
             console.log(e);
             this.submitting = false;
-        });
+          });
       } else {
-        histrixApi.updateAppData( this.xmlUrl(), postData)
+        histrixApi
+          .updateAppData(this.xmlUrl(), postData)
           .then((response) => {
             this.submitting = false;
             this.$emit('closepopup');
@@ -651,13 +743,18 @@ export default {
     setDefaultValues() {
       for (const key in this.localSchema.fields) {
         const field = this.localSchema.fields[key];
-        if (field.hasOwnProperty('default_option_value') && this.localValues[field.name] == '' && field.default_option_value != '') {
+        if (
+          field.hasOwnProperty('default_option_value') &&
+          this.localValues[field.name] == '' &&
+          field.default_option_value != ''
+        ) {
           this.localValues[field.name] = field.default_option_value;
         }
       }
     },
     getData() {
-      histrixApi.getAppData(this.xmlUrl(), this.query)
+      histrixApi
+        .getAppData(this.xmlUrl(), this.query)
         .then((response) => {
           this.localValues = response.data.data[0];
           // this.localValues = { ...this.localValues, ...this.parseDateToLocale() };

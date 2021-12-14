@@ -421,7 +421,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="edit" ref="formDialog" full-width>
+    <q-dialog v-model="edit" ref="formDialog" full-width @input="showDialog">
       <q-card>
         <HistrixForm
           ref="histrixForm"
@@ -437,6 +437,7 @@
           v-on:open-popup="bubbleLink(editedItem, $event)"
           v-on:form-saved="formSaved"
           v-on:insert-row="rowRecived"
+          v-on:closepopup="closeEdit"
           :computedFields="computedFields"
           :newRecord="newRecord"
         />
@@ -729,6 +730,16 @@ export default {
         return this.data[index].DT_RowAttr['attributes'][cell];
       } else [];
     },
+    showDialog() {
+      // eslint-disable-next-line no-alert
+      const confim = window.confirm(
+        'Usted esta por cerrar el formulario. Recuerde guardar la informacion (si es que ahi) o se perdera'
+      );
+      if (!confim) this.edit = true;
+    },
+    closeEdit() {
+      this.edit = false;
+    },
     updatePagination(pagination) {
       const descending = pagination.descending ? 'desc' : 'asc';
       this.localFilters._sortBy = `${pagination.sortBy}|${descending}`;
@@ -972,7 +983,7 @@ export default {
      */
     rowRecived(row, index) {
       Vue.set(this.data, row._id, row);
-      this.$refs.formDialog.hide();
+      this.edit = false;
       this.refresh();
     },
     formSaved(row, index) {
@@ -983,7 +994,7 @@ export default {
       } else {
         this.getData();
       }
-      this.$refs.formDialog.hide();
+      this.edit = false;
     },
     processData() {
       this.submitting = true;
