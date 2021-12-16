@@ -150,11 +150,9 @@ export default {
       }
 
       this.btnLoading = true;
-      debugger
       histrixApi.login(this.form.email, this.form.password, this.redirect)
       .then((success) => {
         this.$events.fire('loaded-user');
-        debugger
         if (this.eventAfter) {
           this.$events.fire(this.eventAfter)
           this.eventAfter = null
