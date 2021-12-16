@@ -158,8 +158,6 @@ export default {
         if (this.eventAfter) {
           this.$events.fire(this.eventAfter)
           this.eventAfter = null
-        } else {
-          this.$router.push(success)
         }
         this.btnLoading = false;
       }).catch((error) => {
