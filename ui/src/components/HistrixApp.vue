@@ -199,7 +199,6 @@
       </q-card>
     </q-dialog>
     <q-dialog
-      @input="showDialog"
       v-model="linkDialog"
       full-width
       :maximized="$q.platform.is.mobile ? true : false"
@@ -562,13 +561,6 @@ export default {
           return a & a;
         }, 0)
       );
-    },
-    showDialog(val) {
-      // eslint-disable-next-line no-alert
-      const confim = window.confirm(
-        'Usted esta por cerrar el formulario. Recuerde guardar la informacion (si es que ahi) o se perdera'
-      );
-      if (!confim) this.linkDialog = true;
     },
     subscribeWamp() {
       var that = this;

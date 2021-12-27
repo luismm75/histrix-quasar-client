@@ -438,6 +438,7 @@
           v-on:form-saved="formSaved"
           v-on:insert-row="rowRecived"
           v-on:closepopup="closeEdit"
+          v-on:valueEdit="setEdit"
           :computedFields="computedFields"
           :newRecord="newRecord"
         />
@@ -725,6 +726,9 @@ export default {
     },
   },
   methods: {
+    setEdit(value) {
+      this.editValue = value;
+    },
     getRowSchema(index, cell) {
       if (this.data[index].DT_RowAttr['attributes']) {
         return this.data[index].DT_RowAttr['attributes'][cell];
@@ -732,13 +736,21 @@ export default {
     },
     showDialog() {
       // eslint-disable-next-line no-alert
-      const confim = window.confirm(
-        'Usted esta por cerrar el formulario. Recuerde guardar la informacion (si es que ahi) o se perdera'
-      );
-      if (!confim) this.edit = true;
+      let confim = true;
+      if (this.editValue) {
+        confim = window.confirm(
+          'Usted esta por cerrar el formulario. Recuerde guardar la informacion o se perdera'
+        );
+      }
+      if (!confim) {
+        this.edit = true;
+      } else {
+        this.setEdit(false)
+      }
     },
     closeEdit() {
       this.edit = false;
+      this.setEdit(false);
     },
     updatePagination(pagination) {
       const descending = pagination.descending ? 'desc' : 'asc';
@@ -1218,6 +1230,7 @@ export default {
         _sortBy: '',
       },
       edit: false,
+      editValue: false,
       filter: '',
       fullQuery: this.query,
       expanded: [],

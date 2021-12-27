@@ -458,7 +458,11 @@ export default {
       deep: true,
     },
     localValues: {
-      handler(data) {
+      handler(data, oldVal) {
+        if (!this.valueEdit && JSON.stringify(oldVal).length !== 2) {
+          this.valueEdit = true;
+          this.$emit('valueEdit', true);
+        }
         for (const formula in this.computedFields) {
           const result = this.processOperation(this.computedFields[formula]);
           if (result != undefined) {
@@ -781,6 +785,7 @@ export default {
       data: [],
       submitting: false,
       currentTab: 'mainTab',
+      valueEdit: false,
     };
   },
 };
