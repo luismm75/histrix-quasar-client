@@ -728,6 +728,7 @@ export default {
   methods: {
     setEdit(value) {
       this.editValue = value;
+      this.$events.fire('editValue', value);
     },
     getRowSchema(index, cell) {
       if (this.data[index].DT_RowAttr['attributes']) {
