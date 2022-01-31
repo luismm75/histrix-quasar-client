@@ -71,10 +71,10 @@
       <span
         v-if="histrixType === 'check'"
         v-html="hint"
-        class="text-blue text-bold text-caption q-ml-md "
+        class="text-blue text-bold text-caption q-ml-md"
       ></span>
       <template v-slot:hint>
-        <div v-html="hint" :title="hint" class="text-blue text-bold "></div>
+        <div v-html="hint" :title="hint" class="text-blue text-bold"></div>
       </template>
 
       <template v-slot:before v-if="histrixType === 'q-file'">
@@ -98,7 +98,7 @@
           />
         </q-avatar>
         <q-dialog v-model="showImage">
-          <q-card style="width:700px; max-width: 80vw;">
+          <q-card style="width: 700px; max-width: 80vw">
             <q-card-section class="row items-center q-pb-none">
               <q-space />
               <q-btn icon="close" flat round dense v-close-popup />
@@ -218,9 +218,7 @@
 
       <template v-slot:no-option>
         <q-item>
-          <q-item-section class="text-grey">
-            No resultado
-          </q-item-section>
+          <q-item-section class="text-grey"> No resultado </q-item-section>
         </q-item>
       </template>
     </component>
@@ -360,7 +358,7 @@ export default {
     onImageChange(image) {
       console.log(image);
     },
-    onFileChange: function(file) {
+    onFileChange: function (file) {
       this.previewUrl = 'entra';
       //const file = files[0]
       if (!file) {
@@ -371,7 +369,7 @@ export default {
       }
       const reader = new FileReader();
       const that = this;
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         that.previewUrl = e.target.result;
       };
       reader.readAsDataURL(file);
@@ -409,7 +407,7 @@ export default {
     },
     mapRemoteOptions(options) {
       const data = [];
-
+      let flat = false;
       if (options) {
         options.map((optionData) => {
           let counter = 0;
@@ -424,6 +422,15 @@ export default {
             }
             counter++;
           });
+          if (!flat && label.includes(' - ')) {
+            const temp = label.slice(0, label.indexOf(' - '));
+            if (
+              temp.match(
+                /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/
+              )
+            )
+              flat = true;
+          }
           data.push({
             value: key,
             label,
@@ -432,7 +439,7 @@ export default {
           });
         });
         if (this.fieldSchema.sortable !== false) {
-          data.sort((a, b) => (a.label > b.label ? 1 : -1));
+          this.orderData(data, flat);
         }
         this.optionFixed = data;
         return data;
@@ -440,6 +447,7 @@ export default {
     },
     mapOptions(options) {
       const data = [];
+      let flat = false;
       if (options) {
         options.map((option) => {
           const key = String(option._id);
@@ -451,6 +459,16 @@ export default {
           ) {
             label = label[Object.keys(label)[0]];
           }
+
+          if (!flat && label.includes(' - ')) {
+            const temp = label.slice(0, label.indexOf(' - '));
+            if (
+              temp.match(
+                /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/
+              )
+            )
+              flat = true;
+          }
           data.push({
             value: key,
             label: label,
@@ -459,14 +477,15 @@ export default {
           });
         });
         if (this.fieldSchema.sortable !== false) {
-           data.sort((a, b) => (a.label > b.label ? 1 : -1));
+          this.orderData(data, flat);
         }
       }
       this.optionFixed = data;
       return data;
-    },    
+    },
     mapOptionsOld(options) {
       const data = [];
+      let flat = false;
       if (options) {
         Object.entries(options).map((option) => {
           const key = option[0];
@@ -476,7 +495,16 @@ export default {
             label !== null
           ) {
             label = label[Object.keys(label)[0]];
-          } 
+          }
+          if (!flat && label.includes(' - ')) {
+            const temp = label.slice(0, label.indexOf(' - '));
+            if (
+              temp.match(
+                /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/
+              )
+            )
+              flat = true;
+          }
           data.push({
             value: key,
             label,
@@ -484,10 +512,38 @@ export default {
             data: option[1],
           });
         });
-        data.sort((a, b) => (a.label > b.label ? 1 : -1));
+        this.orderData(data, flat);
       }
       this.optionFixed = data;
       return data;
+    },
+
+    orderData(data, flat) {
+      if (!flat) return data.sort((a, b) => (a.label > b.label ? 1 : -1));
+      data.sort((prev, next) => {
+        const dateNextFormat = this.formatDate(next.label.slice(0, 10));
+        const tempNext = new Date(
+          dateNextFormat[0],
+          dateNextFormat[1],
+          dateNextFormat[2]
+        );
+        const datePrevFormat = this.formatDate(prev.label.slice(0, 10));
+        const tempPrev = new Date(
+          datePrevFormat[0],
+          datePrevFormat[1],
+          datePrevFormat[2]
+        );
+        if (tempPrev.getTime() > tempNext) return -1;
+        if (tempPrev.getTime() < tempNext) return 1;
+        return 0;
+      });
+    },
+
+    formatDate(props) {
+      const year = props.slice(6, 10);
+      const month = props.slice(3, 5);
+      const day = props.slice(0, 2);
+      return [year, month, day];
     },
     getHelpSchema(url) {
       if (this.helpPath) {
@@ -577,12 +633,11 @@ export default {
           } else {
             this.options = this.mapOptionsOld(this.fieldSchema.options);
           }
-        
+
           const option = this.options.find((obj) => obj.value == val);
           if (option) {
             this.$emit('selectOption', { value: val, selected_option: option });
           }
-          
         }
       }
     },
@@ -604,9 +659,10 @@ export default {
         /* starting with Sunday */
         days: 'Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado'.split('_'),
         daysShort: 'Dom_Lun_Mar_Mié_Jue_Vie_Sáb'.split('_'),
-        months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split(
-          '_'
-        ),
+        months:
+          'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split(
+            '_'
+          ),
         monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split(
           '_'
         ),
@@ -617,7 +673,7 @@ export default {
   mounted() {
     this.setRules();
     this.getHelpSchema();
-    this.getOptions();    
+    this.getOptions();
   },
   computed: {
     hint() {
@@ -979,18 +1035,20 @@ export default {
         return this.value;
       },
       set(localValue) {
-
         if (this.histrixType == 'q-select') {
-          let val = localValue
+          let val = localValue;
           if (localValue && localValue.value) {
             this.$emit('input', localValue.value);
-            let val = localValue.value
+            let val = localValue.value;
           } else {
             this.$emit('input', localValue);
           }
 
-          const option = this.options.find(obj => obj.value == val);
-          this.$emit('selectOption', { value: localValue, selected_option: option });
+          const option = this.options.find((obj) => obj.value == val);
+          this.$emit('selectOption', {
+            value: localValue,
+            selected_option: option,
+          });
           /*
                         console.log('select');
 
@@ -1032,7 +1090,7 @@ export default {
           }
         }
 
-         this.$emit('field-change', this.row);
+        this.$emit('field-change', this.row);
       },
     },
   },
