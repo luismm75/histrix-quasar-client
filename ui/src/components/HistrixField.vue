@@ -541,7 +541,7 @@ export default {
 
     formatDate(props) {
       const year = props.slice(6, 10);
-      const month = props.slice(3, 5);
+      const month = parseInt(props.slice(3, 5)) + 1;
       const day = props.slice(0, 2);
       return [year, month, day];
     },
