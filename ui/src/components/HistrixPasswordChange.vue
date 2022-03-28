@@ -68,13 +68,12 @@
 <script>
 // import Vue from 'vue'
 import { required, email, minLength, sameAs, requiredIf } from 'vuelidate/lib/validators';
-import InputPasswordVue from './InputPassword.vue.js';
+import InputPasswordVue from './InputPassword.vue';
 import api from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixPasswordChange',
   components: {
-    Password,
     InputPasswordVue
   },
   props: {
