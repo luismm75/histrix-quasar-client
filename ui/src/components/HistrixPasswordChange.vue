@@ -23,7 +23,7 @@
         <q-item  class="col-12   q-pa-sm">
             <q-item-section>
 
-                          <password :labelShow="'wer'" v-model="form.new_password"
+                          <InputPasswordVue :labelShow="'wer'" v-model="form.new_password"
                                     placeholder="Ingrese su nueva contraseña"
                                     :toggle="true"
                                     required
@@ -31,13 +31,13 @@
                                     class="full-width"
                                   :error-label="passwordErrorMsg"
                                     >
-                          </password>
+                          </InputPasswordVue>
             </q-item-section>
         </q-item>
         <q-item  class="col-12   q-pa-sm">
         <q-item-section>
 
-                     <password :labelShow="'wer'" v-model="form.confirm_password"
+                     <InputPasswordVue :labelShow="'wer'" v-model="form.confirm_password"
                                     placeholder="Repita su nueva contraseña"
                                     :toggle="true"
                                     required
@@ -45,7 +45,7 @@
                                     class="full-width"
                                   :error-label="passwordErrorMsg"
                                     >
-                          </password>
+                          </InputPasswordVue>
             </q-item-section>
         </q-item>
         
@@ -68,13 +68,14 @@
 <script>
 // import Vue from 'vue'
 import { required, email, minLength, sameAs, requiredIf } from 'vuelidate/lib/validators';
-import Password from 'vue-password-strength-meter'
+import InputPasswordVue from './InputPassword.vue.js';
 import api from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixPasswordChange',
   components: {
-    Password
+    Password,
+    InputPasswordVue
   },
   props: {
     
