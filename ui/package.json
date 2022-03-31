@@ -1,6 +1,6 @@
 {
   "name": "quasar-ui-histrix-client",
-  "version": "0.0.85",
+  "version": "0.0.86",
   "author": "Luis M. Melgratti <luis@mundoit.com.ar>",
   "description": "Histrix Quasar client components",
   "license": "MIT",
@@ -63,7 +63,7 @@
     "last 5 Opera versions"
   ],
   "dependencies": {
-    "@quasar/quasar-ui-qcalendar": "^2.5.0",
+    "@quasar/quasar-app-extension-qcalendar": "^3.4.1",
     "@websanova/vue-auth": "^4.1.7",
     "echarts": "^5.2.2",
     "http-vue-loader": "^1.4.2",
