@@ -3,40 +3,35 @@ const fs = require('fs')
 const fse = require('fs-extra')
 const rollup = require('rollup')
 const uglify = require('uglify-es')
+const vuePlugin = require('rollup-plugin-vue2')
 const buble = require('@rollup/plugin-buble')
+const css = require('rollup-plugin-css-only')
+const scss = require('rollup-plugin-scss')
 const json = require('@rollup/plugin-json')
 const { nodeResolve } = require('@rollup/plugin-node-resolve')
-const replace = require('@rollup/plugin-replace')
-
-const { version } = require('../package.json')
 
 const buildConf = require('./config')
 const buildUtils = require('./utils')
 
 const rollupPlugins = [
-  replace({
-    preventAssignment: false,
-    values: {
-      __UI_VERSION__: `'${ version }'`
-    }
-  }),
+  css(),
+  scss(),
+  vuePlugin({ css: false, }),
   nodeResolve({
     extensions: ['.js'],
     preferBuiltins: false
   }),
   json(),
-  commonjs(),
-  VuePlugin(/* VuePluginOptions */),
-  buble({
-    objectAssign: 'Object.assign'
-  })
+  // buble({
+  //   objectAssign: 'Object.assign'
+  // })
 ]
 
 const builds = [
   {
     rollup: {
       input: {
-        input: pathResolve('../src/index.esm.js')
+        input: pathResolve('entry/index.esm.js')
       },
       output: {
         file: pathResolve('../dist/index.esm.js'),
@@ -51,7 +46,7 @@ const builds = [
   {
     rollup: {
       input: {
-        input: pathResolve('../src/index.common.js')
+        input: pathResolve('entry/index.common.js')
       },
       output: {
         file: pathResolve('../dist/index.common.js'),
@@ -66,7 +61,7 @@ const builds = [
   {
     rollup: {
       input: {
-        input: pathResolve('../src/index.umd.js')
+        input: pathResolve('entry/index.umd.js')
       },
       output: {
         name: 'histrixClient',
@@ -100,7 +95,7 @@ function pathResolve (_path) {
 function addAssets (builds, type, injectName) {
   const
     files = fs.readdirSync(pathResolve('../../ui/src/components/' + type)),
-    plugins = [ buble(bubleConfig) ],
+    plugins = [ buble(/* bubleConfig */) ],
     outputDir = pathResolve(`../dist/${type}`)
 
     fse.mkdirp(outputDir)

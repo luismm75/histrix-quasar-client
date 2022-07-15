@@ -27,10 +27,10 @@
 
             <q-item-section>
               <q-item-label>{{ post.title }}</q-item-label>
-              <q-item-label caption lines="2" v-html="post.downText">{{
+              <q-item-label caption lines="2" :innerHTML="post.downText">{{
                 post.downText
               }}</q-item-label>
-              <q-item-label caption lines="10" v-html="post.news">{{
+              <q-item-label caption lines="10" :innerHTML="post.news">{{
                 post.news
               }}</q-item-label>
             </q-item-section>

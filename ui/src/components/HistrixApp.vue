@@ -286,21 +286,21 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import httpVueLoader from 'http-vue-loader';
+// TODO: ver que onda
+// import httpVueLoader from 'http-vue-loader';
 import qs from 'qs';
 import histrixApi from '../services/histrixApi.js';
 
-httpVueLoader.httpRequest = function(url) {
-  histrixApi
-    .getData(url)
-    .then(function(res) {
-      return res.data;
-    })
-    .catch(function(err) {
-      return Promise.reject(err.status);
-    });
-};
+// httpVueLoader.httpRequest = function(url) {
+//   histrixApi
+//     .getData(url)
+//     .then(function(res) {
+//       return res.data;
+//     })
+//     .catch(function(err) {
+//       return Promise.reject(err.status);
+//     });
+// };
 
 export default {
   name: 'HistrixApp',
@@ -464,9 +464,10 @@ export default {
     hasFullDetail() {
       return this.hasDetail && !this.schema.inline_detail;
     },
-    componentFile() {
-      return httpVueLoader(this.vueUrl);
-    },
+    //TODO: cambiar
+    // componentFile() {
+    //   return httpVueLoader(this.vueUrl);
+    // },
     /**
      * database id
      */

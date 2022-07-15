@@ -1,6 +1,5 @@
 <template>
   <q-page >
-
      <q-dialog v-model="displayEvent">
       <q-card v-if="event">
         <q-toolbar  style="min-width: 400px;">
@@ -59,8 +58,8 @@
       <!-- Events in month View -->
 
       <template v-slot:day="day">
-          <template v-for="event in getEvents(day)">
             <q-badge
+              v-for="event in getEvents(day)"
               :key="event.id"
               :style="'width: 100%; cursor: pointer; background-color:' + event.color"
               class="ellipsis"
@@ -69,11 +68,10 @@
             >
               <q-icon v-if="event.icon" :name="event.icon" class="q-mr-xs"></q-icon><span class="ellipsis">{{ event.title }}</span>
             </q-badge>
-          </template>
       </template>
       <template v-slot:intervals-header="day">
-          <template v-for="event in getEvents(day)">
             <q-badge
+              v-for="event in getEvents(day)"
               :key="event.id"
               :style="'width: 100%; cursor: pointer; background-color:' + event.color"
               class="ellipsis"
@@ -82,7 +80,6 @@
             >
               <q-icon v-if="event.icon" :name="event.icon" class="q-mr-xs"></q-icon><span class="ellipsis">{{ event.title }}</span>
             </q-badge>
-          </template>
       </template>
 
       <template v-slot:day-header="day">
@@ -97,7 +94,7 @@
             </q-badge>
             <q-badge
               v-else
-              :key="index"
+              :key="index - 1000"
               class="q-ma-xs"
 
               style="width: 10px; max-width: 10px; height: 10px; max-height: 10px"
@@ -107,8 +104,8 @@
       </template>
 
       <template v-slot:interval="day">
-          <template v-for="(event, index) in getDayEvents(day)">
             <q-badge
+              v-for="(event, index) in getDayEvents(day)"
               :key="index"
               :style="'width: 100%; cursor: pointer; background-color:' + event.color"
               class="ellipsis"
@@ -117,7 +114,6 @@
             >
               <q-icon v-if="event.icon" :name="event.icon" class="q-mr-xs"></q-icon><span class="ellipsis">{{ event.title }}</span>
             </q-badge>
-          </template>
       </template>
 
   </q-calendar>
@@ -125,7 +121,6 @@
 </template>
 
 <script>
-import QCalendar from '@quasar/quasar-ui-qcalendar';
 import histrixApi from '../services/histrixApi.js'
 
 export default {
@@ -394,24 +389,30 @@ export default {
   },  
 };
 </script>
-<style lang="sass">
-.calendar-container
-  position: relative
+<style>
 
-.my-event
-  width: 100%
-  position: absolute
+.calendar-container {
+  position: relative;
+}
+
+.my-event {
+  width: 100%;
+  position: absolute;
   font-size: 12px
+}
 
-.full-width
-  left: 0
-  width: 100%
+.full-width {
+  left: 0;
+  width: 100%;
+}
 
-.left-side
-  left: 0
-  width: 49.75%
+.left-side {
+  left: 0;
+  width: 49.75%;
+}
 
-.right-side
-  left: 50.25%
-  width: 49.75%
-  </style>
+.right-side {
+  left: 50.25%;
+  width: 49.75%;
+}
+</style>

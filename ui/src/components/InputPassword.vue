@@ -395,17 +395,15 @@ export default {
   outline: none;
   color: #777777;
   padding: 0;
-
-  svg {
-    fill: currentColor;
-  }
-
-  &:hover,
-  &:focus {
-    color: #404b69;
-  }
 }
 
+.btn-clean svg {
+  fill: currentColor;
+}
+
+.btn-clean:hover, .btn-clean:focus {
+  color: #404b69;
+}
 .message_error {
   color: #c10015;
   margin: 0;

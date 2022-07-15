@@ -12,7 +12,7 @@
     <q-list outline  bordered>
       <q-item v-for="(row, index) in data" v-bind:key="index" clickable @click="editItem(row)">
         <q-item-section v-for="(field, index) in row" v-bind:key="index">
-          <q-item-label v-html="field._">
+          <q-item-label :innerHTML="field._">
             {{ field._ }}
           </q-item-label>
         </q-item-section>

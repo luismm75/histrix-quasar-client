@@ -175,7 +175,7 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
+<style scoped>
 .Password {
     max-width: 100%;
   }
