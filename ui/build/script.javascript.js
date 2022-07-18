@@ -2,10 +2,10 @@ const path = require('path')
 const fs = require('fs')
 const fse = require('fs-extra')
 const rollup = require('rollup')
-const uglify = require('uglify-es')
-const vuePlugin = require('rollup-plugin-vue2')
-const buble = require('@rollup/plugin-buble')
-const css = require('rollup-plugin-css-only')
+const uglify = require('uglify-js')
+const vuePlugin = require('rollup-plugin-vue')
+// const buble = require('@rollup/plugin-buble')
+const commonjs = require('@rollup/plugin-commonjs')
 const scss = require('rollup-plugin-scss')
 const json = require('@rollup/plugin-json')
 const { nodeResolve } = require('@rollup/plugin-node-resolve')
@@ -14,14 +14,14 @@ const buildConf = require('./config')
 const buildUtils = require('./utils')
 
 const rollupPlugins = [
-  css(),
   scss(),
-  vuePlugin({ css: false, }),
+  vuePlugin({ css: true }),
   nodeResolve({
     extensions: ['.js'],
     preferBuiltins: false
   }),
   json(),
+  commonjs(),
   // buble({
   //   objectAssign: 'Object.assign'
   // })
@@ -35,6 +35,7 @@ const builds = [
       },
       output: {
         file: pathResolve('../dist/index.esm.js'),
+        inlineDynamicImports: true,
         format: 'es'
       }
     },
@@ -50,6 +51,7 @@ const builds = [
       },
       output: {
         file: pathResolve('../dist/index.common.js'),
+        inlineDynamicImports: true,
         format: 'cjs'
       }
     },
@@ -66,6 +68,7 @@ const builds = [
       output: {
         name: 'histrixClient',
         file: pathResolve('../dist/index.umd.js'),
+        inlineDynamicImports: true,
         format: 'umd'
       }
     },
