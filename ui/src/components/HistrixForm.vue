@@ -729,6 +729,7 @@ export default {
           .catch((e) => {
             console.log(e);
             this.submitting = false;
+            this.$events.fire('histrix-error-http', e);
           });
       } else {
         histrixApi
