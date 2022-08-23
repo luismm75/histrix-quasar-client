@@ -67,6 +67,7 @@
       :clearable="clearable"
       inline
       :borderless="isDisabled"
+      :autocomplete="autoComplet"
     >
       <span
         v-if="histrixType === 'check'"
@@ -676,6 +677,9 @@ export default {
     this.getOptions();
   },
   computed: {
+    autoComplet() {
+      return this.schema.autocomplete;
+    },
     hint() {
       return this.fieldSchema.placeholder != this.fieldSchema.title
         ? this.fieldSchema.placeholder
