@@ -108,8 +108,16 @@ export default {
   },
   methods: {
     nodeUri(node) {
-      const path = `/auth/${node.uri}`.replace('//', '/');
-      return { path, query: { _title: node.label } };
+      // Si no tiene &vue= se devuelve el estandar
+      if (!node.uri.includes('&vue=')) {
+        const path = `/auth/${node.uri}`.replace('//', '/');
+        return { path, query: { _title: node.label } };
+      }
+      // recortar desde &vue= hasta el siguiente & o el final de la cadena (si no hay mas &)
+      const vue = node.uri.match(/&vue=(.*?)(&|$)/)[1];
+      // transformar %2F en /
+      const path = `/${vue}`.replace(/%2F/g, '/').replace('//', '/');
+      return { path };
     },
     getData() {
       histrixApi
