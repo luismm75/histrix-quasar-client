@@ -382,18 +382,18 @@ export default {
       return {id: null, keys: []};
     }
   },
-  async setFavorit(menuId, idOption) {
+  async setFavorit(menuId, uri, name, idOption) {
     if (!idOption) {
       return Vue.prototype.$axios({
         method: 'POST',
         url: `${this.apiUrl()}/app/favorito`,
         data: {
-          option_value: JSON.stringify([menuId]),
+          option_value: JSON.stringify([{menuId, uri, name}]),
         },
       });
     }
     const options = await this.getFavoritesOption();
-    options.push(menuId);
+    options.push({menuId, uri, name});
     console.log(options);
     return Vue.prototype.$axios({
       method: 'PUT',
@@ -410,7 +410,7 @@ export default {
   },
   async removeFavorit(idOption, menuId) {
     const options = await this.getFavoritesOption();
-    const index = options.indexOf(menuId);
+    const index = options.findIndex((item) => item.menuId == menuId);
     if (index > -1) {
       options.splice(index, 1);
     }

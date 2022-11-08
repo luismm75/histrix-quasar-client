@@ -70,7 +70,7 @@
             class="capitalize"
             v-html="node.label.toLowerCase()"
           ></q-item-section>
-          <q-item-section side v-if="isFavorite" @click="setFavorit(node.menuId)">
+          <q-item-section side v-if="isFavorite" @click="setFavorit(node.menuId, node.uri, node.label.toLowerCase())">
             <q-btn flat round color="primary" :icon="setIconStart(node.menuId)" />
           </q-item-section>
         </q-item>
@@ -125,21 +125,21 @@ export default {
   },
   methods: {
     setIconStart(idMenu) {
-      if (this.favorit.keys.includes(idMenu)) {
+      if (this.favorit.keys.some((value) => value.menuId === idMenu)) {
         return 'star';
       } else {
         return 'star_border';
       }
     },
-    async setFavorit(menuId) {
-      if (this.favorit.keys.includes(menuId)) {
+    async setFavorit(menuId, uri, name) {
+      if (this.favorit.keys.some((value) => value.menuId === menuId)) {
         histrixApi.removeFavorit(this.favorit.id, menuId);
-        const indexItem = this.favorit.keys.indexOf(menuId);
+        const indexItem = this.favorit.keys.findIndex((item) => item.menuId == menuId);
         this.favorit.keys.splice(indexItem, 1);
         return;
       }
       histrixApi
-      .setFavorit(menuId, this.favorit.id)
+      .setFavorit(menuId, uri, name, this.favorit.id)
       .then((response) => {
           this.$q.notify({
             message: 'Favorito guardado',
@@ -149,7 +149,7 @@ export default {
           if (response.data.id) {
             this.favorit.id = response.data.id;
           }
-          this.favorit.keys.push(menuId);
+          this.favorit.keys.push({menuId, uri, name});
         })
         .catch((error) => {
           this.$q.notify({
