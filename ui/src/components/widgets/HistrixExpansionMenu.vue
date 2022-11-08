@@ -136,6 +136,7 @@ export default {
         histrixApi.removeFavorit(this.favorit.id, menuId);
         const indexItem = this.favorit.keys.findIndex((item) => item.menuId == menuId);
         this.favorit.keys.splice(indexItem, 1);
+        this.$events.fire('update-favorit');
         return;
       }
       histrixApi
@@ -158,6 +159,7 @@ export default {
             icon: 'warning',
           });
         });
+        this.$events.fire('update-favorit');
     },
     nodeUri(node) {
       // Si no tiene &vue= se devuelve el estandar
