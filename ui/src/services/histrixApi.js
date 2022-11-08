@@ -362,6 +362,73 @@ export default {
     });
   },
 
+  // Favorites
+  async getFavoritesOption() {
+    const url = `${this.apiUrl()}/app/favorito_qry`;
+    try {
+      const response = await this.getData(url);
+      return JSON.parse(response.data.data[0].option_value);
+      
+    } catch (error) {
+      return []
+    }
+  },
+  async getFavorites() {
+    const url = `${this.apiUrl()}/app/favorito_qry`;
+    try {
+      const response = await this.getData(url);
+      return {id: response.data.data[0].id_option, keys: JSON.parse(response.data.data[0].option_value)};
+    } catch (error) {
+      return {id: null, keys: []};
+    }
+  },
+  async setFavorit(menuId, idOption) {
+    if (!idOption) {
+      return Vue.prototype.$axios({
+        method: 'POST',
+        url: `${this.apiUrl()}/app/favorito`,
+        data: {
+          option_value: JSON.stringify([menuId]),
+        },
+      });
+    }
+    const options = await this.getFavoritesOption();
+    options.push(menuId);
+    console.log(options);
+    return Vue.prototype.$axios({
+      method: 'PUT',
+      url: `${this.apiUrl()}/app/favorito`,
+      data: {
+        data: {
+          option_value: JSON.stringify(options),
+        },
+        keys:{
+          id_option: idOption,
+        },
+      }
+  });
+  },
+  async removeFavorit(idOption, menuId) {
+    const options = await this.getFavoritesOption();
+    const index = options.indexOf(menuId);
+    if (index > -1) {
+      options.splice(index, 1);
+    }
+    return Vue.prototype.$axios({
+      method: 'PUT',
+      url: `${this.apiUrl()}/app/favorito`,
+      data: {
+        data: {
+          option_value: JSON.stringify(options),
+        },
+        keys:{
+          id_option: idOption,
+        },
+      }
+  });
+  },
+
+
   downloadAppData(path, query, fileFormat, fileName) {
     const url = `${this.apiUrl()}/export/${fileFormat}/${path}`;
     Vue.prototype.$axios

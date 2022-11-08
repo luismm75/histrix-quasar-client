@@ -50,6 +50,8 @@
 
           <histrixExpansionMenu
             :tree="node.children"
+            :favorites="favorit"
+            :is-favorite="isFavorite"
             _class="bg-grey-2"
             :mini="mini"
           />
@@ -68,6 +70,9 @@
             class="capitalize"
             v-html="node.label.toLowerCase()"
           ></q-item-section>
+          <q-item-section side v-if="isFavorite" @click="setFavorit(node.menuId)">
+            <q-btn flat round color="primary" :icon="setIconStart(node.menuId)" />
+          </q-item-section>
         </q-item>
       </div>
     </q-list>
@@ -82,8 +87,16 @@ export default {
   props: {
     level: String,
     filter: Boolean,
+    isFavorite: {
+      type: Boolean,
+      default: false,
+    },
     tree: { type: Array },
     mini: Boolean,
+    favorites: {
+      type: Object,
+      default: () => {},
+    },
   },
   components: {
     HistrixExpansionMenu: () => import('./HistrixExpansionMenu.vue'),
@@ -94,6 +107,7 @@ export default {
       filterString: '',
       data: [],
       expanded: [],
+      favorit: {},
       loading: true,
       locationCurrent: '',
     };
@@ -105,8 +119,46 @@ export default {
         this.$refs.qtree.expandAll();
       }
     },
+    favorites(newval, oldval) {
+      this.favorit = newval;
+    },
   },
   methods: {
+    setIconStart(idMenu) {
+      if (this.favorit.keys.includes(idMenu)) {
+        return 'star';
+      } else {
+        return 'star_border';
+      }
+    },
+    async setFavorit(menuId) {
+      if (this.favorit.keys.includes(menuId)) {
+        histrixApi.removeFavorit(this.favorit.id, menuId);
+        const indexItem = this.favorit.keys.indexOf(menuId);
+        this.favorit.keys.splice(indexItem, 1);
+        return;
+      }
+      histrixApi
+      .setFavorit(menuId, this.favorit.id)
+      .then((response) => {
+          this.$q.notify({
+            message: 'Favorito guardado',
+            color: 'positive',
+            icon: 'check',
+          });
+          if (response.data.id) {
+            this.favorit.id = response.data.id;
+          }
+          this.favorit.keys.push(menuId);
+        })
+        .catch((error) => {
+          this.$q.notify({
+            message: 'El favorito no se pudo guardar',
+            color: 'negative',
+            icon: 'warning',
+          });
+        });
+    },
     nodeUri(node) {
       // Si no tiene &vue= se devuelve el estandar
       if (!node.uri.includes('&vue=')) {
@@ -120,6 +172,11 @@ export default {
       return { path };
     },
     getData() {
+      if (this.isFavorite) {
+        histrixApi.getFavorites().then((response) => {
+          this.favorit = response;
+        });
+      }
       histrixApi
         .getMenu(this.level)
         .then((response) => {
@@ -143,6 +200,7 @@ export default {
   mounted() {
     if (this.tree) {
       this.data = this.tree;
+      this.favorit = this.favorites;
     } else {
       this.getData();
     }
