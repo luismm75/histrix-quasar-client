@@ -47,6 +47,7 @@
 
 <script>
 import histrixApi from '../../services/histrixApi.js'
+import config from '../../services/config.js'
 
 export default {
   name: 'HistrixNews',
@@ -54,7 +55,7 @@ export default {
     return {
       numberOfPosts: 2,
       data: [],
-      HOST: process.env.BASE_URL,
+      HOST: config.baseUrl,
     };
   },
   methods: {

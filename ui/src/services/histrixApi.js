@@ -1,6 +1,7 @@
 
 import Vue from 'vue';
 import { Notify } from 'quasar';
+import config from './config.js'
 
 export default {
   /**
@@ -11,7 +12,7 @@ export default {
     return Vue.prototype.$axios.get(url);
   },
   currentDb() {
-    return localStorage.getItem('database') || process.env.DB;
+    return localStorage.getItem('database') || config.db;
   },
   async info() {
     const host = this.host();
@@ -22,13 +23,13 @@ export default {
     return this.getData(`${host}/api/db/${db}`);
   },
   host () {
-    return localStorage.getItem('host') || process.env.MAIN_URL
+    return localStorage.getItem('host') || config.mainUrl;
   },
   apiUrl() {
     if (this.currentDb()) {
       return `${this.host()}/api/db/${this.currentDb()}`;
     } else {
-      return process.env.API_URL;
+      return config.apiUrl;
     }
   },
 
@@ -179,8 +180,8 @@ export default {
         username,
         password,
         grant_type: 'password',
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
+        client_id: config.clientId,
+        client_secret: config.clientSecret,
         notification_token: token,
       },
       method: 'POST',

@@ -70,6 +70,7 @@
 import { required, email, minLength, sameAs, requiredIf } from 'vuelidate/lib/validators';
 import InputPasswordVue from './InputPassword.vue';
 import api from '../services/histrixApi.js';
+import config from '../services/config.js';
 
 export default {
   name: 'HistrixPasswordChange',
@@ -91,9 +92,8 @@ export default {
       old_password: null,
       new_password: null,
       confirm_password: null,
-      db: process.env.DB
+      db: config.db,
     },
-    processEnv: process.env,
     loading: true,
   }),
   validations: {

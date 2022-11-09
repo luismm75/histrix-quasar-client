@@ -135,7 +135,6 @@ export default {
       eventAfter: null,
       btnLoading: false,
       showRecaptcha: false,
-      processEnv: process.env,
       loading: false,
       redir: '',
       // redirect: (this.$route.params.nextUrl) ? `#${this.$route.params.nextUrl}` : null,
