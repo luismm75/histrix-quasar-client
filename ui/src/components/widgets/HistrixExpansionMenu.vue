@@ -163,12 +163,12 @@ export default {
     },
     nodeUri(node) {
       // Si no tiene &vue= se devuelve el estandar
-      if (!node.uri.includes('&vue=')) {
+      if (!node.uri.includes('vue=')) {
         const path = `/auth/${node.uri}`.replace('//', '/');
         return { path, query: { _title: node.label } };
       }
       // recortar desde &vue= hasta el siguiente & o el final de la cadena (si no hay mas &)
-      const vue = node.uri.match(/&vue=(.*?)(&|$)/)[1];
+      const vue = node.uri.match(/vue=(.*?)(&|$)/)[1];
       // transformar %2F en /
       const path = `/${vue}`.replace(/%2F/g, '/').replace('//', '/');
       return { path };
