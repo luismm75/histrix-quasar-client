@@ -1,7 +1,7 @@
 
 import Vue from 'vue';
 import { Notify } from 'quasar';
-import config from './config.js'
+import config from './config'
 
 export default {
   /**
@@ -457,4 +457,21 @@ export default {
         });
       });
   },
+
+  async apiDBQuery(){
+    const { data } = await Vue.prototype.$axios.get(config.mainUrl)
+    const infoDB = [];
+    for (const db in data){
+      const aux= data[db];
+      if(aux.hidden !== 'true' ){
+        aux.name = aux.name ? aux.name : db;
+        infoDB.push({
+          value: aux.id,
+          label: aux.description,
+          img: aux.logo,
+        })
+      } 
+    }
+    return infoDB;
+  }
 };

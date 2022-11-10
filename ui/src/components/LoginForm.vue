@@ -5,6 +5,13 @@
       <q-form @submit.prevent="submitLogin">
         <div class="row">
           <div class="col-xs-12 q-mb-sm">
+            <div class="img" v-if="isSelectDataBase">
+            <q-img
+          :src="imglogo"
+          class="logo"
+        />
+      </div>
+            <q-select v-if="isSelectDataBase" outlined v-model="db" map-options emit-value :options="infoDB" label="Database" />
             <q-input
               inverted-light
               :label="'Ingrese su correo electrónico'"
@@ -110,15 +117,40 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import vuelidate from 'vuelidate';
 import { required, email } from 'vuelidate/lib/validators';
 
 // import validate from '../mixins/validate.js'
 import histrixApi from '../services/histrixApi.js';
+import config from '../services/config.js'
 
 export default {
-  props: ['nextUrl', 'login', 'settings', 'isRegister'],
+  //props: ['nextUrl', 'login', 'settings', 'isRegister'],
+  props:{
+    'nextUrl': {
+      required: false,
+    },
+
+    'login': {
+      required:false,
+
+    },
+
+    'settings': {
+      required: false,
+    },
+
+    'isRegister':{
+      required: false,
+      default: false,
+      type: Boolean,
+    },
+    'isSelectDataBase':{
+      required: false,
+      default: false,
+      type: Boolean,
+    }
+
+  },
   name: 'LoginForm',
   components: {
     HistrixConnectionSettings: () =>
@@ -135,14 +167,25 @@ export default {
       eventAfter: null,
       btnLoading: false,
       showRecaptcha: false,
+      processEnv: process.env,
       loading: false,
       redir: '',
+      infoDB: [],
       // redirect: (this.$route.params.nextUrl) ? `#${this.$route.params.nextUrl}` : null,
       isPwd: true,
+      db: '',
+      img: '',
     };
   },
   mounted() {
     this.form.email = this.login;
+    if (this.isSelectDataBase) {
+      histrixApi.apiDBQuery().then((response)=>{this.infoDB=response
+      if (config.db){ 
+        this.db = this.infoDB.find(val=> val.value === config.db).value
+      }
+    });
+    }
   },
   validations: {
     form: {
@@ -159,6 +202,18 @@ export default {
         ? { path: `${this.$route.params.nextUrl}` }
         : { path: this.nextUrl, query: { t: new Date().getTime() } };
     },
+    imglogo(){
+      return `${config.fixApi}${this.img}`
+    }
+  },
+  watch:{
+    db(newVal){
+      if (!newVal) return
+      this.$emit('jorge', newVal)
+      config.db = newVal;
+      localStorage.setItem('database', newVal)
+      this.img = this.infoDB.find(val=>val.value === newVal).img
+    }
   },
   methods: {
     submitLogin() {
@@ -212,4 +267,12 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.img{
+  margin-left:auto;
+  margin-right:auto;
+  max-width: 300px;
+  display: block;
+  max-height: 300px;
+}
+</style>
