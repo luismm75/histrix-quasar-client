@@ -688,7 +688,13 @@ export default {
           this.$emit('closepopup');
         })
         .catch((e) => {
+          this.$q.notify({
+              type: 'negative',
+              message: e.response.data,
+              position: 'top',
+            });
           this.submitting = false;
+          this.$events.fire('closepopup');
           this.$emit('process-finish', true);
         });
     },
