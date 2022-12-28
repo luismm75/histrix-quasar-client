@@ -524,20 +524,13 @@ export default {
     },
   },
   computed: {
-    localTableValidations() {
-      const tableValidations = this.rawData.map((row, index) => {
-        // const rowSchema = {...this.schema.fields, ...this.data[index].DT_RowAttr['attributes'] }
+    localValidations() {
+      let localValidations = {};
+      Object.entries(this.schema.fields).map((fieldArray) => {
+        const field = fieldArray[1];
+        localValidations[field.name] = {};
 
-        let localValidations = {};
-        Object.entries(this.schema.fields).map((fieldArray) => {
-          const field = fieldArray[1];
-          const fieldData = {
-            ...field,
-            ...this.data[index].DT_RowAttr['attributes'][field.name],
-          };
-          localValidations[field.name] = {};
-
-          localValidations[field.name].requiredIf = requiredIf((item) => {
+        localValidations[field.name].requiredIf = requiredIf((item) => {
           const id = item._id;
           const row = this.innerData.find((row) => row._id === id);
           if (row && row.DT_RowAttr?.attributes) {
@@ -547,40 +540,6 @@ export default {
           }
           return false;
         });
-
-          // add validations
-          if (fieldData.maxlength) {
-            localValidations[field.name].maxLength = maxLength(
-              fieldData.maxlength
-            );
-          }
-
-          switch (fieldData.histrix_type) {
-            case 'Numeric':
-            case 'CustomNumeric':
-              localValidations[fieldData.name].decimal = decimal;
-              break;
-            case 'Email':
-              localValidations[fieldData.name].email = email;
-              break;
-            default:
-              break;
-          }
-        });
-        return localValidations;
-      });
-      return { rawData: { $each: tableValidations } };
-    },
-
-    localValidations() {
-      let localValidations = {};
-      Object.entries(this.schema.fields).map((fieldArray) => {
-        const field = fieldArray[1];
-        localValidations[field.name] = {};
-
-        if (field.required == 'required') {
-          localValidations[field.name].required = required;
-        }
 
         // add validations
         if (field.maxlength) {
