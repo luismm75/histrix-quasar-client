@@ -1,6 +1,6 @@
 {
   "name": "quasar-app-extension-histrix-client",
-  "version": "0.0.102",
+  "version": "0.0.103",
   "description": "Hitrix client Quasar App extension",
   "author": "Luis M. Melgratti <luis@mundoit.com.ar>",
   "license": "MIT",
@@ -12,7 +12,7 @@
   "bugs": "",
   "homepage": "",
   "dependencies": {
-    "quasar-ui-histrix-client": "^0.0.101"
+    "quasar-ui-histrix-client": "^0.0.103"
   },
   "engines": {
     "node": ">= 8.9.0",
