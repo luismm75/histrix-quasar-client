@@ -471,12 +471,16 @@ export default {
         }
         // this.refreshSchema();
         this.$emit('input', this.localValues);
-        this.$emit('validity', !this.$v.$invalid);
+        this.$emit('validity', !this.$v.$invalid && !this.validationExtra.$invalid);
       },
       deep: true,
     },
   },
-
+  events: {
+    'validations-add'(field) {
+      this.validationExtra = field;
+    },
+  },
   methods: {
     refresh() {
       this.localSchema = this.schema;
@@ -790,6 +794,9 @@ export default {
       },
       // fieldQuerys:{},
       data: [],
+      validationExtra: {
+        $invalid: false,
+      },
       submitting: false,
       currentTab: 'mainTab',
       valueEdit: false,

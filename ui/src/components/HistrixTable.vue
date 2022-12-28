@@ -449,7 +449,7 @@
 
 <script>
 import Vue from 'vue';
-import { required, maxLength, decimal, email } from 'vuelidate/lib/validators';
+import { required, maxLength, decimal, email, requiredIf } from 'vuelidate/lib/validators';
 import qs from 'qs';
 import histrixApi from '../services/histrixApi.js';
 
@@ -516,6 +516,12 @@ export default {
       },
       deep: true,
     },
+    localValidations: {
+      handler() {
+        this.$events.fire('validations-add', this.$v);
+      },
+      immediate: true,
+    },
   },
   computed: {
     localTableValidations() {
@@ -531,9 +537,16 @@ export default {
           };
           localValidations[field.name] = {};
 
-          if (fieldData.required == 'required') {
-            localValidations[field.name].required = required;
+          localValidations[field.name].requiredIf = requiredIf((item) => {
+          const id = item._id;
+          const row = this.innerData.find((row) => row._id === id);
+          if (row && row.DT_RowAttr?.attributes) {
+            const cell = row.DT_RowAttr.attributes[field.name];
+            if (!cell) return false;
+            return cell.required === 'required' || cell.required === 'true';
           }
+          return false;
+        });
 
           // add validations
           if (fieldData.maxlength) {
