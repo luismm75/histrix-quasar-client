@@ -525,7 +525,16 @@ export default {
     },
 
     orderData(data, flat) {
-      if (!flat) return data.sort((a, b) => (a.label > b.label ? 1 : -1));
+      if (!flat) {
+        if (typeof data[0]?.data === 'object') {
+          const keys = Object.keys(data[0].data);
+          const order = keys.filter((key) => key.includes('orden'));
+          if (order) {
+            return data.sort((a, b) => (parseInt(a.data[order]) > parseInt(b.data[order]) ? 1 : -1));
+          }
+        }
+        return data.sort((a, b) => (a.label > b.label ? 1 : -1))
+      };
       data.sort((prev, next) => {
         const dateNextFormat = this.formatDate(next.label.slice(0, 10));
         const tempNext = new Date(
