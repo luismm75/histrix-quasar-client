@@ -20,6 +20,10 @@
       @change="onImageChange">
     </picture-input>
     -->
+    <div v-if="rowSchema.TipoDato === 'radio'">
+        <div class="header-check"><b>{{ rowSchema.label }}</b></div>
+    </div>
+
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
@@ -69,6 +73,7 @@
       :borderless="isDisabled"
       :autocomplete="autoComplet"
     >
+
       <span
         v-if="histrixType === 'check'"
         v-html="hint"
