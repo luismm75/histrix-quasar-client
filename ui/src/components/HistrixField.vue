@@ -20,7 +20,7 @@
       @change="onImageChange">
     </picture-input>
     -->
-    <div v-if="rowSchema.TipoDato === 'radio'">
+    <div v-if="isRadio">
         <div class="header-check"><b>{{ rowSchema.label }}</b></div>
     </div>
 
