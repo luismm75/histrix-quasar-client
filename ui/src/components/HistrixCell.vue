@@ -6,7 +6,7 @@
        <q-card-section class="row items-center q-pb-none">
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>        
+        </q-card-section>
         <q-card-section>
             <q-img v-if="hasThumb" :src="thumb" spinner-color="white" >
             </q-img>
@@ -23,9 +23,9 @@
       :style="col.value.button_style "
       :icon="icon"
       @click="$emit('open-popup', {link: col.value && col.value.link ? col.value.link : null, title: col.value.text ,parameters: col.value['linkParameters']})" >
-      {{text}} 
+      {{text}}
     </q-btn>
-    
+
     <q-icon
       v-else-if="isCheck"
       :name="checkIcon"
@@ -43,7 +43,7 @@
     ></div>
 
     <q-btn icon="cloud_upload" v-if="isAwsUploader"
-    @click="$emit('open-popup', {url: awsData.url, title: awsData.title || ''})" 
+    @click="$emit('open-popup', {url: awsData.url, title: awsData.title || ''})"
     >
       {{awsData.title || ''}}
     </q-btn>
@@ -51,7 +51,7 @@
        // TODO IMPLEMENT PROGRESS METER
     -->
   </div>
-  
+
 </template>
 
 <script>
@@ -111,10 +111,13 @@ export default {
       return this.col.value;
     },
     displayValue() {
-      let value = (this.col.value && this.col.value.value != undefined) ? this.col.value.value : 
+      let value = (this.col.value && this.col.value.value != undefined) ? this.col.value.value :
         (this.col.value && this.col.value._ ? this.col.value._ : null);
       value = (value !== undefined) ? value : this.col.value;
       if (this.hasOptions) {
+        if (this.checkIsArray(value)) {
+          return JSON.parse(value).map((v) => Object.entries(this.hasOptions[v])[0][1]).join(', ');
+        }
         const option = this.hasOptions[value];
         if (typeof option === 'object') {
           return Object.entries(this.hasOptions[value])[0][1];
@@ -151,7 +154,7 @@ export default {
                          title: element.innerText
             }
             aws.url =  `${histrixApi.host()}/uploader/?table=${aws.table}&recid=${aws.recid}&db=${histrixApi.currentDb()}`
-          }          
+          }
           return aws
     },
     formatedValue() {
@@ -174,6 +177,14 @@ export default {
     },
   },
   methods: {
+    checkIsArray(value) {
+      try {
+        const temp = JSON.parse(value);
+        return Array.isArray(temp);
+      } catch (error) {
+        return false;
+      }
+    },
     dirname(path) {
       return path.match(/.*\//);
     },
