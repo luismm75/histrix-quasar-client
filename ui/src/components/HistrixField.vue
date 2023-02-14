@@ -42,6 +42,7 @@
       :options="options"
       emit-value
       map-options
+      debounce="500"
       :rules="rules"
       :label="label"
       :inner="true"
@@ -249,6 +250,7 @@ export default {
     row: null,
     submitting: null,
     path: null,
+
   },
   watch: {
     localValue: {
@@ -260,6 +262,7 @@ export default {
           this.onFileChange(newVal);
         }
       },
+      inmediate: true,
       deep: true,
     },
 
@@ -311,12 +314,30 @@ export default {
 
       return true;
     },
-    filterFn(val, update, about) {
+
+    /**
+     * Filtra las opciones de la peticion, en caso que sea autocomplete, filtrara el input a partir del tercer caracter
+     * @returns Prmosise<void>|String
+     */
+    async filterFn(val, update, about) {
+      if(this.autoComplet === 'true' ){
+        if (val.length < 3) {
+          this.options = [];
+          update();
+          return;
+        }
+        await this.searchOptions(val);
+        update();
+        return;
+      }
+
       update(() => {
         if (!val) {
           this.options = this.optionFixed;
           return;
         }
+        console.log('juan Ignacio', Date.now());
+
         const accent_map = {
           á: 'a',
           é: 'e',
@@ -614,19 +635,43 @@ export default {
         }
       }
     },
-    */
+    /**
+     * Realiza la peticion de busqueda cuando autocomplete es 'true'
+     * @param {*} valueSearch
+     * @return Promise<Array>
+     */
+
+    async searchOptions(valueSearch) {
+      try {
+        const response = await histrixApi
+        .getAppData(this.innerContainerUrl, {'_f[]': 'label','_o[]': 'like', '_v[]': valueSearch})
+        // this.options = this.mapOptions(response.data.data);
+        this.options = this.mapRemoteOptions(response.data.data);
+        const option = this.options.find((obj) => obj.value == val);
+        this.$emit('selectOption', {
+          value: val,
+          selected_option: option,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    /**
+     * Sirve para traer las opciones del campo
+     * @returns void
+     */
     getOptions() {
       // this.$emit("refreshFieldSchema", {value: localValue.value, selected_option: option})
       // this.getFieldSchema(query)
       const val = this.localValue
         ? this.localValue.value || this.localValue
         : null;
-
       if (this.hasOptions) {
         if (
           this.query != undefined &&
           Object.entries(this.query).length !== 0
         ) {
+          if ( this.autoComplet === 'true') return;
           histrixApi
             .getAppData(this.innerContainerUrl, this.query)
             .then((response) => {
@@ -691,8 +736,13 @@ export default {
     this.getOptions();
   },
   computed: {
+    /**
+     * Se utiliza para indicar si el campo es autocompletable o no para la busqueda.
+     * @options 'on'|'off'|'true'|'false'
+     * @return String
+     */
     autoComplet() {
-      return this.schema.autocomplete;
+      return this.fieldSchema.autocomplete;
     },
     hint() {
       return this.fieldSchema.placeholder != this.fieldSchema.title
@@ -725,9 +775,16 @@ export default {
       }
       return mask;
     },
+    /**
+     * 
+     * @returns String
+     */
     innerContainerUrl() {
       const { innerContainer } = this.schema;
-      const url = `${innerContainer.dir}/${innerContainer.xml}`;
+      let url = `${innerContainer.dir}/${innerContainer.xml}`;
+      if (this.fieldSchema.helperXml) {
+        url = this.fieldSchema.helperXml;
+      }
       return url;
     },
     isDisabled() {
@@ -932,6 +989,7 @@ export default {
       }
       return component;
     },
+
     isRadio() {
       return this.histrixType == 'radio';
     },
