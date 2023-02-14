@@ -430,42 +430,42 @@ export default {
     mapRemoteOptions(options) {
       const data = [];
       let flat = false;
-      if (options) {
-        options.map((optionData) => {
-          let counter = 0;
-          let key = null;
-          let label = '';
-          Object.entries(optionData).map((options) => {
-            if (counter === 0) {
-              key = options[1];
-            }
-            if (counter === 1) {
-              label = options[1];
-            }
-            counter++;
-          });
-          if (!flat && label.includes(' - ')) {
-            const temp = label.slice(0, label.indexOf(' - '));
-            if (
-              temp.match(
-                /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/
-              )
-            )
-              flat = true;
-          }
-          data.push({
-            value: key,
-            label,
-            description: label,
-            data: optionData,
-          });
-        });
-        if (this.fieldSchema.sortable !== false) {
-          this.orderData(data, flat);
-        }
-        this.optionFixed = data;
+      if (!options)
         return data;
+      options.forEach((optionData) => {
+        let counter = 0;
+        let key = null;
+        let label = '';
+        Object.entries(optionData).forEach((options) => {
+          if (counter === 0) {
+            key = optionData['value'] ?? options[1];
+          }
+          if (counter === 1) {
+            label = optionData['label'] ?? options[1];
+          }
+          counter++;
+        });
+        if (!flat && label.includes(' - ')) {
+          const temp = label.slice(0, label.indexOf(' - '));
+          if (
+            temp.match(
+              /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/
+            )
+          )
+            flat = true;
+        }
+        data.push({
+          value: key,
+          label,
+          description: label,
+          data: optionData,
+        });
+      });
+      if (this.fieldSchema.sortable !== false) {
+        this.orderData(data, flat);
       }
+      this.optionFixed = data;
+      return data;
     },
     mapOptions(options) {
       const data = [];
@@ -629,13 +629,14 @@ export default {
 
     async searchOptions(valueSearch) {
       try {
+        let field = await histrixApi.getAppSchema(this.innerContainerUrl)
+        field = Object.keys(field.data.schema.fields)[1]
         const response = await histrixApi
-        .getAppData(this.innerContainerUrl, {'_f[]': 'label','_o[]': 'like', '_v[]': valueSearch})
+        .getAppData(this.innerContainerUrl, {'_f[]': `${field}`,'_o[]': 'like', '_v[]': valueSearch})
         // this.options = this.mapOptions(response.data.data);
         this.options = this.mapRemoteOptions(response.data.data);
         const option = this.options.find((obj) => obj.value == val);
         this.$emit('selectOption', {
-          value: val,
           selected_option: option,
         });
       } catch (error) {
