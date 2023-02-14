@@ -454,7 +454,7 @@
 
 <script>
 import Vue from 'vue';
-import { required, maxLength, decimal, email } from 'vuelidate/lib/validators';
+import { required, maxLength, decimal, email, requiredIf } from 'vuelidate/lib/validators';
 import qs from 'qs';
 import histrixApi from '../services/histrixApi.js';
 
@@ -521,58 +521,30 @@ export default {
       },
       deep: true,
     },
+    localValidations: {
+      handler() {
+        this.$events.fire('validations-add', this.$v);
+      },
+      immediate: true,
+    },
   },
   computed: {
-    localTableValidations() {
-      const tableValidations = this.rawData.map((row, index) => {
-        // const rowSchema = {...this.schema.fields, ...this.data[index].DT_RowAttr['attributes'] }
-
-        let localValidations = {};
-        Object.entries(this.schema.fields).map((fieldArray) => {
-          const field = fieldArray[1];
-          const fieldData = {
-            ...field,
-            ...this.data[index].DT_RowAttr['attributes'][field.name],
-          };
-          localValidations[field.name] = {};
-
-          if (fieldData.required == 'required') {
-            localValidations[field.name].required = required;
-          }
-
-          // add validations
-          if (fieldData.maxlength) {
-            localValidations[field.name].maxLength = maxLength(
-              fieldData.maxlength
-            );
-          }
-
-          switch (fieldData.histrix_type) {
-            case 'Numeric':
-            case 'CustomNumeric':
-              localValidations[fieldData.name].decimal = decimal;
-              break;
-            case 'Email':
-              localValidations[fieldData.name].email = email;
-              break;
-            default:
-              break;
-          }
-        });
-        return localValidations;
-      });
-      return { rawData: { $each: tableValidations } };
-    },
-
     localValidations() {
       let localValidations = {};
       Object.entries(this.schema.fields).map((fieldArray) => {
         const field = fieldArray[1];
         localValidations[field.name] = {};
 
-        if (field.required == 'required') {
-          localValidations[field.name].required = required;
-        }
+        localValidations[field.name].requiredIf = requiredIf((item) => {
+          const id = item._id;
+          const row = this.innerData.find((row) => row._id === id);
+          if (row && row.DT_RowAttr?.attributes) {
+            const cell = row.DT_RowAttr.attributes[field.name];
+            if (!cell) return false;
+            return cell.required === 'required' || cell.required === 'true';
+          }
+          return false;
+        });
 
         // add validations
         if (field.maxlength) {

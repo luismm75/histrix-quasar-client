@@ -1,13 +1,13 @@
 <template>
   <div>
     <!--
-    <picture-input v-if="histrixType === 'q-file'" 
+    <picture-input v-if="histrixType === 'q-file'"
       ref="pictureInput"
-      width="300" 
+      width="300"
       height="300"
-      margin="16" 
-      accept="image/jpeg,image/png" 
-      size="10" 
+      margin="16"
+      accept="image/jpeg,image/png"
+      size="10"
       buttonClass="button-shadow  rounded-borders	 bg-primary text-white"
        :removable="true"
       :custom-strings="{
@@ -20,10 +20,6 @@
       @change="onImageChange">
     </picture-input>
     -->
-    <div v-if="isRadio">
-        <div class="header-check"><b>{{ rowSchema.label }}</b></div>
-    </div>
-
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
@@ -74,7 +70,6 @@
       :borderless="isDisabled"
       :autocomplete="autoComplet"
     >
-
       <span
         v-if="histrixType === 'check'"
         v-html="hint"
@@ -87,9 +82,9 @@
       <template v-slot:before v-if="histrixType === 'q-file'">
         <!--<q-btn   icon="folder"  @click="fileManager = true" />
 
-        <q-dialog v-model="fileManager">            
+        <q-dialog v-model="fileManager">
           <HistrixFileManager :path="path" />
-        </q-dialog>                  
+        </q-dialog>
         -->
         <q-avatar size="100px">
           <q-img
@@ -546,16 +541,7 @@ export default {
     },
 
     orderData(data, flat) {
-      if (!flat) {
-        if (typeof data[0]?.data === 'object') {
-          const keys = Object.keys(data[0].data);
-          const order = keys.filter((key) => key.includes('orden'));
-          if (order) {
-            return data.sort((a, b) => (parseInt(a.data[order]) > parseInt(b.data[order]) ? 1 : -1));
-          }
-        }
-        return data.sort((a, b) => (a.label > b.label ? 1 : -1))
-      };
+      if (!flat) return data.sort((a, b) => (a.label > b.label ? 1 : -1));
       data.sort((prev, next) => {
         const dateNextFormat = this.formatDate(next.label.slice(0, 10));
         const tempNext = new Date(
@@ -847,7 +833,7 @@ export default {
     },
     isMultiple() {
       return this.fieldSchema
-        ? this.fieldSchema.multiple == 1
+        ? this.fieldSchema.multiple === 1 || this.fieldSchema.multiple === 'multiple'
         : this.schema.multiple == 'multiple';
     },
     isTextarea() {
@@ -1141,11 +1127,11 @@ export default {
               console.log('PUTO VALOR DE ENTRADA');
               console.log(localValue)
               this.$emit('input', localValue);
-            
+
               const option = this.options.find(obj => obj.value == localValue);
-       
+
         //      this.$emit('selectOption', { value: localValue, selected_option: option });
-              
+
             }
             */
         } else {
