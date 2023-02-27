@@ -25,6 +25,7 @@ import notificationMenu from './components/widgets/notificationMenu.vue';
 import profileMenu from './components/widgets/profileMenu.vue';
 import profileMenuItems from './components/widgets/profileMenuItems.vue';
 import FavoritItems from './components/widgets/FavoritItems.vue';
+import FormLoginNotStyles from './components/FormLoginNotStyles.vue';
 
 
 
@@ -54,7 +55,8 @@ export {
   notificationMenu,
   profileMenu,
   profileMenuItems,
-  FavoritItems
+  FavoritItems,
+  FormLoginNotStyles
 }
 
 export default {
@@ -82,7 +84,8 @@ export default {
   notificationMenu,
   profileMenu,
   FavoritItems,
-  profileMenuItems,  
+  profileMenuItems,
+  FormLoginNotStyles,
   install (Vue) {
     Vue.component(ExportForm.name, ExportForm);
     Vue.component(HistrixApp.name, HistrixApp);
@@ -108,5 +111,6 @@ export default {
     Vue.component(profileMenu.name, profileMenu);
     Vue.component(profileMenuItems.name, profileMenuItems);
     Vue.component(FavoritItems.name, FavoritItems);
+    Vue.component(FormLoginNotStyles.name, FormLoginNotStyles);
   }
 }

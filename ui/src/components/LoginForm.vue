@@ -1,266 +1,138 @@
 <template>
   <q-card>
-    <q-separator />
     <q-card-section>
-      <q-form @submit.prevent="submitLogin">
-        <div class="row">
-          <div class="col-xs-12 q-mb-sm">
-            <div class="img" v-if="isSelectDataBase">
-            <q-img
-          :src="imglogo"
-          class="logo"
-        />
-      </div>
-            <q-select v-if="isSelectDataBase" outlined v-model="db" map-options emit-value :options="infoDB" label="Database" />
-            <q-input
-              inverted-light
-              :label="'Ingrese su correo electrónico'"
-              id="email"
-              autofocus
-              required
-              type="text"
-              v-model="form.email"
-              name="email"
-              class="full-width"
-              :before="[
-                {
-                  icon: 'person',
-                },
-              ]"
-            >
-              <template v-slot:prepend>
-                <q-icon name="email" />
-              </template>
-            </q-input>
-          </div>
-          <div class="col-xs-12 q-mb-sm">
-            <q-input
-              :label="'Ingrese contraseña'"
-              id="password"
-              inverted-light
-              :type="isPwd ? 'password' : 'text'"
-              v-model="form.password"
-              name="password"
-              class="full-width"
-              :before="[{ icon: 'lock' }]"
-            >
-              <template v-slot:prepend>
-                <q-icon name="vpn_key" />
-              </template>
-              <template v-slot:append>
-                <q-icon
-                  :name="isPwd ? 'visibility_off' : 'visibility'"
-                  class="cursor-pointer"
-                  @click="isPwd = !isPwd"
-                />
-              </template>
-            </q-input>
-          </div>
-          <br />
-          <div class="col-xs-12 q-mb-sm text-center">
-            <q-btn
-              icon="chevron_right"
-              class="q-pl-md q-pr-md q-pt-sm q-pb-sm full-width"
-              :disable="btnLoading"
-              type="submit"
-              :loading="btnLoading"
-              color="positive"
-              size="md"
-              label="Ingresar"
-            >
-            </q-btn>
-            <div class="row text-center">
-              <q-btn
-                v-if="!isRegister"
-                size="sm"
-                flat
-                class="col q-ma-md bg-accent"
-                color="white"
-                :to="{ name: 'register', query: { t: new Date().getTime() } }"
-              >
-                <span class="q-ml-xs">Registrarme</span>
-              </q-btn>
-
-              <q-btn
-                size="sm"
-                flat
-                class="q-ma-md col"
-                color="primary"
-                v-close-popup
-                :to="{ name: 'mail-reset-password' }"
-              >
-                <span class="q-ml-xs">Recuperar contraseña</span>
-              </q-btn>
-
-              <q-btn
-                v-if="settings"
-                icon="settings"
-                @click="config = true"
-                class="col-1"
-                color="primary"
-                flat
-              />
-            </div>
-          </div>
-        </div>
-
-        <q-dialog v-model="config">
-          <q-card style="width: 700px; max-width: 80vw">
-            <HistrixConnectionSettings
-              v-on:change-database="$emit('change-database')"
-            />
-          </q-card>
-        </q-dialog>
-      </q-form>
+      <FormLoginNotStyles
+        :nextUrl="nextUrl"
+        :login="login"
+        :isRegister="isRegister"
+        :isSelectDataBase="isSelectDataBase"
+        :formLoginAlter="formLoginAlter"
+        :redirectParent="redir"
+        :eventAfter="eventAfter"
+      />
     </q-card-section>
   </q-card>
 </template>
 
 <script>
-import { required, email } from 'vuelidate/lib/validators';
-
-// import validate from '../mixins/validate.js'
-import histrixApi from '../services/histrixApi.js';
-import config from '../services/config.js'
 
 export default {
-  //props: ['nextUrl', 'login', 'settings', 'isRegister'],
   props:{
+    /**
+     * @description Url para redirecionar despues de login
+     * @type {String} - Url
+     * @default null
+     * @example
+     * nextUrl="/"
+     */
     'nextUrl': {
       required: false,
+      default: null,
+      type: String,
     },
 
+    /**
+     * @description Pasarle ya el email o username para que se loguee
+     * @type {String} - Email o username
+     * @default null
+     * @example
+     * login="histrix"
+     */
     'login': {
       required:false,
-
+      default: null,
+      type: String,
     },
 
-    'settings': {
-      required: false,
-    },
-
+    /**
+     * @description Si es true, muestra el boton de registro
+     * @type {Boolean}
+     * @default false
+     * @example
+     * isRegister="true"
+     */
     'isRegister':{
       required: false,
       default: false,
       type: Boolean,
     },
+
+    /**
+     * @description Si es true, muestra el select de base de datos
+     * @type {Boolean}
+     * @default false
+     * @example
+     * isSelectDataBase="true"
+     */
     'isSelectDataBase':{
       required: false,
       default: false,
       type: Boolean,
-    }
+    },
 
+    /**
+     * @description Mandarle con que datos se va a loguear
+     * @type {Object}
+     * @default {email: null, password: null}
+     * @example
+     * formLoginAlter="{email: 'histrix', password: 'histrix'}"
+     */
+    'formLoginAlter': {
+      required: false,
+      default: () => ({
+        email: null,
+        password: null,
+      }),
+      type: Object,
+    }
   },
   name: 'LoginForm',
   components: {
-    HistrixConnectionSettings: () =>
-      import('./widgets/HistrixConnectionSettings.vue'),
+    FormLoginNotStyles: () => import('./FormLoginNotStyles.vue'),
   },
   mixins: [],
   data() {
     return {
-      form: {
-        email: null,
-        password: null,
-      },
-      config: false,
+      /**
+       * @description Url para redirecionar despues de login pasado por evento
+       * @type {String} - Url
+       * @default null
+       */
+      redir: null,
+      /**
+       * @description Evento para ejecutar despues de login
+       * @type {String} - Evento
+       * @default null
+       */
       eventAfter: null,
-      btnLoading: false,
-      showRecaptcha: false,
-      processEnv: process.env,
-      loading: false,
-      redir: '',
-      infoDB: [],
-      // redirect: (this.$route.params.nextUrl) ? `#${this.$route.params.nextUrl}` : null,
-      isPwd: true,
-      db: '',
-      img: '',
     };
   },
-  mounted() {
-    this.form.email = this.login;
-    if (this.isSelectDataBase) {
-      histrixApi.apiDBQuery().then((response)=>{this.infoDB=response
-      if (config.db){ 
-        this.db = this.infoDB.find(val=> val.value === config.db).value
-      }
-    });
-    }
-  },
-  validations: {
-    form: {
-      email: { required },
-      password: { required },
-    },
-  },
-  computed: {
-    redirect() {
-      if (this.redir !== '') {
-        return this.redir;
-      }
-      return this.$route.params.nextUrl
-        ? { path: `${this.$route.params.nextUrl}` }
-        : { path: this.nextUrl, query: { t: new Date().getTime() } };
-    },
-    imglogo(){
-      return `${config.fixApi}${this.img}`
-    }
-  },
-  watch:{
-    db(newVal){
-      if (!newVal) return
-      this.$emit('jorge', newVal)
-      config.db = newVal;
-      localStorage.setItem('database', newVal)
-      this.img = this.infoDB.find(val=>val.value === newVal).img
-    }
-  },
-  methods: {
-    submitLogin() {
-      /*
-      if (!this.validateForm()) {
-        return;
-      }
-      */
-      if (this.showRecaptcha && !this.recaptcha()) {
-        return;
-      }
-
-      this.btnLoading = true;
-      histrixApi
-        .login(this.form.email, this.form.password, this.redirect)
-        .then((success) => {
-          this.$events.fire('loaded-user');
-          if (this.eventAfter) {
-            this.$events.fire(this.eventAfter);
-            this.eventAfter = null;
-          }
-          this.btnLoading = false;
-        })
-        .catch((error) => {
-          this.btnLoading = false;
-          this.$q.notify({
-            message: 'email o contraseña incorrectos ',
-            type: 'negative',
-            timeout: 40000,
-            position: 'top',
-          });
-        });
-      this.form.password = null;
-    },
-  },
+  mounted() {},
+  computed: {},
+  watch:{},
+  methods: {},
   events: {
-    /*
-    'get-user': function () {
-      this.getUser(true);
-    },
-    */
+    /**
+     * @description Evento para redirecionar despues de login
+     * @param {String | null} redirect - Url para redirecionar despues de login default null
+     * @param {String | null} eventAfter - Evento para ejecutar despues de login default null
+     * @returns {void}
+     * @example
+     * this.$events.fire('login-modal', '/home', 'event-after');
+     */
     'login-modal'(redirect = null, eventAfter = null) {
       this.redir = redirect;
       this.eventAfter = eventAfter;
     },
+    /**
+     * @description Evento para ejecutar despues de login
+     * @param {String | null} eventAfter - Evento para ejecutar despues de login default null
+     * @returns {void}
+     * @example
+     * this.$events.fire('event-after', 'event-after');
+     */
     'event-after'(eventAfter) {
-      this.redir = false;
+      this.redir = null;
       this.eventAfter = eventAfter;
     },
   },
@@ -268,11 +140,4 @@ export default {
 </script>
 
 <style scoped>
-.img{
-  margin-left:auto;
-  margin-right:auto;
-  max-width: 300px;
-  display: block;
-  max-height: 300px;
-}
 </style>

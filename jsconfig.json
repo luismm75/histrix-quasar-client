@@ -6,6 +6,7 @@
     // Relative to "baseUrl"
     "paths": {
       "ui/*": ["src/*"]
-    }
+    },
+    "allowJs": true,
   }
 }
