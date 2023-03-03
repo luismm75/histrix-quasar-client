@@ -42,6 +42,7 @@
       emit-value
       map-options
       debounce="500"
+      hide-bottom-space
       :rules="rules"
       :label="label"
       :inner="true"
@@ -775,7 +776,7 @@ export default {
       return mask;
     },
     /**
-     * 
+     *
      * @returns String
      */
     innerContainerUrl() {
@@ -1052,9 +1053,6 @@ export default {
     },
     style() {
       let style = this.fieldSchema.style || '';
-      if (this.fieldSchema.label) {
-        style += `min-width:${this.fieldSchema.label.length * 2}em`;
-      }
       return style;
     },
     dateMask() {

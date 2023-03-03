@@ -269,7 +269,6 @@
           :class="rowClass(props) + 'q-pa-xs col-12 grid-style-transition'"
           :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
-          <q-card :class="props.selected ? 'bg-grey-2' : ''">
             <q-item
               v-for="cell in props.cols.filter((row) => row.name)"
               :key="cell.name"
@@ -316,13 +315,10 @@
               </q-item-section>
             </q-item>
 
-            <q-separator />
             <q-card-section
               class="row q-pa-xs"
               v-if="(canUpdate && !isGrid) || (schema.can_delete && canDelete)"
             >
-              <!-- <q-checkbox dense v-model="props.selected" :label="props.row.name" /> -->
-              <q-item class="col-9"> </q-item>
               <q-item style="align-items: center;">
                 <q-btn
                   flat
@@ -369,7 +365,6 @@
                 />
               </div>
             </q-card-section>
-          </q-card>
         </div>
       </template>
 
@@ -805,7 +800,7 @@ export default {
           }
         }, this);
       }, this);
-      
+
       // add External Query data
       Object.keys(this.query).map((key) => {
         if (this.query[key]) {
