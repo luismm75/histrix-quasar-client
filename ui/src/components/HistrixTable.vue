@@ -278,7 +278,7 @@
               <q-item-section
                 side
                 class="col-4 text-grey-15"
-                v-if="!getFieldAttribute(props.key, cell.name, 'editable')"
+                v-if="!getFieldAttribute(props.key, cell.name, 'editable')  && cell.label"
               >
                 {{ cell.label }}
               </q-item-section>
