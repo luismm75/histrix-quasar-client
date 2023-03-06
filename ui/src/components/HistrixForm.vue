@@ -489,7 +489,6 @@ export default {
       Object.keys(this.query).map((key) => {
         this.localValues[key] = this.query[key];
       });
-
       if (
         this.query &&
         this.localSchema.preFetch != false &&
@@ -673,8 +672,6 @@ export default {
         .processAppForm(this.xmlUrl(), this.postData)
         .then((response) => {
           this.submitting = false;
-          this.localValues = { ...this.editedItem, ...{} };
-
           this.$q.notify({
             message: 'PROCESO FINALIZADO',
             type: 'success',
@@ -684,10 +681,6 @@ export default {
             closeBtn: 'cerrar',
             position: 'top',
           });
-
-          // this.$router.back();
-          this.reset();
-          this.refresh();
           this.$emit('process-finish', true);
           this.$emit('closepopup');
         })

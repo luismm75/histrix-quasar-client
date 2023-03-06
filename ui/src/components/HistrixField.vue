@@ -47,6 +47,7 @@
       :label="label"
       :inner="true"
       :mask="fieldMask"
+      :isFormulation="true"
       :filled="!isDisabled"
       :toolbar="toolbar"
       :disabled="isDisabled"
@@ -232,7 +233,6 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import { date } from 'quasar';
 
 import histrixApi from '../services/histrixApi.js';
@@ -1167,5 +1167,15 @@ export default {
       },
     },
   },
+  events: {
+    'reset-field'(names) {
+      if (typeof names === 'string') {
+        names = [names];
+      }
+      if (names.includes(this.fieldSchema.name)) {
+        this.localValue = '';
+      }
+      },
+    },
 };
 </script>

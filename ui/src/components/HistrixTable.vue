@@ -269,6 +269,8 @@
           :class="rowClass(props) + 'q-pa-xs col-12 grid-style-transition'"
           :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
+        <!-- @TODO: pasar todo esta card a un componente aparte -->
+          <contenierItem v-bind:is="contentItem" :class="props.selected ? 'bg-grey-2' : ''">
             <q-item
               v-for="cell in props.cols.filter((row) => row.name)"
               :key="cell.name"
@@ -315,6 +317,7 @@
               </q-item-section>
             </q-item>
 
+            <q-separator v-if="!isFormulation" />
             <q-card-section
               class="row q-pa-xs"
               v-if="(canUpdate && !isGrid) || (schema.can_delete && canDelete)"
@@ -365,6 +368,7 @@
                 />
               </div>
             </q-card-section>
+          </contenierItem>
         </div>
       </template>
 
@@ -466,6 +470,7 @@ export default {
     computedFields: Object,
     computedTotals: Object,
     value: null,
+    isFormulation: { type: Boolean, default: false },
   },
   components: {
     HistrixFilters: () => import('./HistrixFilters.vue'),
@@ -524,6 +529,9 @@ export default {
     },
   },
   computed: {
+    contentItem() {
+      return this.isFormulation ? 'div' : 'q-card';
+    },
     localValidations() {
       let localValidations = {};
       Object.entries(this.schema.fields).map((fieldArray) => {
