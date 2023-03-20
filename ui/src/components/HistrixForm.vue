@@ -9,6 +9,7 @@
     </q-toolbar>
     -->
     <q-form @submit="onSubmit" enctype="multipart/form-data">
+
       <div class="row">
         <div class="col">
           <q-tabs
@@ -320,10 +321,8 @@ export default {
      */
     files() {
       const data = [];
-      Object.keys(this.localValues).forEach((item) => {
-        if (!this.localValues[item]) return;
-        if (Array.isArray(this.localValues[item])) return;
-        if (typeof this.localValues[item] === 'object') {
+      Object.keys(this.localValues).map((item) => {
+        if (this.localSchema.fields[item] && this.localSchema.fields[item]['inputType'] === 'file') {
           data.push({
             name: item,
             data: this.localValues[item],
@@ -338,7 +337,7 @@ export default {
 
       const data = this.localValues;
       Object.keys(this.localValues).map((item) => {
-        if (
+        if (this.localValues[item] &&
           typeof this.localValues[item] === 'object' &&
           this.localValues[item]['name']
         ) {
@@ -673,7 +672,6 @@ export default {
       if (this.files) {
         histrixApi.upload(this.files);
       }
-      this.localValues = { ...this.editedItem, ...{} };
 
       histrixApi
         .processAppForm(this.xmlUrl(), this.postData)
