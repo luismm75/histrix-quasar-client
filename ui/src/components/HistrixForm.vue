@@ -314,9 +314,15 @@ export default {
         (field) => field['data-role'] != 'datebox'
       );
     },
+    /**
+     * @description: chequea si el formulario tiene campos de tipo date object
+     * @returns {Array || null}
+     */
     files() {
       const data = [];
-      Object.keys(this.localValues).map((item) => {
+      Object.keys(this.localValues).forEach((item) => {
+        if (!this.localValues[item]) return;
+        if (Array.isArray(this.localValues[item])) return;
         if (typeof this.localValues[item] === 'object') {
           data.push({
             name: item,
@@ -325,7 +331,7 @@ export default {
           });
         }
       });
-      return data;
+      return data.length ? data : null;
     },
     postData() {
       // return this.localValues;
