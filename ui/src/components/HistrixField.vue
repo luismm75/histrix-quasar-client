@@ -1065,6 +1065,12 @@ export default {
           return this.value === true || this.value != 0;
         }
         if (this.isDate) {
+          if (this.value === '' || !this.value) {
+            return undefined;
+          }
+          if (this.value.length !== 10) {
+            return this.value;
+          }
           let fecha = new Date(this.value);
           fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
           return date.formatDate(fecha, this.dateMask);
@@ -1149,6 +1155,11 @@ export default {
           if (this.isDate) {
             var fecha = new Date();
             if (this.dateMask === 'DD/MM/YYYY') {
+              if (localValue.length !== 10) {
+                this.$emit('input', localValue);
+                this.$emit('field-change', this.row);
+                return;
+              }
               fecha = new Date(
                 localValue.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')
               );
