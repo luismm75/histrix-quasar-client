@@ -673,6 +673,7 @@ export default {
       if (this.files) {
         histrixApi.upload(this.files);
       }
+      this.localValues = { ...this.editedItem, ...{} };
 
       histrixApi
         .processAppForm(this.xmlUrl(), this.postData)
@@ -687,6 +688,9 @@ export default {
             closeBtn: 'cerrar',
             position: 'top',
           });
+          // this.$router.back();
+          this.reset();
+          this.refresh();
           this.$emit('process-finish', true);
           this.$emit('closepopup');
         })
