@@ -334,7 +334,6 @@ export default {
     },
     postData() {
       // return this.localValues;
-
       const data = this.localValues;
       Object.keys(this.localValues).map((item) => {
         if (this.localValues[item] &&
@@ -672,7 +671,8 @@ export default {
       if (this.files) {
         histrixApi.upload(this.files);
       }
-
+      console.log('process');
+      console.log(this.postData);
       histrixApi
         .processAppForm(this.xmlUrl(), this.postData)
         .then((response) => {
