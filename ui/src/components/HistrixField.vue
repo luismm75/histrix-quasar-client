@@ -47,6 +47,8 @@
       :label="label"
       :inner="true"
       :mask="fieldMask"
+      :reverse-fill-mask="isDecimal"
+      :fill-mask="fillMask"
       :isFormulation="true"
       :filled="!isDisabled"
       :toolbar="toolbar"
@@ -773,6 +775,16 @@ export default {
       if (this.isDateTime) {
         mask = '####-##-## ##:##:##';
       }
+      if (this.isDecimal) {
+        if (this.totalDecimal == 0) {
+          mask = '#';
+        } else {
+          mask = '#.';
+          for (let i = 0; i < this.totalDecimal; i++) {
+            mask += '#';
+          }
+        }
+      }
       return mask;
     },
     /**
@@ -862,6 +874,17 @@ export default {
       return (
         this.fieldSchema.histrix_type == 'Time' || this.histrixType == 'time'
       );
+    },
+    isDecimal() {
+      return (
+        this.fieldSchema.histrix_type == 'decimal' || this.histrixType == 'decimal'
+      );
+    },
+    fillMask() {
+      return this.isDecimal ? '0' : '';
+    },
+    totalDecimal() {
+      return parseInt(this.fieldSchema.decimales);
     },
     isDateTime() {
       return (
