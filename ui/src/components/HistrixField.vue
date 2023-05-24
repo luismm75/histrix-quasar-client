@@ -283,12 +283,17 @@ export default {
     },
     options: {
       handler(newVal, oldVal) {
+        if (this.options.find((o) => o.value == this.localValue)) {
+          return;
+        }
         if (
           this.options.length == 1 &&
           this.fieldSchema.innerContainer.empty == false
         ) {
           this.localValue = this.options[0];
-        }
+          return
+        } 
+        this.localValue = '';
       },
       deep: true,
     },
