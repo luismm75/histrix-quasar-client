@@ -460,12 +460,20 @@ export default {
           )
             flat = true;
         }
+        if (this.helperPath) {
+          data.push({
+          value: key,
+          label,
+        });
+        }
+        else{
         data.push({
           value: key,
           label,
           description: label,
           data: optionData,
         });
+      }
       });
       if (this.fieldSchema.sortable !== false) {
         this.orderData(data, flat);
@@ -497,12 +505,20 @@ export default {
             )
               flat = true;
           }
+          if (this.helperPath) {
           data.push({
-            value: key,
-            label: label,
-            description: label,
-            data: option,
-          });
+          value: key,
+          label,
+        });
+        }
+        else{
+        data.push({
+          value: key,
+          label,
+          description: label,
+          data: optionData,
+        });
+      }
         });
         if (this.fieldSchema.sortable !== false) {
           this.orderData(data, flat);
@@ -533,12 +549,20 @@ export default {
             )
               flat = true;
           }
+          if (this.helperPath) {
           data.push({
-            value: key,
-            label,
-            description: label,
-            data: option[1],
-          });
+          value: key,
+          label,
+        });
+        }
+        else{
+        data.push({
+          value: key,
+          label,
+          description: label,
+          data: optionData,
+        });
+      }
         });
         this.orderData(data, flat);
       }
