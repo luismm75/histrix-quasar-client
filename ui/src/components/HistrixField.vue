@@ -269,14 +269,14 @@ export default {
 
     schema: {
       handler(newVal, oldVal) {
-        this.getOptions();
+        this.getOptions(true);
       },
       deep: true,
     },
     query: {
       handler(newVal, oldVal) {
         if (!this.shallowEqual(newVal, oldVal)) {
-          this.getOptions();
+          this.getOptions(true);
         }
       },
       deep: true,
@@ -691,9 +691,17 @@ export default {
      * Sirve para traer las opciones del campo
      * @returns void
      */
-    getOptions() {
+    getOptions(refresh) {
+
       // this.$emit("refreshFieldSchema", {value: localValue.value, selected_option: option})
       // this.getFieldSchema(query)
+      if (!refresh && this.rowSchema && this.fieldSchema.options) {
+        this.options = this.mapOptionsOld(this.fieldSchema.options);
+        refresh = false;
+      } else {
+        refresh = true;
+      }
+
       const val = this.localValue
         ? this.localValue.value || this.localValue
         : null;
@@ -703,21 +711,23 @@ export default {
           Object.entries(this.query).length !== 0
         ) {
           if ( this.autoComplet === 'true') return;
-          histrixApi
-            .getAppData(this.innerContainerUrl, this.query)
-            .then((response) => {
-              // this.options = this.mapOptions(response.data.data);
-              this.options = this.mapRemoteOptions(response.data.data);
+          if (refresh) {
+            histrixApi
+              .getAppData(this.innerContainerUrl, this.query)
+              .then((response) => {
+                // this.options = this.mapOptions(response.data.data);
+                this.options = this.mapRemoteOptions(response.data.data);
 
-              const option = this.options.find((obj) => obj.value == val);
-              this.$emit('selectOption', {
-                value: val,
-                selected_option: option,
+                const option = this.options.find((obj) => obj.value == val);
+                this.$emit('selectOption', {
+                  value: val,
+                  selected_option: option,
+                });
+              })
+              .catch((e) => {
+                console.log(e);
               });
-            })
-            .catch((e) => {
-              console.log(e);
-            });
+          }
         } else {
           if (this.fieldSchema.full_options) {
             this.options = this.mapOptions(this.fieldSchema.full_options);
@@ -764,7 +774,7 @@ export default {
   mounted() {
     this.setRules();
     this.getHelpSchema();
-    this.getOptions();
+    this.getOptions(false);
   },
   computed: {
     /**
