@@ -88,6 +88,7 @@ export default {
   FormLoginNotStyles,
   install (Vue, options) {
     config.axios = options?.axios;
+    config.vueInstance = options?.vueInstance ? Vue : undefined;
     Vue.component(ExportForm.name, ExportForm);
     Vue.component(HistrixApp.name, HistrixApp);
     Vue.component(HistrixCalendar.name, HistrixCalendar);

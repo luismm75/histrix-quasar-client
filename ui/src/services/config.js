@@ -7,6 +7,8 @@ let valueConfig = {
   clientSecret: process.env.CLIENT_SECRET ? process.env.CLIENT_SECRET : "",
   fixApi: process.env.FIX_API_URL ? process.env.FIX_API_URL : "",
   axios: undefined,
+  version: process.env.VERSION ? process.env.VERSION : "",
+  vueInstance: undefined,
 };
 
 export const config = new Proxy(valueConfig, {

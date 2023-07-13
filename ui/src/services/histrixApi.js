@@ -11,6 +11,9 @@ export default {
     const url = `${host}/api/db/`;
     return this.getAxios().get(url);
   },
+  getVueInstance() {
+    return config.vueInstance ?? Vue;
+  },
   getAxios(){
     return config.axios ?? Vue.prototype.$axios;
   },
@@ -177,7 +180,8 @@ export default {
      */
   async login(username, password, redirect) {
     const token = null;
-    return Vue.auth.login({
+    const vueInstance = this.getVueInstance();
+    return vueInstance.auth.login({
       url: `${this.apiUrl()}/token`,
       data: {
         username,
@@ -236,8 +240,8 @@ export default {
             const userObject = resp.data;              
             // this.$events.fire('got-user');
             localStorage.setItem('user', JSON.stringify(resp.data));
-
-            Vue.auth.user(userObject);
+            const vueInstance = this.getVueInstance();
+            vueInstance.auth.user(userObject);
             // this.$q.localStorage.set('user', JSON.stringify(userObject))
             // Vue.events.fire('loaded-user');
             if (userObject.verified == null) {
