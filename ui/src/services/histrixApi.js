@@ -9,7 +9,10 @@ export default {
    */
   getHostDb(host) {
     const url = `${host}/api/db/`;
-    return Vue.prototype.$axios.get(url);
+    return this.getAxios().get(url);
+  },
+  getAxios(){
+    return config.axios ?? Vue.prototype.$axios;
   },
   currentDb() {
     return localStorage.getItem('database') || config.db;
@@ -37,28 +40,28 @@ export default {
    * User Methods
    */
   changePassword(data) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .post(
         `${this.apiUrl()}/change-password/`,
         data,
       );
   },
   reSendConfirmationMail(data) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .post(
         `${this.apiUrl()}/resend-confirmation/`,
         data,
       );
   },
   confirmRegistration(data) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .post(
         `${this.apiUrl()}/confirm-registration/`,
         data,
       );
   },
   register(form) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .post(
         `${this.apiUrl()}/registration/`,
         form,
@@ -96,7 +99,7 @@ export default {
   //
 
   updateUser(form, userId) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .put(`${this.apiUrl()}/app/users/current_user_form.xml`, {
         data: {
           Nombre: form.Nombre,
@@ -131,7 +134,7 @@ export default {
   },
 
   getBasicDataUser(scope) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .get(`${this.apiUrl()}/me`)
       /*      
       .then((resp) => {
@@ -148,7 +151,7 @@ export default {
   },
   /*
   getCuitData(cuit) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .get(`${this.apiUrl()}/app/cuit/cuit.xml`, {
         params: {
           cuit: cuit,
@@ -199,7 +202,7 @@ export default {
     });
   },
   async getData(url) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .get(url)
   },
   /**
@@ -246,7 +249,7 @@ export default {
     })
   },
   async getValidToken(id) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .get(`${this.apiUrl()}/app/users/valid_token.xml?login=${id}`, {
         params: {
           token: 'magic_token',
@@ -272,25 +275,25 @@ export default {
    * @param {string} path App Xml Path
    */
   async getAppSchema(path, params) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .options(`${this.apiUrl()}/app/${path}`, { params});
   },
   async getAppData(path, params) {
-    return Vue.prototype.$axios({
+    return this.getAxios()({
       method: 'GET',
       url: `${this.apiUrl()}/app/${path}`,
       params,
     });
   },
   async getAppPdf(path, params) {
-    return Vue.prototype.$axios
+    return this.getAxios()
       .get(`${this.apiUrl()}/pdf/${path}`, { params, responseType: 'arraybuffer' });
   },
   upload(files) {
     files.filter(file => file.data.name).map(file => {
       let formData = new FormData();
       formData.append('file', file.data);      
-      Vue.prototype.$axios({
+      this.getAxios()({
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -303,28 +306,28 @@ export default {
 
   },
   async insertAppData(path, data) {
-    return Vue.prototype.$axios({
+    return this.getAxios()({
       method: 'POST',
       url: `${this.apiUrl()}/app/${path}`,
       data,
     });
   },
   async updateAppData(path, data) {
-    return Vue.prototype.$axios({
+    return this.getAxios()({
       method: 'PUT',
       url: `${this.apiUrl()}/app/${path}`,
       data,
     });
   },
   async processAppForm(path, data) {
-    return Vue.prototype.$axios({
+    return this.getAxios()({
       method: 'PATCH',
       url: `${this.apiUrl()}/app/${path}`,
       data: { data },
     });
   },
   async processApp(path, data) {
-    return Vue.prototype.$axios({
+    return this.getAxios()({
       method: 'PATCH',
       url: `${this.apiUrl()}/app/${path}`,
       data: {
@@ -333,7 +336,7 @@ export default {
     });
   },
   async deleteAppData(path, keys) {
-    return Vue.prototype.$axios({
+    return this.getAxios()({
       method: 'DELETE',
       url: `${this.apiUrl()}/app/${path}`,
       data: {
@@ -353,11 +356,11 @@ export default {
   },
   getFiles(path) {
     const url = `${this.apiUrl()}/dir/${path}`;
-    return Vue.prototype.$axios
+    return this.getAxios()
       .get(url, {})
   },
   async deleteFile(path) {
-    return Vue.prototype.$axios({
+    return this.getAxios()({
       method: 'DELETE',
       url: `${this.apiUrl()}/files/${path}`
     });
@@ -385,7 +388,7 @@ export default {
   },
   async setFavorit(menuId, uri, name, idOption) {
     if (!idOption) {
-      return Vue.prototype.$axios({
+      return this.getAxios()({
         method: 'POST',
         url: `${this.apiUrl()}/app/favorito`,
         data: {
@@ -396,7 +399,7 @@ export default {
     const options = await this.getFavoritesOption();
     options.push({menuId, uri, name});
     console.log(options);
-    return Vue.prototype.$axios({
+    return this.getAxios()({
       method: 'PUT',
       url: `${this.apiUrl()}/app/favorito`,
       data: {
@@ -415,7 +418,7 @@ export default {
     if (index > -1) {
       options.splice(index, 1);
     }
-    return Vue.prototype.$axios({
+    return this.getAxios()({
       method: 'PUT',
       url: `${this.apiUrl()}/app/favorito`,
       data: {
@@ -432,7 +435,7 @@ export default {
 
   downloadAppData(path, query, fileFormat, fileName) {
     const url = `${this.apiUrl()}/export/${fileFormat}/${path}`;
-    Vue.prototype.$axios
+    this.getAxios()
       .get(url, {
         params: query,
         responseType: 'blob',
@@ -459,7 +462,7 @@ export default {
   },
 
   async apiDBQuery(){
-    const { data } = await Vue.prototype.$axios.get(config.mainUrl)
+    const { data } = await this.getAxios().get(config.mainUrl)
     const infoDB = [];
     for (const db in data){
       const aux= data[db];
