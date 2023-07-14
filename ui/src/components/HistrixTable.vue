@@ -453,12 +453,16 @@
 
 <script>
 import Vue from 'vue';
-import { required, maxLength, decimal, email, requiredIf } from 'vuelidate/lib/validators';
+import { useVuelidate } from '@vuelidate/core'
+import { required, maxLength, decimal, email, requiredIf } from '@vuelidate/validators';
 import qs from 'qs';
 import histrixApi from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixTable',
+  setup() {
+    return { v$: useVuelidate() }
+  },
   props: {
     inner: { type: Boolean, default: false },
     path: String,

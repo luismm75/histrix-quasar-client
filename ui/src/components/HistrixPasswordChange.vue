@@ -66,14 +66,17 @@
         </q-card>
 </template>
 <script>
-// import Vue from 'vue'
-import { required, email, minLength, sameAs, requiredIf } from 'vuelidate/lib/validators';
+import { required, minLength, sameAs } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core'
 import InputPasswordVue from './InputPassword.vue';
 import api from '../services/histrixApi.js';
 import config from '../services/config.js';
 
 export default {
   name: 'HistrixPasswordChange',
+  setup() {
+    return { v$: useVuelidate() }
+  },
   components: {
     InputPasswordVue
   },
@@ -96,12 +99,14 @@ export default {
     },
     loading: true,
   }),
-  validations: {
-    form: {
-      old_password: { required },
-      new_password: { required, minLength: minLength(6) },
-      confirm_password: { required, sameAsPassword: sameAs('new_password') },
-    },
+  validations() {
+    return {
+      form: {
+        old_password: { required },
+        new_password: { required, minLength: minLength(6) },
+        confirm_password: { required, sameAsPassword: sameAs('new_password') },
+      },
+    }
   },
   computed: {
       passwordErrorMsg() {

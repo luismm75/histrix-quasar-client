@@ -99,12 +99,16 @@
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators';
+import { useVuelidate } from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
 import histrixApi from '../services/histrixApi.js';
 import config from '../services/config.js'
 
 export default {
   name: 'FormLoginNotStyles',
+  setup() {
+    return { v$: useVuelidate() };
+  },
   props:{
     /**
      * @description Url para redirecionar despues de login
@@ -285,11 +289,13 @@ export default {
       });
     }
   },
-  validations: {
-    form: {
-      email: { required },
-      password: { required },
-    },
+  validations() {
+    return {
+      form: {
+        email: { required },
+        password: { required },
+      },
+    }
   },
   computed: {
     /**

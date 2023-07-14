@@ -179,13 +179,15 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import { date } from 'quasar';
-import { required, maxLength, decimal, email } from 'vuelidate/lib/validators';
+import { required, maxLength, decimal, email } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core'
 import histrixApi from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixForm',
+  setup () {
+    return { v$: useVuelidate() }
+  },
   props: {
     title: String,
     inner: { type: Boolean, default: false },
