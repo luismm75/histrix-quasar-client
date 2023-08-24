@@ -28,7 +28,7 @@ export default {
     'nextUrl': {
       required: false,
       default: null,
-      type: String,
+      type: String || Boolean,
     },
 
     /**
