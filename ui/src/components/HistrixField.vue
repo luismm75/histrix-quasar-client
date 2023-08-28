@@ -269,14 +269,14 @@ export default {
 
     schema: {
       handler(newVal, oldVal) {
-        this.getOptions();
+        this.getOptions(true);
       },
       deep: true,
     },
     query: {
       handler(newVal, oldVal) {
         if (!this.shallowEqual(newVal, oldVal)) {
-          this.getOptions();
+          this.getOptions(true);
         }
       },
       deep: true,
@@ -691,11 +691,17 @@ export default {
      * Sirve para traer las opciones del campo
      * @returns void
      */
-    getOptions() {
+    getOptions(refresh = false) {
 
       // this.$emit("refreshFieldSchema", {value: localValue.value, selected_option: option})
       // this.getFieldSchema(query)
 
+      if (!refresh && this.rowSchema && this.fieldSchema.options) {
+        this.options = this.mapOptionsOld(this.fieldSchema.options);
+        refresh = false;
+      } else {
+        refresh = true;
+      }
       const val = this.localValue
         ? this.localValue.value || this.localValue
         : null;
@@ -705,6 +711,7 @@ export default {
           Object.entries(this.query).length !== 0
         ) {
           if ( this.autoComplet === 'true') return;
+          if (refresh || this.histrixType === 'radio') {
             histrixApi
               .getAppData(this.innerContainerUrl, this.query)
               .then((response) => {
@@ -720,6 +727,7 @@ export default {
               .catch((e) => {
                 console.log(e);
               });
+          }
         } else {
           if (this.fieldSchema.full_options) {
             this.options = this.mapOptions(this.fieldSchema.full_options);
