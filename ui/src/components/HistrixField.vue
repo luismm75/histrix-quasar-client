@@ -293,7 +293,7 @@ export default {
           this.localValue = this.options[0];
           return
         }
-        this.localValue = '';
+        //this.localValue = '';
       },
       deep: true,
     },
@@ -702,9 +702,11 @@ export default {
       } else {
         refresh = true;
       }
+      
       const val = this.localValue
         ? this.localValue.value || this.localValue
         : null;
+      
       if (this.hasOptions) {
         if (
           this.query != undefined &&
@@ -729,18 +731,19 @@ export default {
               });
           }
         } else {
-          if (this.fieldSchema.full_options) {
-            this.options = this.mapOptions(this.fieldSchema.full_options);
-          } else {
-            this.options = this.mapOptionsOld(this.fieldSchema.options);
-          }
+            if (this.fieldSchema.full_options) {
+              this.options = this.mapOptions(this.fieldSchema.full_options);
+            } else {
+              this.options = this.mapOptionsOld(this.fieldSchema.options);
+            }
 
-          const option = this.options.find((obj) => obj.value == val);
-          if (option) {
-            this.$emit('selectOption', { value: val, selected_option: option });
+            const option = this.options.find((obj) => obj.value == val);
+            if (option) {
+              this.$emit('selectOption', { value: val, selected_option: option });
+            }
           }
-        }
       }
+      
     },
   },
   data() {
@@ -770,6 +773,9 @@ export default {
         firstDayOfWeek: 1,
       },
     };
+  },
+  created() {
+   // this.getOptions(true);
   },
   mounted() {
     this.setRules();
@@ -861,11 +867,12 @@ export default {
       return this.fieldSchema.disabled == 'disabled';
     },
     hasOptions() {
-      return (
-        (this.fieldSchema.options &&
-          Object.keys(this.fieldSchema.options).length !== 0) ||
-        this.fieldSchema.isSelect
-      );
+        return (
+          (this.fieldSchema.options &&
+            Object.keys(this.fieldSchema.options).length !== 0) ||
+          this.fieldSchema.isSelect
+        );
+
     },
     renderHelper() {
       return this.fieldSchema.innerContainer && !this.hasOptions;
