@@ -774,7 +774,7 @@ export default {
   mounted() {
     this.setRules();
     this.getHelpSchema();
-    this.getOptions();
+    this.getOptions(true);
   },
   computed: {
     /**
