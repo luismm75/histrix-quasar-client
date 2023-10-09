@@ -50,7 +50,11 @@
               v-on:validity="onValidityChange"
               v-on:advance-step="$emit('advance-step')"
               v-on:process-finish="refreshMaster"
-            ></component>
+            >
+            <template v-slot:slot-botton-form="props">
+              <slot name="slot-botton-form" :props="props.props" />
+            </template>
+          </component>
             <div class="row justify-center">
               <div class="q-pa-sm ">
                 <q-btn
