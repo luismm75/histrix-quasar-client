@@ -175,6 +175,7 @@
             -->
       </div>
     </q-form>
+    <slot name="slot-botton-form" :props="localValues" />
   </div>
 </template>
 

@@ -298,6 +298,8 @@ export default {
      */
     redirect() {
       if (this.redirectParent && this.redirectParent !== '') return this.redirectParent;
+      if (this.redirectParent === false) return null;
+      if (this.nextUrl === false) return null;
       return this.$route.params.nextUrl
         ? { path: `${this.$route.params.nextUrl}` }
         : { path: this.nextUrl, query: { t: new Date().getTime() } };
@@ -324,6 +326,7 @@ export default {
         .login(formData.email, formData.password, this.redirect)
         .then((success) => {
           this.$events.fire('loaded-user');
+          this.$events.fire('login-ok');
           this.runEventAfter();
         })
         .catch((error) => {

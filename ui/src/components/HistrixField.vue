@@ -292,8 +292,8 @@ export default {
         ) {
           this.localValue = this.options[0];
           return
-        } 
-        this.localValue = '';
+        }
+        //this.localValue = '';
       },
       deep: true,
     },
@@ -691,27 +691,29 @@ export default {
      * Sirve para traer las opciones del campo
      * @returns void
      */
-    getOptions(refresh) {
+    getOptions(refresh = false) {
 
       // this.$emit("refreshFieldSchema", {value: localValue.value, selected_option: option})
       // this.getFieldSchema(query)
+
       if (!refresh && this.rowSchema && this.fieldSchema.options) {
         this.options = this.mapOptionsOld(this.fieldSchema.options);
         refresh = false;
       } else {
         refresh = true;
       }
-
+      
       const val = this.localValue
         ? this.localValue.value || this.localValue
         : null;
+      
       if (this.hasOptions) {
         if (
           this.query != undefined &&
           Object.entries(this.query).length !== 0
         ) {
           if ( this.autoComplet === 'true') return;
-          if (refresh) {
+          if (refresh || this.histrixType === 'radio') {
             histrixApi
               .getAppData(this.innerContainerUrl, this.query)
               .then((response) => {
@@ -729,18 +731,19 @@ export default {
               });
           }
         } else {
-          if (this.fieldSchema.full_options) {
-            this.options = this.mapOptions(this.fieldSchema.full_options);
-          } else {
-            this.options = this.mapOptionsOld(this.fieldSchema.options);
-          }
+            if (this.fieldSchema.full_options) {
+              this.options = this.mapOptions(this.fieldSchema.full_options);
+            } else {
+              this.options = this.mapOptionsOld(this.fieldSchema.options);
+            }
 
-          const option = this.options.find((obj) => obj.value == val);
-          if (option) {
-            this.$emit('selectOption', { value: val, selected_option: option });
+            const option = this.options.find((obj) => obj.value == val);
+            if (option) {
+              this.$emit('selectOption', { value: val, selected_option: option });
+            }
           }
-        }
       }
+      
     },
   },
   data() {
@@ -771,10 +774,13 @@ export default {
       },
     };
   },
+  created() {
+   // this.getOptions(true);
+  },
   mounted() {
     this.setRules();
     this.getHelpSchema();
-    this.getOptions(false);
+    this.getOptions(true);
   },
   computed: {
     /**
@@ -861,11 +867,12 @@ export default {
       return this.fieldSchema.disabled == 'disabled';
     },
     hasOptions() {
-      return (
-        (this.fieldSchema.options &&
-          Object.keys(this.fieldSchema.options).length !== 0) ||
-        this.fieldSchema.isSelect
-      );
+        return (
+          (this.fieldSchema.options &&
+            Object.keys(this.fieldSchema.options).length !== 0) ||
+          this.fieldSchema.isSelect
+        );
+
     },
     renderHelper() {
       return this.fieldSchema.innerContainer && !this.hasOptions;

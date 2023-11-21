@@ -136,7 +136,7 @@ export default {
   getBasicDataUser(scope) {
     return this.getAxios()
       .get(`${this.apiUrl()}/me`)
-      /*      
+      /*
       .then((resp) => {
         console.log(resp.data)
         scope.$events.fire('got-user');
@@ -195,7 +195,7 @@ export default {
         'Content-Type': 'application/json',
       },
       // redirect: '/auth',
-      redirect: redirect,
+      redirect: redirect ? redirect : '',
       fetchUser: false,
     }).then((success) => {
       return this.getUser()
@@ -233,7 +233,7 @@ export default {
   async getUser(verify = false) {
     return this.getBasicDataUser(this)
           .then((resp) => {
-            const userObject = resp.data;              
+            const userObject = resp.data;
             // this.$events.fire('got-user');
             localStorage.setItem('user', JSON.stringify(resp.data));
 
@@ -297,12 +297,12 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data'
-        },        
+        },
         url: `${this.apiUrl()}/files/${file.path}`,
         data: formData,
       });
     })
-//    return 
+//    return
 
   },
   async insertAppData(path, data) {
@@ -372,7 +372,7 @@ export default {
     try {
       const response = await this.getData(url);
       return JSON.parse(response.data.data[0].option_value);
-      
+
     } catch (error) {
       return []
     }
@@ -473,7 +473,7 @@ export default {
           label: aux.description,
           img: aux.logo,
         })
-      } 
+      }
     }
     return infoDB;
   }
