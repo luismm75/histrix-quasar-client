@@ -12,7 +12,7 @@ export default {
     return this.getAxios().get(url);
   },
   getAxios(){
-    return config.axios ?? Vue.prototype.$axios;
+    return  Vue.prototype.$axios;
   },
   currentDb() {
     return localStorage.getItem('database') || config.db;

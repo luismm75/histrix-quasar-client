@@ -107,7 +107,7 @@
                         v-else-if="!localSchema.readonly"
                       >
                       <template v-slot:slot-top-field-histrixapp="props">
-                        <slot name="slot-top-field-histrixapp" :props="props" />
+                        <slot name="slot-top-field-histrixapp" :props="props.props" />
                       </template>
                     
                     </HistrixField>

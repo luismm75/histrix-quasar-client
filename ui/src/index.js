@@ -87,7 +87,6 @@ export default {
   profileMenuItems,
   FormLoginNotStyles,
   install (Vue, options) {
-    config.axios = options?.axios;
     Vue.component(ExportForm.name, ExportForm);
     Vue.component(HistrixApp.name, HistrixApp);
     Vue.component(HistrixCalendar.name, HistrixCalendar);
