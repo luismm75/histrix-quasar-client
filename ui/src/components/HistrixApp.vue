@@ -51,6 +51,12 @@
               v-on:advance-step="$emit('advance-step')"
               v-on:process-finish="refreshMaster"
             >
+            <template v-slot:slot-top-form="props">
+              <slot name="slot-top-form" :props="props.props" />
+            </template>
+            <template v-slot:slot-top-field-histrixapp="props">
+              <slot name="slot-top-field-histrixapp" :props="props.props" />
+            </template>
             <template v-slot:slot-botton-form="props">
               <slot name="slot-botton-form" :props="props.props" />
             </template>

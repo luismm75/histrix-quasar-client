@@ -6,6 +6,7 @@ let valueConfig = {
   clientId: process.env.CLIENT_ID ? process.env.CLIENT_ID : "",
   clientSecret: process.env.CLIENT_SECRET ? process.env.CLIENT_SECRET : "",
   fixApi: process.env.FIX_API_URL ? process.env.FIX_API_URL : "",
+  axios: undefined,
 };
 
 export const config = new Proxy(valueConfig, {
@@ -13,7 +14,6 @@ export const config = new Proxy(valueConfig, {
     return target[prop];
   },
   set: (target, props, newVal, receiver) => {
-    if (typeof newVal !== "string") return false;
     target[props] = newVal;
     return true;
   },

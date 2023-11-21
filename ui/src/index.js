@@ -26,7 +26,7 @@ import profileMenu from './components/widgets/profileMenu.vue';
 import profileMenuItems from './components/widgets/profileMenuItems.vue';
 import FavoritItems from './components/widgets/FavoritItems.vue';
 import FormLoginNotStyles from './components/FormLoginNotStyles.vue';
-
+import config from './services/config';
 
 
 export {
@@ -86,7 +86,8 @@ export default {
   FavoritItems,
   profileMenuItems,
   FormLoginNotStyles,
-  install (Vue) {
+  install (Vue, options) {
+    config.axios = options?.axios;
     Vue.component(ExportForm.name, ExportForm);
     Vue.component(HistrixApp.name, HistrixApp);
     Vue.component(HistrixCalendar.name, HistrixCalendar);
