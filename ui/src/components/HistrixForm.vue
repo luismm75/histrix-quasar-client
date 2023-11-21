@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-sm">
+    <slot name="slot-top-form" :props="localValues" />
     <!--
      <q-toolbar class="text-primary " borderer _flat>
       <q-toolbar-title>
@@ -104,7 +105,12 @@
                         :error-message="errorMessage(field)"
                         :error="$v['localValues'][field.name].$invalid"
                         v-else-if="!localSchema.readonly"
-                      />
+                      >
+                      <template v-slot:slot-top-field-histrixapp="props">
+                        <slot name="slot-top-field-histrixapp" :props="props" />
+                      </template>
+                    
+                    </HistrixField>
                       <div v-else>
                         <span v-html="localValues[field.name]" />
                       </div>

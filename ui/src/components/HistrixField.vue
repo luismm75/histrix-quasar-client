@@ -23,6 +23,9 @@
     <div v-if="isRadio">
         <div class="header-check"><b>{{ rowSchema.label }}</b></div>
     </div>
+    <div v-if="fieldComponent === 'HistrixApp'">
+      <slot name="slot-top-field-histrixapp" :props="localValue" />
+    </div>
     <component
       v-bind:is="fieldComponent"
       v-model="localValue"
