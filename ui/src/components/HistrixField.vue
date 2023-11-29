@@ -266,7 +266,7 @@ export default {
           this.onFileChange(newVal);
         }
       },
-      inmediate: true,
+      immediate: true,
       deep: true,
     },
 
@@ -1143,7 +1143,11 @@ export default {
           if (this.value.length !== 10) {
             return this.value;
           }
-          let fecha = new Date(this.value);
+          let value = this.value;
+          if (this.value.includes('/')) {
+            value = this.value.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3');
+          }
+          let fecha = new Date(value);
           fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
           return date.formatDate(fecha, this.dateMask);
         }
