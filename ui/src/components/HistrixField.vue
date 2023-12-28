@@ -296,7 +296,7 @@ export default {
           this.localValue = this.options[0];
           return
         }
-        //this.localValue = '';
+        this.localValue = '';
       },
       deep: true,
     },
