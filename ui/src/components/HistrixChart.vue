@@ -1,10 +1,10 @@
 <template>
   <q-card flat bordered class="">
-    <q-card-section  v-if="loading">
-      <q-skeleton type="QToolbar"/>
+    <q-card-section v-if="loading">
+      <q-skeleton type="QToolbar" />
     </q-card-section>
-    <q-card-section class="row  " v-if="!loading">
-      <span class=" col-2 ">{{ schema.title }}</span>
+    <q-card-section class="row" v-if="!loading">
+      <span class="col-2">{{ schema.title }}</span>
       <q-space />
       <HistrixFilters
         v-if="schema.filters[0]"
@@ -14,11 +14,16 @@
       />
     </q-card-section>
     <q-separator inset></q-separator>
-    <q-card-section  v-if="loading">
+    <q-card-section v-if="loading">
       <q-skeleton :style="styles" square />
     </q-card-section>
     <q-card-section v-if="showCharts">
-      <div class="q-pa-md" v-bind:key="chart.id" v-for="chart in schema.charts" :style="styles">
+      <div
+        class="q-pa-md"
+        v-bind:key="chart.id"
+        v-for="chart in schema.charts"
+        :style="styles"
+      >
         <IEcharts
           ref="chart"
           theme="light"
@@ -33,7 +38,7 @@
 </template>
 
 <script>
-import histrixApi from '../services/histrixApi.js'
+import histrixApi from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixChart',
@@ -88,11 +93,11 @@ export default {
     },
     */
     xmlUrl(query) {
-      return `${this.schema.api  }/app/${  this.path  }?${  query || ''}`;
+      return `${this.schema.api}/app/${this.path}?${query || ''}`;
     },
     setChartOptions(data) {
-      var series = []
-      let types = {L: 'line', P: 'pie', C: 'bar', SC: 'bar' }
+      var series = [];
+      let types = this.types;
       this.schema.charts.map((chart) => {
         let options = this.defaultOptions;
 
@@ -102,17 +107,9 @@ export default {
         let label = chart.etiquetas;
 
         if (chart.tipo == 'P') {
-          let newdata = data.map((item) => ({ value: item[chart.datos], name: item[chart.etiquetas] }));
           options.xAxis = null;
           options.yAxis = null;
-          series = [
-            {
-              name: chart.datos,
-              type: types[chart.tipo],
-              // radius: ['40%', '70%'],z|
-              data: newdata,
-            },
-          ];
+          series = this.getDataIfIsPie(chart, data);
         } else {
           options.dataset.dimensions = Object.keys(chart.series);
           series = Object.keys(chart.series).map((serie) => {
@@ -126,7 +123,7 @@ export default {
             return {
               name: this.schema.fields[serie].title,
               type: types[chart.tipo],
-              stack: (chart.tipo == 'SC') ? 'A' : null,
+              stack: chart.tipo == 'SC' ? 'A' : null,
               data: newdata,
             };
           }, this);
@@ -138,9 +135,44 @@ export default {
 
       this.showCharts = true;
     },
-
+    getDataIfIsPie(chart, data) {
+      const keysSerie = Object.keys(chart.series);
+      let series = [];
+      if (keysSerie.length >= 1) {
+        let tempArray = [];
+        for (let key of keysSerie) {
+          const newdata = data.map((item) => ({
+            value: item[key],
+            name: this.schema.fields[key].title,
+          }));
+          tempArray.push(newdata);
+        }
+        series = [
+          {
+            name: chart.datos,
+            type: this.types[chart.tipo],
+            data: tempArray.flat(),
+          },
+        ];
+      } else {
+        let newdata = data.map((item) => ({
+          value: item[chart.datos],
+          name: item[chart.etiquetas],
+        }));
+        series = [
+          {
+            name: chart.datos,
+            type: this.types[chart.tipo],
+            // radius: ['40%', '70%'],z|
+            data: newdata,
+          },
+        ];
+      }
+      return series;
+    },
     getData(url) {
-      histrixApi.getData(url)
+      histrixApi
+        .getData(url)
         .then((response) => {
           this.setChartOptions(response.data.data);
           this.loading = false;
@@ -156,6 +188,7 @@ export default {
       showCharts: false,
       message: null,
       dialog: false,
+      types: { L: 'line', P: 'pie', C: 'bar', SC: 'bar' },
       loading: true,
       mode: 'list',
       editedItem: [],
