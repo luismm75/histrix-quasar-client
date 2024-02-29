@@ -296,7 +296,8 @@ export default {
           this.localValue = this.options[0];
           return
         }
-        this.localValue = '';
+        // @TODO: Verificar porque para rosgan tiene que estar comentado pero para mgp no
+        // this.localValue = '';
       },
       deep: true,
     },
