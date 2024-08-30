@@ -276,7 +276,7 @@ export default {
    */
   async getAppSchema(path, params) {
     return this.getAxios()
-      .options(`${this.apiUrl()}/app/${path}`, { params});
+      .get(`${this.apiUrl()}/schema/${path}`, { params});
   },
   async getAppData(path, params) {
     return this.getAxios()({
