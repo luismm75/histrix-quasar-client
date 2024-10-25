@@ -562,6 +562,7 @@ export default {
           data.push({
           value: key,
           label,
+          data:  option[1] ?? {},
         });
         }
         else{
