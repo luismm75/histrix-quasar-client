@@ -377,7 +377,10 @@ export default {
             Object.entries(field.innerContainer.schema.conditions).map(
               (conditions) => {
                 Object.entries(conditions[1]).map((condition) => {
-                  rel[conditions[0]] = condition[1].valor;
+                  const con = condition[1]?.operador ?? null;
+                  if (con && con === '=') {
+                    rel[conditions[0]] = condition[1].valor;
+                  }
                 });
               },
               this
