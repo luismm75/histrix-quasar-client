@@ -26,7 +26,8 @@ export default {
     return this.getData(`${host}/api/db/${db}`);
   },
   host () {
-    return localStorage.getItem('host') || config.mainUrl;
+    //TODO: Change fixApi to config.apiUrl in production
+    return localStorage.getItem('host') || config.fixApi;
   },
   apiUrl() {
     if (this.currentDb()) {
