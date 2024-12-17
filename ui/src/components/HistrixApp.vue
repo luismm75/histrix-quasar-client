@@ -370,6 +370,10 @@ export default {
     componentQuery() {
       return { ...this.$route.query, ...this.query };
     },
+    redirectPage() {
+      if (!this.schema || !this.schema.redirect) return null;
+      return this.schema.redirect;
+    },
     user() {
       return localStorage.getItem('user');
     },
@@ -607,6 +611,9 @@ export default {
     refreshMaster(doRefresh) {
       //this.$refs.main.refresh()
       this.$emit('process-finish', true);
+      if (this.redirectPage) {
+        this.$router.push(this.redirectPage);
+      }
     },
     onValidityChange(validity) {
       this.validity = validity;
