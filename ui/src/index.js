@@ -1,7 +1,7 @@
-import { version } from '../package.json'
+import { version } from '../package.json';
 
-import HistrixApi from './services/histrixApi.js';
 import ExportForm from './components/ExportForm.vue';
+import FormLoginNotStyles from './components/FormLoginNotStyles.vue';
 import HistrixApp from './components/HistrixApp.vue';
 import HistrixCalendar from './components/HistrixCalendar.vue';
 import HistrixCell from './components/HistrixCell.vue';
@@ -11,11 +11,12 @@ import HistrixField from './components/HistrixField.vue';
 import HistrixFilters from './components/HistrixFilters.vue';
 import HistrixForm from './components/HistrixForm.vue';
 import HistrixList from './components/HistrixList.vue';
+import HistrixPasswordChange from './components/HistrixPasswordChange.vue';
 import HistrixTable from './components/HistrixTable.vue';
 import HistrixTree from './components/HistrixTree.vue';
 import LoginForm from './components/LoginForm.vue';
-import HistrixPasswordChange from './components/HistrixPasswordChange.vue';
 import DatabaseSelector from './components/widgets/DatabaseSelector.vue';
+import FavoritItems from './components/widgets/FavoritItems.vue';
 import HistrixExpansionMenu from './components/widgets/HistrixExpansionMenu.vue';
 import HistrixLog from './components/widgets/HistrixLog.vue';
 import HistrixMenu from './components/widgets/HistrixMenu.vue';
@@ -24,10 +25,8 @@ import HistrixUsers from './components/widgets/HistrixUsers.vue';
 import notificationMenu from './components/widgets/notificationMenu.vue';
 import profileMenu from './components/widgets/profileMenu.vue';
 import profileMenuItems from './components/widgets/profileMenuItems.vue';
-import FavoritItems from './components/widgets/FavoritItems.vue';
-import FormLoginNotStyles from './components/FormLoginNotStyles.vue';
 import config from './services/config';
-
+import HistrixApi from './services/histrixApi.js';
 
 export {
   version,
@@ -57,7 +56,7 @@ export {
   profileMenuItems,
   FavoritItems,
   FormLoginNotStyles
-}
+};
 
 export default {
   version,
@@ -86,7 +85,7 @@ export default {
   FavoritItems,
   profileMenuItems,
   FormLoginNotStyles,
-  install (Vue, options) {
+  install(Vue, _options) {
     Vue.component(ExportForm.name, ExportForm);
     Vue.component(HistrixApp.name, HistrixApp);
     Vue.component(HistrixCalendar.name, HistrixCalendar);
@@ -113,4 +112,4 @@ export default {
     Vue.component(FavoritItems.name, FavoritItems);
     Vue.component(FormLoginNotStyles.name, FormLoginNotStyles);
   }
-}
+};

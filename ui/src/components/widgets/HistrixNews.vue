@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js'
-import config from '../../services/config.js'
+import config from '../../services/config.js';
+import histrixApi from '../../services/histrixApi.js';
 
 export default {
   name: 'HistrixNews',
@@ -55,24 +55,24 @@ export default {
     return {
       numberOfPosts: 2,
       data: [],
-      HOST: config.baseUrl,
+      HOST: config.baseUrl
     };
   },
   methods: {
     getData() {
       const url = '/news/htx_news.xml';
-      histrixApi.getAppData(url)
+      histrixApi
+        .getAppData(url)
         .then((response) => {
           this.data = response.data.data;
         })
         .catch((e) => {
           console.log(e);
         });
-    },
+    }
   },
   mounted() {
-    
     this.getData();
-  },
+  }
 };
 </script>

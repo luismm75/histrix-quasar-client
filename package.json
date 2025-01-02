@@ -1,11 +1,16 @@
 {
   "name": "histrix-quasar-client",
   "version": "0.0.0",
-  "description": "",
   "private": true,
+  "description": "",
+  "keywords": [],
+  "author": "",
   "scripts": {
+    "check": "biome check --write --unsafe",
+    "lint": "biome lint --write",
     "versionUp": "node scripts/publish.js"
   },
-  "keywords": [],
-  "author": ""
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  }
 }

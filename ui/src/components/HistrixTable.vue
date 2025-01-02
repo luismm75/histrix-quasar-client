@@ -28,7 +28,7 @@
       @update:pagination="updatePagination"
     >
       <!-- TOP LEFT: FILTERS -->
-      <template v-slot:top-left="props">
+      <template v-slot:top-left="">
         <div v-if="!inner" class="row">
           <HistrixFilters
             v-if="schema.filters.length"
@@ -279,7 +279,7 @@
             >
               <q-item-section
                 side
-                class="col-4 text-grey-15"
+                class="text-grey-15"
                 v-if="!getFieldAttribute(props.key, cell.name, 'editable')  && cell.label"
               >
                 {{ cell.label }}
@@ -452,9 +452,9 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import { required, maxLength, decimal, email, requiredIf } from 'vuelidate/lib/validators';
 import qs from 'qs';
+import Vue from 'vue';
+import { decimal, email, maxLength, required, requiredIf } from 'vuelidate/lib/validators';
 import histrixApi from '../services/histrixApi.js';
 
 export default {
@@ -470,14 +470,14 @@ export default {
     computedFields: Object,
     computedTotals: Object,
     value: null,
-    isFormulation: { type: Boolean, default: false },
+    isFormulation: { type: Boolean, default: false }
   },
   components: {
     HistrixFilters: () => import('./HistrixFilters.vue'),
     HistrixField: () => import('./HistrixField.vue'),
     HistrixForm: () => import('./HistrixForm.vue'),
     HistrixCell: () => import('./HistrixCell.vue'),
-    HistrixApp: () => import('./HistrixApp.vue'),
+    HistrixApp: () => import('./HistrixApp.vue')
   },
   mounted() {
     this.editedItem = Object.assign({}, this.schema.values);
@@ -499,41 +499,41 @@ export default {
   },
   watch: {
     path: {
-      handler(newVal, oldVal) {
+      handler(_newVal, _oldVal) {
         this.getData();
-      },
+      }
     },
     query: {
       handler(newVal, oldVal) {
-        if (JSON.stringify(newVal) != JSON.stringify(oldVal)) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
           this.getData();
         }
-      },
+      }
     },
     fullQuery: {
-      handler(newVal, oldVal) {
+      handler(_newVal, _oldVal) {
         this.getData();
-      },
+      }
     },
     innerData: {
       handler() {
         this.$emit('input', this.rawData);
       },
-      deep: true,
+      deep: true
     },
     localValidations: {
       handler() {
         this.$events.fire('validations-add', this.$v);
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   computed: {
     contentItem() {
       return this.isFormulation ? 'div' : 'q-card';
     },
     localValidations() {
-      let localValidations = {};
+      const localValidations = {};
       Object.entries(this.schema.fields).map((fieldArray) => {
         const field = fieldArray[1];
         localValidations[field.name] = {};
@@ -541,7 +541,7 @@ export default {
         localValidations[field.name].requiredIf = requiredIf((item) => {
           const id = item._id;
           const row = this.innerData.find((row) => row._id === id);
-          if (row && row.DT_RowAttr?.attributes) {
+          if (row?.DT_RowAttr?.attributes) {
             const cell = row.DT_RowAttr.attributes[field.name];
             if (!cell) return false;
             return cell.required === 'required' || cell.required === 'true';
@@ -585,19 +585,15 @@ export default {
     innerData() {
       if (this.filteredRows) {
         return this.filteredRows.map((row) => {
-          let newRow = row;
+          const newRow = row;
           // calculate fields in row
-          if (this.computedFields != undefined) {
+          if (this.computedFields !== undefined) {
             for (const formula in this.computedFields) {
-              const result = this.processOperation(
-                this.computedFields[formula],
-                newRow
-              );
-              if (result != undefined) {
+              const result = this.processOperation(this.computedFields[formula], newRow);
+              if (result !== undefined) {
                 if (
                   row[formula] !== undefined &&
-                  (typeof row[formula] === 'object' ||
-                    typeof row[formula] === 'function')
+                  (typeof row[formula] === 'object' || typeof row[formula] === 'function')
                 ) {
                   newRow[formula].value = result;
                 } else {
@@ -613,14 +609,10 @@ export default {
     },
     rawData() {
       return this.innerData.map((row) => {
-        let newRow = {};
+        const newRow = {};
         for (const item in row) {
-          if (
-            row[item] !== undefined &&
-            (typeof row[item] === 'object' || typeof row[item] === 'function')
-          ) {
-            newRow[item] =
-              row[item].value !== undefined ? row[item].value : row[item]._;
+          if (row[item] !== undefined && (typeof row[item] === 'object' || typeof row[item] === 'function')) {
+            newRow[item] = row[item].value !== undefined ? row[item].value : row[item]._;
           } else {
             newRow[item] = row[item];
           }
@@ -631,18 +623,15 @@ export default {
 
     /** Calculates the bottom amount where field has sum = true */
     columnTotals() {
-      let totals = {};
-      this.schema.columns
-        .filter((col) => col.sum !== null)
-        .forEach((element) => {
-          totals[element.name] = this.data.reduce((prev, cur) => {
-            const value =
-              cur[element.name].value ||
-              cur[element.name]._ ||
-              cur[element.name];
-            return parseFloat(prev + (parseFloat(value) || 0))
-          }, 0)
-        });
+      const totals = {};
+      const columnsToSum = this.schema.columns.filter((col) => col.sum !== null);
+      for (const element of columnsToSum) {
+        totals[element.name] = this.data.reduce((prev, cur) => {
+          const field = cur[element.name];
+          const value = field?.value ?? field?._ ?? field ?? 0;
+          return prev + (Number.parseFloat(value) || 0);
+        }, 0);
+      }
       Object.keys(this.computedTotals).map((key) => {
         const sourceName = this.computedTotals[key];
         this.$emit('computed-total', {
@@ -650,7 +639,7 @@ export default {
           value: totals[sourceName]
         });
       });
-      return totals
+      return totals;
     },
     filteredRows() {
       if (this.searchStr === '') {
@@ -660,7 +649,7 @@ export default {
       return this.data.filter(
         (row) =>
           Object.keys(row)
-            .map((key, index) => {
+            .map((key, _index) => {
               return row[key]._ || row[key].value || row[key];
             })
             .join()
@@ -668,19 +657,22 @@ export default {
             .indexOf(this.searchStr.toLowerCase()) > -1
       );
     },
-    filteredData(cols) {
+    filteredData(_cols) {
       return this.data.filter((row) => !row.value);
     },
     isGrid() {
-      return this.schema.type == 'grid' || this.schema.type == 'liveGrid';
+      return this.schema.type === 'grid' || this.schema.type === 'liveGrid';
     },
     canInsert() {
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
       return this.resources.hasOwnProperty('POST');
     },
     canUpdate() {
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
       return this.resources.hasOwnProperty('PUT') && this.schema.can_update;
     },
     canDelete() {
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
       return this.resources.hasOwnProperty('DELETE');
     },
     visibleColumns() {
@@ -688,22 +680,16 @@ export default {
         .filter((column) => {
           return !column.hidden && !column.style.includes('display:none;');
         })
-        .map((column, index, array) => {
+        .map((column, _index, _array) => {
           return column.name;
         });
     },
     fieldsWithContainers() {
-      return this.filterObject(
-        this.schema.fields,
-        (field) => !field.innerContainer && !field.options
-      );
+      return this.filterObject(this.schema.fields, (field) => !field.innerContainer && !field.options);
     },
     updatedFields() {
-      return this.filterObject(
-        this.schema.fields,
-        (field) => !field.update_fields
-      );
-    },
+      return this.filterObject(this.schema.fields, (field) => !field.update_fields);
+    }
   },
   methods: {
     setEdit(value) {
@@ -711,22 +697,21 @@ export default {
       this.$events.fire('editValue', value);
     },
     getRowSchema(index, cell) {
-      if (this.data[index].DT_RowAttr['attributes']) {
-        return this.data[index].DT_RowAttr['attributes'][cell];
-      } else [];
+      if (this.data[index].DT_RowAttr.attributes) {
+        return this.data[index].DT_RowAttr.attributes[cell];
+      }
+      [];
     },
     showDialog() {
       // eslint-disable-next-line no-alert
       let confim = true;
       if (this.editValue) {
-        confim = window.confirm(
-          'Usted esta por cerrar el formulario. Recuerde guardar la informacion o se perdera'
-        );
+        confim = window.confirm('Usted esta por cerrar el formulario. Recuerde guardar la informacion o se perdera');
       }
       if (!confim) {
         this.edit = true;
       } else {
-        this.setEdit(false)
+        this.setEdit(false);
       }
     },
     closeEdit() {
@@ -749,14 +734,11 @@ export default {
        */
       if (field.innerContainer) {
         if (field.innerContainer.schema) {
-          Object.entries(field.innerContainer.schema.conditions).map(
-            (conditions) => {
-              Object.entries(conditions[1]).map((condition) => {
-                rel[conditions[0]] = condition[1].valor;
-              });
-            },
-            this
-          );
+          Object.entries(field.innerContainer.schema.conditions).map((conditions) => {
+            Object.entries(conditions[1]).map((condition) => {
+              rel[conditions[0]] = condition[1].valor;
+            });
+          }, this);
           fieldQuerys[field.name] = rel;
         }
 
@@ -764,15 +746,12 @@ export default {
          * Read Relationships
          */
         if (field.innerContainer.relationship) {
-          Object.entries(field.innerContainer.relationship).map(
-            (relationship) => {
-              const localtarget = relationship[0];
-              const source = relationship[1];
+          Object.entries(field.innerContainer.relationship).map((relationship) => {
+            const localtarget = relationship[0];
+            const source = relationship[1];
 
-              rel[localtarget] = row[source.valor];
-            },
-            this
-          );
+            rel[localtarget] = row[source.valor];
+          }, this);
 
           fieldQuerys[field.name] = rel;
         }
@@ -843,30 +822,27 @@ export default {
 
     getFieldAttribute(rowIndex, name, attr) {
       if (
-        this.data[rowIndex].DT_RowAttr &&
-        this.data[rowIndex].DT_RowAttr['attributes'] &&
-        this.data[rowIndex].DT_RowAttr['attributes'][name] &&
-        this.data[rowIndex].DT_RowAttr['attributes'][name][attr] != undefined
+        this.data[rowIndex].DT_RowAttr?.attributes?.[name] &&
+        this.data[rowIndex].DT_RowAttr.attributes[name][attr] !== undefined
       ) {
-        return this.data[rowIndex].DT_RowAttr['attributes'][name][attr];
+        return this.data[rowIndex].DT_RowAttr.attributes[name][attr];
       }
       return this.schema.fields[name][attr];
     },
     colStyle(col) {
-      const style = col.value && col.value.style ? col.value.style : '';
+      const style = col.value?.style ? col.value.style : '';
       return `${style};`;
     },
     customError(row, field) {
       const cell = {
         ...this.schema.fields[field.name],
-        ...this.getRowSchema(row, field.name),
+        ...this.getRowSchema(row, field.name)
       };
 
       if (
         cell.required &&
         (cell.required === 'required' || cell.required === 'true') &&
-        (this.rawData[row][field.name] == '' ||
-          this.rawData[row][field.name] == undefined)
+        (this.rawData[row][field.name] === '' || this.rawData[row][field.name] === undefined)
       ) {
         return true;
       }
@@ -875,38 +851,37 @@ export default {
     errorMessage(row, field) {
       const cell = {
         ...this.$v.rawData.$each[row][field.name],
-        ...this.getRowSchema(row, field.name),
+        ...this.getRowSchema(row, field.name)
       };
 
-      if (cell.customValidation != undefined && !cell.customValidation) {
+      if (cell.customValidation !== undefined && !cell.customValidation) {
         return this.errorMessages[field.name].customError;
       }
 
-      if (cell.required != undefined && !cell.required) {
+      if (cell.required !== undefined && !cell.required) {
         return 'Campo Obligatorio';
       }
 
-      if (cell.decimal != undefined && !cell.decimal) {
+      if (cell.decimal !== undefined && !cell.decimal) {
         return 'Campo debe ser numérico';
       }
 
-      if (cell.email != undefined && !cell.email) {
+      if (cell.email !== undefined && !cell.email) {
         return 'Email incorrecto';
       }
 
-      if (cell.minLength != undefined && !cell.minLength) {
+      if (cell.minLength !== undefined && !cell.minLength) {
         return `Tamaño mínimo de ${cell.$params.minLength.min} caracteres`;
       }
 
-      if (cell.maxLength != undefined && !cell.maxLength) {
+      if (cell.maxLength !== undefined && !cell.maxLength) {
         return `Tamaño máximo de ${cell.$params.maxLength.max} caracteres`;
       }
     },
     processOperation(str, row) {
       let formula = str;
-      let operatios = /[+\-\*\/\(\)]/g;
-      let keys = formula.split(operatios);
-      let that = this;
+      const operatios = /[+\-\*\/\(\)]/g;
+      const keys = formula.split(operatios);
 
       keys.map((key) => {
         const k = key.trim();
@@ -921,9 +896,10 @@ export default {
       }, this);
 
       try {
+        // biome-ignore lint/security/noGlobalEval: <explanation>
         const result = eval(formula);
         return result;
-      } catch (error) {
+      } catch (_error) {
         // console.log(formula)
       }
     },
@@ -938,33 +914,22 @@ export default {
       this.editedItem = item;
       this.edit = true;
     },
-    getKeys(row) {
-      const keyFields = Object.entries(this.schema.fields).filter(
-        (field) => field[1].esClave == 'true'
-      );
-      const keyData = {};
-      keyFields.forEach((key) => {
-        keyData[key[0]] = row[key[0]];
-      });
-      return keyData;
-    },
     updateLiveRow(row) {
       const postData = {
         keys: this.getKeys(row),
-        data: this.getValuesFromRow(row),
+        data: this.getValuesFromRow(row)
       };
-      const that = this;
       histrixApi
         .updateAppData(this.xmlUrl(), postData)
-        .then((response) => {
-          that.$q.notify({
+        .then((_response) => {
+          this.$q.notify({
             message: 'Dato Guardado',
             type: 'accept',
             textColor: 'white',
             color: 'info',
             icon: 'info',
             closeBtn: 'cerrar',
-            position: 'bottom right',
+            position: 'bottom right'
           });
         })
         .catch((e) => {
@@ -974,12 +939,12 @@ export default {
     /**
      * Executed when row is inserted by Form
      */
-    rowRecived(row, index) {
+    rowRecived(row, _index) {
       Vue.set(this.data, row._id, row);
       this.edit = false;
       this.refresh();
     },
-    formSaved(row, index) {
+    formSaved(_row, index) {
       // update row values
 
       if (this.data[index]) {
@@ -993,12 +958,12 @@ export default {
       this.submitting = true;
       histrixApi
         .processApp(this.xmlUrl(), this.rawData)
-        .then((response) => {
+        .then((_response) => {
           this.submitting = false;
           this.$emit('closepopup');
           this.refresh();
         })
-        .catch((e) => {
+        .catch((_e) => {
           this.submitting = false;
         });
     },
@@ -1010,7 +975,7 @@ export default {
       } else {
         this.$emit('select-row', {
           row: this.getValuesFromRow(row),
-          schema: this.schema,
+          schema: this.schema
         });
       }
     },
@@ -1030,6 +995,7 @@ export default {
       const { row } = props;
       if (row.DT_RowAttr) {
         const attr = row.DT_RowAttr;
+        // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
         return attr.hasOwnProperty('detailpath');
       }
       return false;
@@ -1057,13 +1023,11 @@ export default {
       }
     },
     getKeys(item) {
-      const keyFields = Object.entries(this.schema.fields).filter(
-        (field) => field[1].esClave == 'true'
-      );
-      let keyData = {};
-      keyFields.forEach((key) => {
+      const keyFields = Object.entries(this.schema.fields).filter((field) => field[1].esClave === 'true');
+      const keyData = {};
+      for (const key of keyFields) {
         keyData[key[0]] = item[key[0]]._ ? item[key[0]]._ : item[key[0]];
-      });
+      }
       return keyData;
     },
     removeItem(item) {
@@ -1071,13 +1035,13 @@ export default {
       this.data.splice(index, 1);
     },
     delete(item) {
-      if (item._ajax_ == false) {
+      if (item._ajax_ === false) {
         this.removeItem(item);
       } else {
-        if (this.getKeys(item).length != 0) {
+        if (this.getKeys(item).length !== 0) {
           histrixApi
             .deleteAppData(this.xmlUrl(), this.getKeys(item))
-            .then((response) => {
+            .then((_response) => {
               this.removeItem(item);
               this.refresh();
             })
@@ -1089,15 +1053,11 @@ export default {
     },
 
     getValuesFromRow(row) {
-      let item2 = {};
+      const item2 = {};
       let key;
       for (key in row) {
-        if (
-          row[key] !== undefined &&
-          (typeof row[key] === 'object' || typeof row[key] === 'function')
-        ) {
-          item2[key] =
-            row[key].value !== undefined ? row[key].value : row[key]._;
+        if (row[key] !== undefined && (typeof row[key] === 'object' || typeof row[key] === 'function')) {
+          item2[key] = row[key].value !== undefined ? row[key].value : row[key]._;
         } else {
           item2[key] = row[key];
         }
@@ -1105,7 +1065,7 @@ export default {
       return item2;
     },
     addItem() {
-      if (this.schema.type == 'grid' || this.schema.type == 'ing') {
+      if (this.schema.type === 'grid' || this.schema.type === 'ing') {
         this.insertRow();
       } else {
         this.editedIndex = -1;
@@ -1166,6 +1126,7 @@ export default {
       const result = {};
       let key;
       for (key in obj) {
+        // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
         if (obj.hasOwnProperty(key) && !predicate(obj[key])) {
           result[key] = obj[key];
         }
@@ -1182,7 +1143,7 @@ export default {
           const { data } = response.data;
           data.map((element) => {
             if (element.DT_RowAttr) {
-              element._id = element.DT_RowAttr['o'];
+              element._id = element.DT_RowAttr.o;
             }
           });
           // alert('llega')
@@ -1195,12 +1156,12 @@ export default {
           this.loading = false;
           this.openFilter = false;
         })
-        .catch((e) => {
+        .catch((_e) => {
           this.dialog = true;
           this.message = 'Error de Carga de Datos';
           this.loading = false;
         });
-    },
+    }
   },
   validations() {
     return this.localValidations;
@@ -1208,7 +1169,7 @@ export default {
   data() {
     return {
       localFilters: {
-        _sortBy: '',
+        _sortBy: ''
       },
       edit: false,
       editValue: false,
@@ -1232,7 +1193,7 @@ export default {
         { label: '20', value: 20 },
         { label: '25', value: 25 },
         { label: '50', value: 50 },
-        { label: 'Todos', value: 0 },
+        { label: 'Todos', value: 0 }
       ],
       data: [],
       openFilter: false,
@@ -1241,11 +1202,11 @@ export default {
         sortBy: 'desc',
         descending: false,
         page: 1,
-        rowsPerPage: 50,
+        rowsPerPage: 50
         // rowsNumber: xx if getting data from a server
-      },
+      }
     };
-  },
+  }
 };
 </script>
 <style>

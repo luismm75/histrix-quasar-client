@@ -9,28 +9,27 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js'
+import histrixApi from '../../services/histrixApi.js';
 
 export default {
   name: 'HistrixLog',
   data() {
     return {
-      data: [],
+      data: []
     };
   },
   methods: {
     subscribeWamp() {
-      const that = this;
       if (this.$wamp) {
-        this.$wamp.subscribe(`${histrixApi.currentDb()}.histrix.log`, (args, kwArgs, details) => {
-          that.data.push(kwArgs.data.data.log);
+        this.$wamp.subscribe(`${histrixApi.currentDb()}.histrix.log`, (_args, kwArgs, _details) => {
+          this.data.push(kwArgs.data.data.log);
         });
       }
-    },
+    }
   },
   mounted() {
     this.data = [];
     this.subscribeWamp();
-  },
+  }
 };
 </script>

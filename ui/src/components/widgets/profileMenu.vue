@@ -35,16 +35,15 @@
 </template>
 
 <script>
-
 export default {
   name: 'profileMenu',
   components: {
-    HistrixMenu: () => import('./HistrixExpansionMenu.vue'),
+    HistrixMenu: () => import('./HistrixExpansionMenu.vue')
   },
   methods: {
     exit() {
       this.$auth.logout();
-    },
+    }
   },
   data() {
     return {
@@ -53,22 +52,22 @@ export default {
           icon: 'person',
           label: 'Mis Datos',
           caption: 'Datos personales',
-          to: { name: 'profile' },
+          to: { name: 'profile' }
         },
         {
           icon: 'settings',
           label: 'Settings',
           caption: 'Configuración',
-          to: { name: 'systemSettings' },
+          to: { name: 'systemSettings' }
         },
         {
           icon: 'info',
           label: 'Acerca',
           caption: 'Acerca de Histrix',
-          to: { name: 'about' },
-        },
-      ],
+          to: { name: 'about' }
+        }
+      ]
     };
-  },
+  }
 };
 </script>

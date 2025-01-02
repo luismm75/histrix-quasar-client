@@ -42,7 +42,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'HistrixConectionSettings',
   data() {

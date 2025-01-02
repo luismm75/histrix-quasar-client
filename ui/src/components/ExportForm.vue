@@ -32,7 +32,7 @@
 </template>
 
 <script>
- import histrixApi from '../services/histrixApi.js'
+import histrixApi from '../services/histrixApi.js';
 
 export default {
   name: 'ExportForm',
@@ -40,14 +40,13 @@ export default {
     path: null,
     query: null,
     exportQuery: null,
-    schema: {},
+    schema: {}
   },
-  components: {
-  },
+  components: {},
   watch: {
     fileFormat() {
       this.fileName = `${this.schema.title}.${this.fileFormat}`;
-    },
+    }
   },
   mounted() {
     this.fileName = `${this.schema.title}.${this.fileFormat}`;
@@ -59,31 +58,31 @@ export default {
           format: 'xls',
           name: 'Excel',
           caption: 'Hoja de Cálculo',
-          icon: 'fas fa-file-excel',
+          icon: 'fas fa-file-excel'
         },
         {
           format: 'pdf',
           name: 'PDF',
           caption: 'Documento PDF',
-          icon: 'fas fa-file-pdf',
+          icon: 'fas fa-file-pdf'
         },
         {
           format: 'csv',
           name: 'CSV',
           caption: 'Texto delimitado por comas',
           delimiter: ',',
-          icon: 'fas fa-file-csv',
+          icon: 'fas fa-file-csv'
         },
         {
           format: 'xml',
           name: 'XML',
           caption: 'Archivo XML de exportación',
-          icon: 'description',
-        },
+          icon: 'description'
+        }
       ],
       fileName: '',
       fileFormat: 'xls',
-      delimiter: ',',
+      delimiter: ','
     };
   },
   computed: {
@@ -94,8 +93,8 @@ export default {
   },
   methods: {
     downloadFile() {
-      histrixApi.downloadAppData(this.path, this.params, this.fileFormat, this.fileName)
-    },
-  },
+      histrixApi.downloadAppData(this.path, this.params, this.fileFormat, this.fileName);
+    }
+  }
 };
 </script>

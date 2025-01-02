@@ -63,15 +63,22 @@
           @click="refrest(nodeUri(node))"
         >
           <q-item-section avatar v-if="node.icon">
-            <q-icon :name="node.icon" style="font-size: 2rem;" />
+            <q-icon :name="node.icon" style="font-size: 2rem" />
           </q-item-section>
+          <q-item-section _v-if="!mini" class="capitalize">{{
+            node.label.toLowerCase()
+          }}</q-item-section>
           <q-item-section
-            _v-if="!mini"
-            class="capitalize"
-            v-html="node.label.toLowerCase()"
-          ></q-item-section>
-          <q-item-section side v-if="isFavorite" @click="setFavorit(node.menuId, node.uri, node.label.toLowerCase())">
-            <q-btn flat round color="primary" :icon="setIconStart(node.menuId)" />
+            side
+            v-if="isFavorite"
+            @click="setFavorit(node.menuId, node.uri, node.label.toLowerCase())"
+          >
+            <q-btn
+              flat
+              round
+              color="primary"
+              :icon="setIconStart(node.menuId)"
+            />
           </q-item-section>
         </q-item>
       </div>
@@ -89,17 +96,19 @@ export default {
     filter: Boolean,
     isFavorite: {
       type: Boolean,
-      default: false,
+      default: false
     },
     tree: { type: Array },
     mini: Boolean,
     favorites: {
       type: Object,
-      default: () => {},
-    },
+      default: () => {
+        //
+      }
+    }
   },
   components: {
-    HistrixExpansionMenu: () => import('./HistrixExpansionMenu.vue'),
+    HistrixExpansionMenu: () => import('./HistrixExpansionMenu.vue')
   },
   data() {
     return {
@@ -109,57 +118,56 @@ export default {
       expanded: [],
       favorit: {},
       loading: true,
-      locationCurrent: '',
+      locationCurrent: ''
     };
   },
   computed: {},
   watch: {
-    filterString(newval, oldval) {
-      if (newval != '') {
+    filterString(newval, _oldval) {
+      if (newval !== '') {
         this.$refs.qtree.expandAll();
       }
     },
-    favorites(newval, oldval) {
+    favorites(newval, _oldval) {
       this.favorit = newval;
-    },
+    }
   },
   methods: {
     setIconStart(idMenu) {
       if (this.favorit.keys.some((value) => value.menuId === idMenu)) {
         return 'star';
-      } else {
-        return 'star_border';
       }
+      return 'star_border';
     },
     async setFavorit(menuId, uri, name) {
       if (this.favorit.keys.some((value) => value.menuId === menuId)) {
         histrixApi.removeFavorit(this.favorit.id, menuId);
-        const indexItem = this.favorit.keys.findIndex((item) => item.menuId == menuId);
+        const indexItem = this.favorit.keys.findIndex((item) => item.menuId === menuId);
         this.favorit.keys.splice(indexItem, 1);
         this.$events.fire('update-favorit');
         return;
       }
       histrixApi
-      .setFavorit(menuId, uri, name, this.favorit.id)
-      .then((response) => {
+        .setFavorit(menuId, uri, name, this.favorit.id)
+        .then((response) => {
           this.$q.notify({
             message: 'Favorito guardado',
             color: 'positive',
-            icon: 'check',
+            icon: 'check'
           });
           if (response.data.id) {
             this.favorit.id = response.data.id;
           }
-          this.favorit.keys.push({menuId, uri, name});
+          this.favorit.keys.push({ menuId, uri, name });
         })
-        .catch((error) => {
+        .catch((_error) => {
           this.$q.notify({
             message: 'El favorito no se pudo guardar',
             color: 'negative',
-            icon: 'warning',
+            icon: 'warning'
           });
         });
-        this.$events.fire('update-favorit');
+      this.$events.fire('update-favorit');
     },
     nodeUri(node) {
       // Si no tiene &vue= se devuelve el estandar
@@ -197,7 +205,7 @@ export default {
         return;
       }
       this.locationCurrent = url.path;
-    },
+    }
   },
   mounted() {
     if (this.tree) {
@@ -206,7 +214,7 @@ export default {
     } else {
       this.getData();
     }
-  },
+  }
 };
 </script>
 

@@ -1,5 +1,5 @@
 // import Vue from 'vue'
-import * as Plugin from './index'
+import * as Plugin from './index';
 
 // Vue.use(Plugin)
 

@@ -31,15 +31,13 @@
 </template>
 
 <script>
-
 export default {
   name: 'profileMenuItems',
   components: {
-    HistrixMenu: () => import('./HistrixExpansionMenu.vue'),
+    HistrixMenu: () => import('./HistrixExpansionMenu.vue')
   },
   props: ['mini'],
-  methods: {
-  },
+  methods: {},
   data() {
     return {
       items: [

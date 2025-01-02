@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="fit" v-if="isPdf" style="position:absolute;">
+    <div class="fit" v-if="isPdf" style="position: absolute">
       <q-pdfviewer v-bind="$attrs" v-model="show" :src="pdfSrc" type="html5" />
     </div>
     <q-dialog class="fit" v-model="showPdfPopup">
@@ -15,7 +15,7 @@
       <q-splitter
         v-model="finalSplitterModel"
         class="fit"
-        style="overflow:hidden;"
+        style="overflow: hidden"
         :limits="[0, Infinity]"
         :separator-class="this.smallscreen || !hasFullDetail ? 'hidden' : ''"
       >
@@ -51,23 +51,23 @@
               v-on:advance-step="$emit('advance-step')"
               v-on:process-finish="refreshMaster"
             >
-            <template v-slot:slot-top-form="props">
-              <slot name="slot-top-form" :props="props.props" />
-            </template>
-            <template v-slot:slot-top-field-histrixapp="props">
-              <slot name="slot-top-field-histrixapp" :props="props.props" />
-            </template>
-            <template v-slot:slot-botton-form="props">
-              <slot name="slot-botton-form" :props="props.props" />
-            </template>
-          </component>
+              <template v-slot:slot-top-form="props">
+                <slot name="slot-top-form" :props="props.props" />
+              </template>
+              <template v-slot:slot-top-field-histrixapp="props">
+                <slot name="slot-top-field-histrixapp" :props="props.props" />
+              </template>
+              <template v-slot:slot-botton-form="props">
+                <slot name="slot-botton-form" :props="props.props" />
+              </template>
+            </component>
             <div class="row justify-center">
-              <div class="q-pa-sm ">
+              <div class="q-pa-sm">
                 <q-btn
                   icon="thumb_up"
                   :disable="!validity"
                   label="procesar "
-                  class=" bg-secondary text-white nojustify-end"
+                  class="bg-secondary text-white nojustify-end"
                   @click="process"
                   v-if="schema.can_process && !inner"
                 />
@@ -137,8 +137,8 @@
                 v-if="schema.process_next_step.xml != ''"
                 :path="
                   schema.process_next_step.dir +
-                    '/' +
-                    schema.process_next_step.xml
+                  '/' +
+                  schema.process_next_step.xml
                 "
                 :query="processNextStepQuery"
                 :finalStep="true"
@@ -322,23 +322,25 @@ export default {
     inner: Boolean,
     pdf: {
       type: Boolean,
-      default: false,
+      default: false
     },
     value: null,
     database: {
       type: String,
-      required: false,
+      required: false
     },
     api: {
       type: String,
-      required: false,
+      required: false
     },
-    finalStep: Boolean,
+    finalStep: Boolean
   },
   components: {
-    ExportForm: () => import('./ExportForm.vue'),
+    ExportForm: () => import('./ExportForm.vue')
   },
-  beforeMount() {},
+  beforeMount() {
+    //
+  },
   mounted() {
     this.getSchema();
     this.detailQuery = {};
@@ -351,20 +353,20 @@ export default {
      * If Path or Query parameters changes then reload all and reset data
      */
     value: {
-      handler(newVal, oldVal) {
+      handler(_newVal, _oldVal) {
         this.localValue = this.value;
-      },
+      }
     },
     xmlUrl: {
       handler(newVal, oldVal) {
-        if (newVal != oldVal) {
+        if (newVal !== oldVal) {
           this.getSchema();
           this.step = 1; // reset stepper
           this.detailQuery = {};
           this.detailPath = '';
         }
-      },
-    },
+      }
+    }
   },
   computed: {
     componentQuery() {
@@ -378,11 +380,8 @@ export default {
       return localStorage.getItem('user');
     },
     hasStepper() {
-      if (this.schema != undefined && this.schema.process_next_step) {
-        if (
-          this.schema.process_next_step.condition &&
-          this.localValue != undefined
-        ) {
+      if (this.schema?.process_next_step) {
+        if (this.schema.process_next_step.condition && this.localValue !== undefined) {
           const condition = this.schema.process_next_step.condition;
           return this.schema.process_next_step && this.localValue[condition];
         }
@@ -390,7 +389,7 @@ export default {
       }
     },
     processNextStepQuery() {
-      var data = {};
+      const data = {};
       const targets = this.schema.process_next_step.query;
       if (targets) {
         Object.keys(targets).map((key) => {
@@ -405,19 +404,19 @@ export default {
      * full App Url
      */
     xmlUrl() {
-      const url = this.path + '?' + this.queryString;
+      const url = `${this.path}?${this.queryString}`;
       return url.replace('//', '/');
     },
     /**
      * Query String: merge browser query string with query props
      */
     queryString() {
-      let query = { ...this.$route.query, ...this.query };
+      const query = { ...this.$route.query, ...this.query };
       return Object.keys(query)
         .map((key) => {
           // do not send objects in params
-          if (typeof query[key] != 'object') {
-            return key + '=' + query[key];
+          if (typeof query[key] !== 'object') {
+            return `${key}=${query[key]}`;
           }
         })
         .join('&');
@@ -426,7 +425,7 @@ export default {
      * map of computed field and formulas
      */
     computedFields() {
-      var computedFields = {};
+      const computedFields = {};
       if (this.schema.fields) {
         Object.entries(this.schema.fields).map((field) => {
           if (field[1].computed_fields) {
@@ -444,7 +443,7 @@ export default {
      * ex:  field 1 column sum goes to field X
      */
     computedTotals() {
-      var computedTotals = {};
+      const computedTotals = {};
       if (this.schema.fields) {
         Object.entries(this.schema.fields).map((field) => {
           if (field[1].computed_totals) {
@@ -462,9 +461,8 @@ export default {
     finalSplitterModel() {
       if (this.isDetailOpened && this.hasFullDetail) {
         return this.smallscreen ? 0 : 30;
-      } else {
-        return 99.9;
       }
+      return 99.9;
     },
     smallscreen() {
       return this.$q.screen.lt.md;
@@ -498,8 +496,8 @@ export default {
      * select apropiate component to render
      */
     histrixComponent() {
-      if (this.schema.type != '') {
-        var type = '';
+      if (this.schema.type !== '') {
+        let type = '';
         switch (this.schema.type) {
           case 'ficha':
           case 'fichaing':
@@ -546,7 +544,7 @@ export default {
             //type = './HistrixTable.vue';
             break;
         }
-        if (type != '') {
+        if (type !== '') {
           return () => import(`${type}`);
         }
       }
@@ -562,53 +560,52 @@ export default {
      * SSR vue APi endpoint
      */
     vueUrl() {
-      return this.apiUrl + '/vue/' + this.path;
+      return `${this.apiUrl}/vue/${this.path}`;
     },
     hash() {
-      return (this.databaseId + '.' + this.path).replace(/\//g, '__');
-    },
+      return `${this.databaseId}.${this.path}`.replace(/\//g, '__');
+    }
   },
   methods: {
     hashcode(s) {
       return Math.abs(
-        s.split('').reduce(function(a, b) {
-          a = (a << 5) - a + b.charCodeAt(0);
-          return a & a;
+        s.split('').reduce((a, b) => {
+          const result = (a << 5) - a + b.charCodeAt(0);
+          return result & result;
         }, 0)
       );
     },
     subscribeWamp() {
-      var that = this;
       if (this.$wamp) {
         this.$wamp
           .subscribe(
             this.hash,
-            function(args, kwArgs, details) {
+            (_args, kwArgs, details) => {
               // component context is available
               console.log('args');
               console.log(kwArgs);
               console.log('details');
               console.log(details);
-              that.$q.notify({
+              this.$q.notify({
                 message: 'Xml utilizado',
                 type: 'info',
                 textColor: 'white',
                 color: 'info',
                 icon: 'info',
                 closeBtn: 'cerrar',
-                position: 'top',
+                position: 'top'
               });
             },
             {
-              acknowledge: true, // option needed for promise, automatically added
+              acknowledge: true // option needed for promise, automatically added
             }
           )
-          .then(function(s) {
+          .then((s) => {
             console.log('AutobahnJS Subscription object: ', s);
           });
       }
     },
-    refreshMaster(doRefresh) {
+    refreshMaster(_doRefresh) {
       //this.$refs.main.refresh()
       this.$emit('process-finish', true);
       if (this.redirectPage) {
@@ -641,8 +638,8 @@ export default {
      */
     openDetail($rowAttr) {
       this.selected = $rowAttr;
-      this.detailQuery = qs.parse($rowAttr['detailquery']);
-      this.detailPath = $rowAttr['detailpath'];
+      this.detailQuery = qs.parse($rowAttr.detailquery);
+      this.detailPath = $rowAttr.detailpath;
       this.isDetailOpened = true;
     },
     process() {
@@ -675,15 +672,10 @@ export default {
       const title = [];
       const schema = this.schema;
       console.log(data);
-      const attrs = data['DT_RowAttr'];
-      Object.entries(data).map(function(value) {
+      const _attrs = data.DT_RowAttr;
+      Object.entries(data).map((value) => {
         const field = schema.fields[value[0]];
-        if (
-          value[1] != '' &&
-          field &&
-          !field.hidden &&
-          field.histrix_type == 'Varchar'
-        ) {
+        if (value[1] !== '' && field && !field.hidden && field.histrix_type === 'Varchar') {
           console.log(field);
           const val = value[1].replace(/<[^>]*>?/gm, '');
           title.push(val);
@@ -694,7 +686,7 @@ export default {
     showLinkDialog(data) {
       if (data.url) {
         this.iframe = data.url;
-        this.dialogTitle = data.title + ': ' + title;
+        this.dialogTitle = `${data.title}`;
         this.showIframe = true;
         return;
       }
@@ -709,16 +701,13 @@ export default {
       }
 
       this.innerPath = path.replace('//', '/');
-      const queryString =
-        '{"' +
-        decodeURI(data.parameters.substring(1))
-          .replace(/"/g, '\\"')
-          .replace(/&/g, '","')
-          .replace(/=/g, '":"') +
-        '"}';
+      const queryString = `{"${decodeURI(data.parameters.substring(1))
+        .replace(/"/g, '\\"')
+        .replace(/&/g, '","')
+        .replace(/=/g, '":"')}"}`;
       this.innerQuery = JSON.parse(queryString);
       this.linkDialog = true;
-      this.dialogTitle = data.title + ': ' + title;
+      this.dialogTitle = `${data.title}: ${title}`;
     },
     /**
      * get PDF blob data
@@ -729,7 +718,7 @@ export default {
         .then((res) => {
           // create the blob
           const blob = new Blob([res.data], {
-            type: res.headers['content-type'],
+            type: res.headers['content-type']
           });
 
           // set reactive variable
@@ -744,7 +733,7 @@ export default {
             color: 'negative',
             icon: 'error',
             closeBtn: 'close',
-            position: 'top',
+            position: 'top'
           });
         });
     },
@@ -753,10 +742,10 @@ export default {
      */
     columnClasses(field) {
       let columnClass = '';
-      if (field.sum == 'true') {
+      if (field.sum === 'true') {
         columnClass += ' bg-light-green-12 text-black ';
       }
-      if (field.esClave == 'true') {
+      if (field.esClave === 'true') {
         columnClass += ' text-red ';
       }
       return columnClass;
@@ -770,6 +759,7 @@ export default {
         .then((response) => {
           this.resources = response.data.resources;
           this.schema = response.data.schema;
+          // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
           if (this.schema.hasOwnProperty('fields')) {
             this.buildColumns();
           }
@@ -780,7 +770,7 @@ export default {
         })
         .catch((e) => {
           this.dialog = true;
-          this.message = 'Error de Carga' + e;
+          this.message = `Error de Carga${e}`;
         });
     },
     /**
@@ -789,38 +779,36 @@ export default {
     buildColumns() {
       const fields = this.schema.fields;
 
-      var columns = [];
+      const columns = [];
       columns.push({
         name: '_id',
         label: 'rowid',
         field: '_id',
-        align: null,
         hidden: true,
         style: null,
         align: null,
         classes: null,
         sortable: false,
-        sum: false,
+        sum: false
       });
 
-      Object.entries(fields).map((fieldArray, i) => {
-        var field = fieldArray[1];
+      Object.entries(fields).map((fieldArray, _i) => {
+        const field = fieldArray[1];
         columns.push({
           name: field.name,
           label: field.title,
           field: field.name,
-          align: field.align,
           hidden: field.hidden_column,
           style: field.column_style,
           align: field.align,
           classes: this.columnClasses(field),
           sortable: field.sortable,
           sum: field.sum,
-          headerClasses: 'bg-primary text-white',
+          headerClasses: 'bg-primary text-white'
         });
       }, this);
       this.schema.columns = columns;
-    },
+    }
   },
   data() {
     return {
@@ -850,14 +838,14 @@ export default {
         filters: [],
         fields: [],
         columns: [],
-        values: {},
+        values: {}
       },
       data: [],
       selected: null,
       detailQuery: '',
-      detailPath: '',
+      detailPath: ''
     };
-  },
+  }
 };
 </script>
 <style>

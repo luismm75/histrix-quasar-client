@@ -21,7 +21,9 @@
     </picture-input>
     -->
     <div v-if="isRadio">
-        <div class="header-check"><b>{{ rowSchema.label }}</b></div>
+      <div class="header-check">
+        <b>{{ rowSchema.label }}</b>
+      </div>
     </div>
     <div v-if="fieldComponent === 'HistrixApp'">
       <slot name="slot-top-field-histrixapp" :props="localValue" />
@@ -253,28 +255,27 @@ export default {
     value: null,
     row: null,
     submitting: null,
-    path: null,
-
+    path: null
   },
   watch: {
     localValue: {
-      handler(newVal, oldVal) {
+      handler(newVal, _oldVal) {
         if (this.fieldSchema.helpContainer) {
           this.getFieldHelpData(newVal);
         }
-        if (this.fieldSchema.histrix_type == 'File') {
+        if (this.fieldSchema.histrix_type === 'File') {
           this.onFileChange(newVal);
         }
       },
       immediate: true,
-      deep: true,
+      deep: true
     },
 
     schema: {
-      handler(newVal, oldVal) {
+      handler(_newVal, _oldVal) {
         this.getOptions(true);
       },
-      deep: true,
+      deep: true
     },
     query: {
       handler(newVal, oldVal) {
@@ -282,29 +283,26 @@ export default {
           this.getOptions(true);
         }
       },
-      deep: true,
+      deep: true
     },
     options: {
-      handler(newVal, oldVal) {
-        if (this.options.find((o) => o.value == this.localValue)) {
+      handler(_newVal, _oldVal) {
+        if (this.options.find((o) => o.value === this.localValue)) {
           return;
         }
-        if (
-          this.options.length == 1 &&
-          this.fieldSchema.innerContainer.empty == false
-        ) {
+        if (this.options.length === 1 && this.fieldSchema.innerContainer.empty === false) {
           this.localValue = this.options[0];
-          return
+          return;
         }
         // @TODO: Verificar porque para rosgan tiene que estar comentado pero para mgp no
         // this.localValue = '';
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   components: {
     HistrixApp: () => import('./HistrixApp.vue'),
-    HistrixFileManager: () => import('./widgets/HistrixFileManager.vue'),
+    HistrixFileManager: () => import('./widgets/HistrixFileManager.vue')
     // PictureInput
   },
   methods: {
@@ -316,7 +314,7 @@ export default {
         return false;
       }
 
-      for (let key of keys1) {
+      for (const key of keys1) {
         if (object1[key] !== object2[key]) {
           return false;
         }
@@ -329,8 +327,8 @@ export default {
      * Filtra las opciones de la peticion, en caso que sea autocomplete, filtrara el input a partir del tercer caracter
      * @returns Prmosise<void>|String
      */
-    async filterFn(val, update, about) {
-      if(this.autoComplet === 'true' ){
+    async filterFn(val, update, _about) {
+      if (this.autoComplet === 'true') {
         if (val.length < 3) {
           this.options = [];
           update();
@@ -351,7 +349,6 @@ export default {
         const accent_map = {
           á: 'a',
           é: 'e',
-          è: 'e',
           í: 'i',
           ó: 'o',
           ú: 'u',
@@ -360,7 +357,7 @@ export default {
           è: 'e',
           Í: 'i',
           Ó: 'o',
-          Ú: 'u',
+          Ú: 'u'
         };
         const accent_fold = (data) => {
           let ret = '';
@@ -376,14 +373,14 @@ export default {
         });
       });
     },
-    uploadFn(file) {
-      return new Promise((resolve, reject) => {
+    uploadFn(_file) {
+      return new Promise((resolve, _reject) => {
         // Retrieve JWT token from your store.
         // const token = "myToken";
         resolve({
           url: this.uploadUrl,
           method: 'POST',
-          headers: this.headers,
+          headers: this.headers
         });
       });
     },
@@ -405,9 +402,8 @@ export default {
         return false;
       }
       const reader = new FileReader();
-      const that = this;
-      reader.onload = function (e) {
-        that.previewUrl = e.target.result;
+      reader.onload = (e) => {
+        this.previewUrl = e.target.result;
       };
       reader.readAsDataURL(file);
     },
@@ -416,7 +412,7 @@ export default {
     },
     selectRow(args) {
       const targets = {};
-      const { row, schema } = args;
+      const { row } = args;
 
       if (row) {
         const firstkey = Object.keys(row)[0];
@@ -426,8 +422,8 @@ export default {
         this.helpFounded = false;
       }
 
-      Object.entries(fieldSchema.fields)
-        .filter((field) => field[1].detail.length != 0)
+      Object.entries(this.fieldSchema.fields)
+        .filter((field) => field[1].detail.length !== 0)
         .map((field) => {
           field[1].detail.map((target) => {
             targets[target] = row ? row[field[0]] : '';
@@ -439,51 +435,44 @@ export default {
     },
     setRules() {
       if (this.helpPath) {
-        this.rules.push((val) => this.helpFounded || 'Código Incorrecto');
+        this.rules.push((_val) => this.helpFounded || 'Código Incorrecto');
       }
     },
     mapRemoteOptions(options) {
       const data = [];
       let flat = false;
-      if (!options)
-        return data;
-      options.forEach((optionData) => {
+      if (!options) return data;
+      for (const optionData of options) {
         let counter = 0;
         let key = null;
         let label = '';
-        Object.entries(optionData).forEach((options) => {
+        for (const [, value] of Object.entries(optionData)) {
           if (counter === 0) {
-            key = optionData['value'] ?? options[1];
+            key = optionData.value ?? value;
           }
           if (counter === 1) {
-            label = optionData['label'] ?? options[1];
+            label = optionData.label ?? value;
           }
           counter++;
-        });
+        }
         if (!flat && label.includes(' - ')) {
           const temp = label.slice(0, label.indexOf(' - '));
-          if (
-            temp.match(
-              /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/
-            )
-          )
-            flat = true;
+          if (temp.match(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/)) flat = true;
         }
         if (this.helperPath) {
           data.push({
-          value: key,
-          label,
-        });
+            value: key,
+            label
+          });
+        } else {
+          data.push({
+            value: key,
+            label,
+            description: label,
+            data: optionData
+          });
         }
-        else{
-        data.push({
-          value: key,
-          label,
-          description: label,
-          data: optionData,
-        });
       }
-      });
       if (this.fieldSchema.sortable !== false) {
         this.orderData(data, flat);
       }
@@ -498,36 +487,27 @@ export default {
           const key = String(option._id);
           //const key = option[0];
           let label = option;
-          if (
-            (typeof label === 'object' || typeof label === 'function') &&
-            label !== null
-          ) {
+          if ((typeof label === 'object' || typeof label === 'function') && label !== null) {
             label = label[Object.keys(label)[0]];
           }
 
           if (!flat && label.includes(' - ')) {
             const temp = label.slice(0, label.indexOf(' - '));
-            if (
-              temp.match(
-                /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/
-              )
-            )
-              flat = true;
+            if (temp.match(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/)) flat = true;
           }
           if (this.helperPath) {
-          data.push({
-          value: key,
-          label,
-        });
-        }
-        else{
-        data.push({
-          value: key,
-          label,
-          description: label,
-          data: optionData,
-        });
-      }
+            data.push({
+              value: key,
+              label
+            });
+          } else {
+            data.push({
+              value: key,
+              label,
+              description: label,
+              data: option
+            });
+          }
         });
         if (this.fieldSchema.sortable !== false) {
           this.orderData(data, flat);
@@ -543,36 +523,27 @@ export default {
         Object.entries(options).map((option) => {
           const key = option[0];
           let label = option[1];
-          if (
-            (typeof label === 'object' || typeof label === 'function') &&
-            label !== null
-          ) {
+          if ((typeof label === 'object' || typeof label === 'function') && label !== null) {
             label = label[Object.keys(label)[0]];
           }
           if (!flat && label.includes(' - ')) {
             const temp = label.slice(0, label.indexOf(' - '));
-            if (
-              temp.match(
-                /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/
-              )
-            )
-              flat = true;
+            if (temp.match(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/)) flat = true;
           }
           if (this.helperPath) {
-          data.push({
-          value: key,
-          label,
-          data:  option[1] ?? {},
-        });
-        }
-        else{
-        data.push({
-          value: key,
-          label,
-          description: label,
-          data: optionData,
-        });
-      }
+            data.push({
+              value: key,
+              label,
+              data: option[1] ?? {}
+            });
+          } else {
+            data.push({
+              value: key,
+              label,
+              description: label,
+              data: option
+            });
+          }
         });
         this.orderData(data, flat);
       }
@@ -586,24 +557,16 @@ export default {
           const keys = Object.keys(data[0].data);
           const order = keys.filter((key) => key.includes('orden'));
           if (order) {
-            return data.sort((a, b) => (parseInt(a.data[order]) > parseInt(b.data[order]) ? 1 : -1));
+            return data.sort((a, b) => (Number.parseInt(a.data[order]) > Number.parseInt(b.data[order]) ? 1 : -1));
           }
         }
-        return data.sort((a, b) => (a.label > b.label ? 1 : -1))
-      };
+        return data.sort((a, b) => (a.label > b.label ? 1 : -1));
+      }
       data.sort((prev, next) => {
         const dateNextFormat = this.formatDate(next.label.slice(0, 10));
-        const tempNext = new Date(
-          dateNextFormat[0],
-          dateNextFormat[1],
-          dateNextFormat[2]
-        );
+        const tempNext = new Date(dateNextFormat[0], dateNextFormat[1], dateNextFormat[2]);
         const datePrevFormat = this.formatDate(prev.label.slice(0, 10));
-        const tempPrev = new Date(
-          datePrevFormat[0],
-          datePrevFormat[1],
-          datePrevFormat[2]
-        );
+        const tempPrev = new Date(datePrevFormat[0], datePrevFormat[1], datePrevFormat[2]);
         if (tempPrev.getTime() > tempNext) return -1;
         if (tempPrev.getTime() < tempNext) return 1;
         return 0;
@@ -612,11 +575,11 @@ export default {
 
     formatDate(props) {
       const year = props.slice(6, 10);
-      const month = parseInt(props.slice(3, 5)) + 1;
+      const month = Number.parseInt(props.slice(3, 5)) + 1;
       const day = props.slice(0, 2);
       return [year, month, day];
     },
-    getHelpSchema(url) {
+    getHelpSchema(_url) {
       if (this.helpPath) {
         histrixApi
           .getAppSchema(this.helpPath)
@@ -636,17 +599,15 @@ export default {
       const helpKey = this.fieldSchema.help_key;
       params[helpKey] = newVal;
 
-      const that = this;
-
       this.delayTimer = setTimeout(() => {
         histrixApi
           .getAppData(this.helpPath, params)
           .then((response) => {
             const row = response.data.data[0];
-            const schema = that.helpSchema;
-            that.selectRow({ row, schema });
+            const schema = this.helpSchema;
+            this.selectRow({ row, schema });
           })
-          .catch((e) => {
+          .catch((_e) => {
             /*
             this.dialog = true;
             this.message = 'Error de Carga de Datos';
@@ -678,15 +639,18 @@ export default {
 
     async searchOptions(valueSearch) {
       try {
-        let field = await histrixApi.getAppSchema(this.innerContainerUrl)
-        field = Object.keys(field.data.schema.fields)[1]
-        const response = await histrixApi
-        .getAppData(this.innerContainerUrl, {'_f[]': `${field}`,'_o[]': 'like', '_v[]': valueSearch})
+        let field = await histrixApi.getAppSchema(this.innerContainerUrl);
+        field = Object.keys(field.data.schema.fields)[1];
+        const response = await histrixApi.getAppData(this.innerContainerUrl, {
+          '_f[]': `${field}`,
+          '_o[]': 'like',
+          '_v[]': valueSearch
+        });
         // this.options = this.mapOptions(response.data.data);
         this.options = this.mapRemoteOptions(response.data.data);
-        const option = this.options.find((obj) => obj.value == val);
+        const option = this.options.find((obj) => obj.value === valueSearch);
         this.$emit('selectOption', {
-          selected_option: option,
+          selected_option: option
         });
       } catch (error) {
         console.log(error);
@@ -696,28 +660,22 @@ export default {
      * Sirve para traer las opciones del campo
      * @returns void
      */
-    getOptions(refresh = false) {
-
+    getOptions(_refresh = false) {
       // this.$emit("refreshFieldSchema", {value: localValue.value, selected_option: option})
       // this.getFieldSchema(query)
-
+      let refresh = _refresh;
       if (!refresh && this.rowSchema && this.fieldSchema.options) {
         this.options = this.mapOptionsOld(this.fieldSchema.options);
         refresh = false;
       } else {
         refresh = true;
       }
-      
-      const val = this.localValue
-        ? this.localValue.value || this.localValue
-        : null;
-      
+
+      const val = this.localValue ? this.localValue.value || this.localValue : null;
+
       if (this.hasOptions) {
-        if (
-          this.query != undefined &&
-          Object.entries(this.query).length !== 0
-        ) {
-          if ( this.autoComplet === 'true') return;
+        if (this.query !== undefined && Object.entries(this.query).length !== 0) {
+          if (this.autoComplet === 'true') return;
           if (refresh || this.histrixType === 'radio') {
             histrixApi
               .getAppData(this.innerContainerUrl, this.query)
@@ -725,10 +683,10 @@ export default {
                 // this.options = this.mapOptions(response.data.data);
                 this.options = this.mapRemoteOptions(response.data.data);
 
-                const option = this.options.find((obj) => obj.value == val);
+                const option = this.options.find((obj) => obj.value === val);
                 this.$emit('selectOption', {
                   value: val,
-                  selected_option: option,
+                  selected_option: option
                 });
               })
               .catch((e) => {
@@ -736,20 +694,19 @@ export default {
               });
           }
         } else {
-            if (this.fieldSchema.full_options) {
-              this.options = this.mapOptions(this.fieldSchema.full_options);
-            } else {
-              this.options = this.mapOptionsOld(this.fieldSchema.options);
-            }
-
-            const option = this.options.find((obj) => obj.value == val);
-            if (option) {
-              this.$emit('selectOption', { value: val, selected_option: option });
-            }
+          if (this.fieldSchema.full_options) {
+            this.options = this.mapOptions(this.fieldSchema.full_options);
+          } else {
+            this.options = this.mapOptionsOld(this.fieldSchema.options);
           }
+
+          const option = this.options.find((obj) => obj.value === val);
+          if (option) {
+            this.$emit('selectOption', { value: val, selected_option: option });
+          }
+        }
       }
-      
-    },
+    }
   },
   data() {
     return {
@@ -768,19 +725,14 @@ export default {
         /* starting with Sunday */
         days: 'Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado'.split('_'),
         daysShort: 'Dom_Lun_Mar_Mié_Jue_Vie_Sáb'.split('_'),
-        months:
-          'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split(
-            '_'
-          ),
-        monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split(
-          '_'
-        ),
-        firstDayOfWeek: 1,
-      },
+        months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
+        monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
+        firstDayOfWeek: 1
+      }
     };
   },
   created() {
-   // this.getOptions(true);
+    // this.getOptions(true);
   },
   mounted() {
     this.setRules();
@@ -797,18 +749,13 @@ export default {
       return this.fieldSchema.autocomplete;
     },
     hint() {
-      return this.fieldSchema.placeholder != this.fieldSchema.title
-        ? this.fieldSchema.placeholder
-        : '';
+      return this.fieldSchema.placeholder !== this.fieldSchema.title ? this.fieldSchema.placeholder : '';
     },
     fieldSchema() {
       return { ...this.schema, ...this.rowSchema };
     },
     clearable() {
-      return (
-        this.fieldComponent == 'q-select' &&
-        this.fieldSchema.innerContainer.empty == true
-      );
+      return this.fieldComponent === 'q-select' && this.fieldSchema.innerContainer.empty === true;
     },
     inputClass() {
       return `text-${this.fieldSchema.align}`;
@@ -826,7 +773,7 @@ export default {
         mask = '####-##-## ##:##:##';
       }
       if (this.isDecimal) {
-        if (this.totalDecimal == 0) {
+        if (this.totalDecimal === 0) {
           mask = '#';
         } else {
           mask = '#.';
@@ -853,45 +800,40 @@ export default {
       if (this.submitting) {
         return true;
       }
-      if (this.histrixType == 'object') {
+      if (this.histrixType === 'object') {
         return false;
       }
       if (this.row && this.fieldSchema.enabler) {
         return (
-          this.row[this.fieldSchema.enabler] == '0' ||
-          this.row[this.fieldSchema.enabler] == 0 ||
-          this.row[this.fieldSchema.enabler] == 'false'
+          this.row[this.fieldSchema.enabler] === '0' ||
+          this.row[this.fieldSchema.enabler] === 0 ||
+          this.row[this.fieldSchema.enabler] === 'false'
         );
       }
-      if (this.fieldSchema.deshabilitado == 'true') {
+      if (this.fieldSchema.deshabilitado === 'true') {
         return true;
       }
-      if (this.fieldSchema.deshabilitado == 'false') {
+      if (this.fieldSchema.deshabilitado === 'false') {
         return false;
       }
-      return this.fieldSchema.disabled == 'disabled';
+      return this.fieldSchema.disabled === 'disabled';
     },
     hasOptions() {
-        return (
-          (this.fieldSchema.options &&
-            Object.keys(this.fieldSchema.options).length !== 0) ||
-          this.fieldSchema.isSelect
-        );
-
+      return (
+        (this.fieldSchema.options && Object.keys(this.fieldSchema.options).length !== 0) || this.fieldSchema.isSelect
+      );
     },
     renderHelper() {
       return this.fieldSchema.innerContainer && !this.hasOptions;
     },
     headers() {
-      return [
-        { name: 'Authorization', value: 'Bearer ' + localStorage.accessToken },
-      ];
+      return [{ name: 'Authorization', value: `Bearer ${localStorage.accessToken}` }];
     },
     uploadUrl() {
-      return histrixApi.apiUrl() + '/files/' + this.path;
+      return `${histrixApi.apiUrl()}/files/${this.path}`;
     },
     thumb() {
-      return histrixApi.apiUrl() + '/thumb/' + this.path + this.value;
+      return `${histrixApi.apiUrl()}/thumb/${this.path}${this.value}`;
     },
     helperPath() {
       const helper = this.fieldSchema.innerContainer;
@@ -911,37 +853,28 @@ export default {
     isMultiple() {
       return this.fieldSchema
         ? this.fieldSchema.multiple === 1 || this.fieldSchema.multiple === 'multiple'
-        : this.schema.multiple == 'multiple';
+        : this.schema.multiple === 'multiple';
     },
     isTextarea() {
       return this.fieldSchema.size > 90;
     },
     isDate() {
-      return (
-        this.schema['data-role'] == 'datebox' || this.histrixType == 'date'
-      );
+      return this.schema['data-role'] === 'datebox' || this.histrixType === 'date';
     },
     isTime() {
-      return (
-        this.fieldSchema.histrix_type == 'Time' || this.histrixType == 'time'
-      );
+      return this.fieldSchema.histrix_type === 'Time' || this.histrixType === 'time';
     },
     isDecimal() {
-      return (
-        this.fieldSchema.histrix_type == 'decimal' || this.histrixType == 'decimal'
-      );
+      return this.fieldSchema.histrix_type === 'decimal' || this.histrixType === 'decimal';
     },
     fillMask() {
       return this.isDecimal ? '0' : '';
     },
     totalDecimal() {
-      return parseInt(this.fieldSchema.decimales);
+      return Number.parseInt(this.fieldSchema.decimales);
     },
     isDateTime() {
-      return (
-        this.fieldSchema.histrix_type == 'Datetime' ||
-        this.histrixType == 'datetime'
-      );
+      return this.fieldSchema.histrix_type === 'Datetime' || this.histrixType === 'datetime';
     },
     label() {
       // if (!this.isDisabled) {
@@ -975,17 +908,10 @@ export default {
                 icon: this.$q.iconSet.editor.align,
                 fixedLabel: true,
                 list: 'only-icons',
-                options: ['left', 'center', 'right', 'justify'],
-              },
+                options: ['left', 'center', 'right', 'justify']
+              }
             ],
-            [
-              'bold',
-              'italic',
-              'strike',
-              'underline',
-              'subscript',
-              'superscript',
-            ],
+            ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
             ['token', 'hr', 'link', 'custom_btn'],
             ['print', 'fullscreen'],
             [
@@ -993,7 +919,7 @@ export default {
                 label: this.$q.lang.editor.formatting,
                 icon: this.$q.iconSet.editor.formatting,
                 list: 'no-icons',
-                options: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code'],
+                options: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code']
               },
               {
                 label: this.$q.lang.editor.fontSize,
@@ -1001,15 +927,7 @@ export default {
                 fixedLabel: true,
                 fixedIcon: true,
                 list: 'no-icons',
-                options: [
-                  'size-1',
-                  'size-2',
-                  'size-3',
-                  'size-4',
-                  'size-5',
-                  'size-6',
-                  'size-7',
-                ],
+                options: ['size-1', 'size-2', 'size-3', 'size-4', 'size-5', 'size-6', 'size-7']
               },
               {
                 label: this.$q.lang.editor.defaultFont,
@@ -1025,15 +943,15 @@ export default {
                   'impact',
                   'lucida_grande',
                   'times_new_roman',
-                  'verdana',
-                ],
+                  'verdana'
+                ]
               },
-              'removeFormat',
+              'removeFormat'
             ],
             ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
 
             ['undo', 'redo'],
-            ['viewsource'],
+            ['viewsource']
           ];
           /*
           :fonts="{
@@ -1065,13 +983,13 @@ export default {
     },
 
     isRadio() {
-      return this.histrixType == 'radio';
+      return this.histrixType === 'radio';
     },
     inputType() {
-      if (this.fieldSchema.histrix_type == 'File') {
+      if (this.fieldSchema.histrix_type === 'File') {
         return this.fieldSchema.histrix_type;
       }
-      if (this.histrixType == 'radio') {
+      if (this.histrixType === 'radio') {
         return this.histrixType;
       }
       if (this.isDateTime) {
@@ -1080,7 +998,7 @@ export default {
       if (this.fieldComponent === 'q-select' && this.hasOptions === true) {
         return 'text';
       }
-      if (this.fieldSchema.TipoDato == 'integer') {
+      if (this.fieldSchema.TipoDato === 'integer') {
         return 'number';
       }
       return this.fieldSchema.type;
@@ -1092,7 +1010,7 @@ export default {
         type = 'q-select';
       }
 
-      if (this.fieldSchema.histrix_type == 'Radio') {
+      if (this.fieldSchema.histrix_type === 'Radio') {
         type = 'radio';
       }
 
@@ -1100,7 +1018,7 @@ export default {
         type = this.fieldSchema.TipoDato;
       }
 
-      if (type == 'select') {
+      if (type === 'select') {
         type = 'q-select';
       }
 
@@ -1108,25 +1026,25 @@ export default {
         type = 'object';
       }
 
-      if (this.fieldSchema.histrix_type == 'File') {
+      if (this.fieldSchema.histrix_type === 'File') {
         type = 'q-file';
       }
 
-      if (this.fieldSchema.histrix_type == 'Editor') {
+      if (this.fieldSchema.histrix_type === 'Editor') {
         type = 'q-editor';
       }
 
-      if (this.fieldSchema.histrix_type == 'Check') {
+      if (this.fieldSchema.histrix_type === 'Check') {
         type = 'check';
       }
 
-      if (this.fieldSchema.histrix_type == 'Flipswitch') {
+      if (this.fieldSchema.histrix_type === 'Flipswitch') {
         type = 'toggle';
       }
       return type;
     },
     style() {
-      let style = this.fieldSchema.style || '';
+      const style = this.fieldSchema.style || '';
       return style;
     },
     dateMask() {
@@ -1135,8 +1053,8 @@ export default {
 
     localValue: {
       get() {
-        if (this.histrixType == 'check' || this.histrixType == 'toggle') {
-          return this.value === true || this.value != 0;
+        if (this.histrixType === 'check' || this.histrixType === 'toggle') {
+          return this.value === true || this.value !== 0;
         }
         if (this.isDate) {
           if (this.value === '' || !this.value) {
@@ -1149,30 +1067,26 @@ export default {
           if (this.value.includes('/')) {
             value = this.value.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3');
           }
-          let fecha = new Date(value);
+          const fecha = new Date(value);
           fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
           return date.formatDate(fecha, this.dateMask);
         }
 
-        if (this.histrixType == 'q-select' && this.options) {
+        if (this.histrixType === 'q-select' && this.options) {
           if (!this.isMultiple) {
             return this.value;
             // return this.options.find(obj => obj.value == this.value);
-          } else {
-            if (this.value === '' || this.value === null) {
-              return undefined;
-            }
+          }
+          if (this.value === '' || this.value === null) {
+            return undefined;
+          }
 
-            if (
-              typeof this.value === 'string' ||
-              this.value instanceof String
-            ) {
-              let items = JSON.parse(this.value);
-              if (!Array.isArray(items)) {
-                items = [this.value];
-              }
-              return items;
+          if (typeof this.value === 'string' || this.value instanceof String) {
+            let items = JSON.parse(this.value);
+            if (!Array.isArray(items)) {
+              items = [this.value];
             }
+            return items;
           }
         }
 
@@ -1186,25 +1100,25 @@ export default {
         // }
 
         if (this.value) {
-          return this.value.value != undefined ? this.value.value : this.value;
+          return this.value.value !== undefined ? this.value.value : this.value;
         }
 
         return this.value;
       },
       set(localValue) {
-        if (this.histrixType == 'q-select') {
-          let val = localValue;
-          if (localValue && localValue.value) {
+        if (this.histrixType === 'q-select') {
+          const val = localValue;
+          if (localValue?.value) {
             this.$emit('input', localValue.value);
-            let val = localValue.value;
+            const _val = localValue.value;
           } else {
             this.$emit('input', localValue);
           }
 
-          const option = this.options.find((obj) => obj.value == val);
+          const option = this.options.find((obj) => obj.value === val);
           this.$emit('selectOption', {
             value: localValue,
-            selected_option: option,
+            selected_option: option
           });
           /*
                         console.log('select');
@@ -1231,16 +1145,14 @@ export default {
             */
         } else {
           if (this.isDate) {
-            var fecha = new Date();
+            let fecha = new Date();
             if (this.dateMask === 'DD/MM/YYYY') {
               if (localValue.length !== 10) {
                 this.$emit('input', localValue);
                 this.$emit('field-change', this.row);
                 return;
               }
-              fecha = new Date(
-                localValue.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')
-              );
+              fecha = new Date(localValue.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'));
               fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
             } else {
               fecha = new Date(localValue);
@@ -1253,18 +1165,16 @@ export default {
         }
 
         this.$emit('field-change', this.row);
-      },
-    },
+      }
+    }
   },
   events: {
     'reset-field'(names) {
-      if (typeof names === 'string') {
-        names = [names];
-      }
-      if (names.includes(this.fieldSchema.name)) {
+      const namesArray = typeof names === 'string' ? [names] : names;
+      if (namesArray.includes(this.fieldSchema.name)) {
         this.localValue = '';
       }
-      },
-    },
+    }
+  }
 };
 </script>

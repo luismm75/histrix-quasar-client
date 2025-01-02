@@ -13,58 +13,64 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js'
+import histrixApi from '../../services/histrixApi.js';
 
 export default {
   name: 'DatabaseSelector',
   props: {
     host: null,
-    value: {},
+    value: {}
   },
   data() {
     return {
       dbinfo: [],
       state: 'success',
-      message: '¡¡Histrix Connected!!',
+      message: '¡¡Histrix Connected!!'
     };
   },
   mounted() {
-      this.getData(this.host);
+    this.getData(this.host);
   },
   computed: {
     localValue: {
-      get() { return this.value; },
-      set(localValue) { this.$emit('input', localValue.value); },
-    },
+      get() {
+        return this.value;
+      },
+      set(localValue) {
+        this.$emit('input', localValue.value);
+      }
+    }
   },
   watch: {
-    host(newVal, oldVal) {
+    host(newVal, _oldVal) {
       this.getData(newVal);
-      
-    },
+    }
   },
   methods: {
     getData(host) {
-      histrixApi.getHostDb(host)
+      histrixApi
+        .getHostDb(host)
         .then((response) => {
           const data = [];
           console.log(response.data);
-          Object.entries(response.data).filter(data => data[1].hidden !== "true").map((info) => {
-            data.push({
-              value: info[1].id,
-              label: info[1].description,
-              description: info[1].name,
+          Object.entries(response.data)
+            .filter((data) => data[1].hidden !== 'true')
+            .map((info) => {
+              data.push({
+                value: info[1].id,
+                label: info[1].description,
+                description: info[1].name
+              });
             });
-          });
           this.dbinfo = data;
           this.state = 'success';
           this.message = '¡¡Histrix Connected!!';
         })
-        .catch((e) => {
+        .catch((_e) => {
           this.state = 'error';
           this.message = 'No Histrix Server Available';
         });
-    },
+    }
   }
 };
 </script>

@@ -67,10 +67,10 @@
 </template>
 <script>
 // import Vue from 'vue'
-import { required, email, minLength, sameAs, requiredIf } from 'vuelidate/lib/validators';
-import InputPasswordVue from './InputPassword.vue';
-import api from '../services/histrixApi.js';
+import { email, minLength, required, requiredIf, sameAs } from 'vuelidate/lib/validators';
 import config from '../services/config.js';
+import api from '../services/histrixApi.js';
+import InputPasswordVue from './InputPassword.vue';
 
 export default {
   name: 'HistrixPasswordChange',
@@ -78,7 +78,6 @@ export default {
     InputPasswordVue
   },
   props: {
-    
     closable: {
       type: Boolean,
       default: false
@@ -92,87 +91,89 @@ export default {
       old_password: null,
       new_password: null,
       confirm_password: null,
-      db: config.db,
+      db: config.db
     },
-    loading: true,
+    loading: true
   }),
   validations: {
     form: {
       old_password: { required },
       new_password: { required, minLength: minLength(6) },
-      confirm_password: { required, sameAsPassword: sameAs('new_password') },
-    },
+      confirm_password: { required, sameAsPassword: sameAs('new_password') }
+    }
   },
   computed: {
-      passwordErrorMsg() {
-        if (this.form.old_password === '') {
-          return ''
-        }
-        // if (!this.warning && this.warning.suggestions.length) {
-          return 'Ingrese contraseña correcta'
-        // }
+    passwordErrorMsg() {
+      if (this.form.old_password === '') {
+        return '';
+      }
+      // if (!this.warning && this.warning.suggestions.length) {
+      return 'Ingrese contraseña correcta';
+      // }
 
-        // let msg = this.warning.suggestions[0]
-        // switch (msg) {
-        //   case 'Add another word or two. Uncommon words are better.': 
-        //   msg = 'Agregue otra palabra. Preferiblemente palabras no comunes.'
-        //   break
-        //   default:
-        //   msg = 'Ingrese contraseña correcta'
-        //   break
-        // }
-        // return msg
-      },
-      passwordError() {
-        return this.$v.form.old_password.$error
-      },    
+      // let msg = this.warning.suggestions[0]
+      // switch (msg) {
+      //   case 'Add another word or two. Uncommon words are better.':
+      //   msg = 'Agregue otra palabra. Preferiblemente palabras no comunes.'
+      //   break
+      //   default:
+      //   msg = 'Ingrese contraseña correcta'
+      //   break
+      // }
+      // return msg
+    },
+    passwordError() {
+      return this.$v.form.old_password.$error;
+    }
   },
   mounted() {
     this.user = JSON.parse(localStorage.getItem('user'));
-    this.form.user_id = this.user.user_id      
+    this.form.user_id = this.user.user_id;
   },
   methods: {
     showScore(score) {
-      console.log('💯', score)
+      console.log('💯', score);
     },
     validateForm() {
-      return (this.form.new_password == this.form.confirm_password) 
+      return this.form.new_password === this.form.confirm_password;
     },
     submit() {
-        if (!this.validateForm()) {
-          return
-        }
-        this.btnLoading = true;
-        const redirect = this.$auth.redirect();
-        
+      if (!this.validateForm()) {
+        return;
+      }
+      this.btnLoading = true;
+      const _redirect = this.$auth.redirect();
 
-        api.changePassword(this.form).then(resp => {
-          this.response = resp.data.responseText
-          this.form.old_password = null
-          this.form.new_password = null
-          this.form.confirm_password = null
-          this.okPassword = resp.data.responseText
+      api
+        .changePassword(this.form)
+        .then((resp) => {
+          this.response = resp.data.responseText;
+          this.form.old_password = null;
+          this.form.new_password = null;
+          this.form.confirm_password = null;
+          this.okPassword = resp.data.responseText;
           this.$q.notify({
             message: resp.data.responseText,
             type: 'positive',
             timeout: 8000,
             position: 'top'
           });
-          this.$emit('close')
-        }).catch(error => {
-          // console.log(error.response)
-          const resp = error.response.data.responseText || 'Ha ocurrido un error reseteando contraseña'
-          this.$q.notify({
-          // message: `${error.response.data.responseText}`,
-          message: resp,
-          type: 'negative',
-          timeout: 8000,
-          position: 'top'
-        });          
-          this.btnLoading = false;
+          this.$emit('close');
         })
+        .catch((error) => {
+          // console.log(error.response)
+          const resp = error.response.data.responseText || 'Ha ocurrido un error reseteando contraseña';
+          this.$q.notify({
+            // message: `${error.response.data.responseText}`,
+            message: resp,
+            type: 'negative',
+            timeout: 8000,
+            position: 'top'
+          });
+          this.btnLoading = false;
+        });
     }
-  },
+  }
 };
 </script>
 <style scoped>

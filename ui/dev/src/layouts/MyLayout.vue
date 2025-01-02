@@ -25,15 +25,15 @@
 </template>
 
 <script>
-import { version } from 'ui' // "ui" is aliased in quasar.conf.js
+import { version } from 'ui'; // "ui" is aliased in quasar.conf.js
 
 export default {
   name: 'MyLayout',
 
-  data () {
+  data() {
     return {
       version
-    }
+    };
   }
-}
+};
 </script>

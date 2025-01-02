@@ -100,12 +100,12 @@
 
 <script>
 import { required } from 'vuelidate/lib/validators';
+import config from '../services/config.js';
 import histrixApi from '../services/histrixApi.js';
-import config from '../services/config.js'
 
 export default {
   name: 'FormLoginNotStyles',
-  props:{
+  props: {
     /**
      * @description Url para redirecionar despues de login
      * @type {String} - Url
@@ -113,10 +113,10 @@ export default {
      * @example
      * nextUrl="/"
      */
-    'nextUrl': {
+    nextUrl: {
       required: false,
       default: null,
-      type: String,
+      type: String
     },
 
     /**
@@ -126,10 +126,10 @@ export default {
      * @example
      * login="histrix"
      */
-    'login': {
-      required:false,
+    login: {
+      required: false,
       default: null,
-      type: String,
+      type: String
     },
 
     /**
@@ -139,10 +139,10 @@ export default {
      * @example
      * isRegister="true"
      */
-    'isRegister':{
+    isRegister: {
       required: false,
       default: false,
-      type: Boolean,
+      type: Boolean
     },
 
     /**
@@ -152,10 +152,10 @@ export default {
      * @example
      * isSelectDataBase="true"
      */
-    'isSelectDataBase':{
+    isSelectDataBase: {
       required: false,
       default: false,
-      type: Boolean,
+      type: Boolean
     },
 
     /**
@@ -165,13 +165,13 @@ export default {
      * @example
      * formLoginAlter="{email: 'histrix', password: 'histrix'}"
      */
-    'formLoginAlter': {
+    formLoginAlter: {
       required: false,
       default: () => ({
         email: null,
-        password: null,
+        password: null
       }),
-      type: Object,
+      type: Object
     },
 
     /**
@@ -181,10 +181,10 @@ export default {
      * @example
      * redirectParent="/"
      */
-    'redirectParent': {
+    redirectParent: {
       required: false,
       default: '',
-      type: String,
+      type: String
     },
 
     /**
@@ -194,23 +194,23 @@ export default {
      * @example
      * eventAfter="eventAfterLogin"
      */
-    'eventAfter': {
+    eventAfter: {
       required: false,
       default: null,
-      type: String,
-    },
+      type: String
+    }
   },
-  watch:{
+  watch: {
     /**
      * @description Si se cambia la base de datos, se guarda en el localStorage, se cambia la configuracion y se cambia la imagen
      * @param {String} newVal - Valor nuevo de la base de datos
      * @returns {void}
      */
-    db(newVal){
-      if (!newVal) return
+    db(newVal) {
+      if (!newVal) return;
       config.db = newVal;
-      localStorage.setItem('database', newVal)
-      this.img = this.infoDB.find(val=>val.value === newVal).img
+      localStorage.setItem('database', newVal);
+      this.img = this.infoDB.find((val) => val.value === newVal).img;
     },
     /**
      * @description Si se cambia el evento, se gurda en la copia del evento.
@@ -218,11 +218,11 @@ export default {
      * @returns {void}
      */
     eventAfter: {
-      handler(newVal){
-        if (!newVal) return
+      handler(newVal) {
+        if (!newVal) return;
         this.copyEvent = newVal;
       },
-      Immutable: true,
+      Immutable: true
     }
   },
   data() {
@@ -234,7 +234,7 @@ export default {
        */
       form: {
         email: null,
-        password: null,
+        password: null
       },
       /**
        * @description Si esta cargando el boton de login
@@ -271,16 +271,16 @@ export default {
        * @type {String}
        * @default ''
        */
-      img: '',
+      img: ''
     };
   },
   mounted() {
     this.form.email = this.login;
     if (this.isSelectDataBase) {
-      histrixApi.apiDBQuery().then((response)=> {
-        this.infoDB=response
-        if (config.db){
-          this.db = this.infoDB.find(val=> val.value === config.db).value
+      histrixApi.apiDBQuery().then((response) => {
+        this.infoDB = response;
+        if (config.db) {
+          this.db = this.infoDB.find((val) => val.value === config.db).value;
         }
       });
     }
@@ -288,8 +288,8 @@ export default {
   validations: {
     form: {
       email: { required },
-      password: { required },
-    },
+      password: { required }
+    }
   },
   computed: {
     /**
@@ -308,8 +308,8 @@ export default {
      * @description Imagen de la base de datos seleccionada
      * @returns {String} - Url de la imagen
      */
-    imglogo(){
-      return `${config.fixApi}${this.img}`
+    imglogo() {
+      return `${config.fixApi}${this.img}`;
     }
   },
   methods: {
@@ -324,20 +324,21 @@ export default {
       this.btnLoading = true;
       histrixApi
         .login(formData.email, formData.password, this.redirect)
-        .then((success) => {
+        .then((_success) => {
           this.$events.fire('loaded-user');
           this.$events.fire('login-ok');
           this.runEventAfter();
         })
-        .catch((error) => {
+        .catch((_error) => {
           this.$q.notify({
             message: 'email o contraseña incorrectos ',
             type: 'negative',
             timeout: 4000,
             position: 'top',
-            actions: [{ icon: 'close', color: 'white' }],
+            actions: [{ icon: 'close', color: 'white' }]
           });
-        }).finally(() => {
+        })
+        .finally(() => {
           this.btnLoading = false;
           this.form.password = null;
         });
@@ -351,12 +352,12 @@ export default {
     formatDataPostLogin() {
       let formData = {
         email: this.form.email,
-        password: this.form.password,
+        password: this.form.password
       };
       if (this.formLoginAlter.email && this.formLoginAlter.password) {
         formData = {
           email: this.formLoginAlter.email,
-          password: this.formLoginAlter.password,
+          password: this.formLoginAlter.password
         };
       }
       return formData;
@@ -367,12 +368,12 @@ export default {
      * @example
      * this.runEventAfter();
      */
-    runEventAfter(){
+    runEventAfter() {
       if (this.copyEvent) this.$events.fire(this.copyEvent);
       this.copyEvent = '';
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style scoped>

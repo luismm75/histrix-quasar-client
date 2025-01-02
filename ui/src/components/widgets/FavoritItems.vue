@@ -15,24 +15,24 @@ export default {
   name: 'FavoritItems',
   data() {
     return {
-      favoritItems: [],
+      favoritItems: []
     };
   },
   methods: {
     async getFavoritItems() {
       const response = await histrixApi.getFavorites();
       this.favoritItems = response;
-    },
+    }
   },
   created() {
     this.getFavoritItems();
   },
   event: {
-    'update-favorit': function() {
+    'update-favorit': function () {
       this.getFavoritItems();
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style scoped>

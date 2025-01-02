@@ -22,13 +22,13 @@
 </template>
 
 <script>
-import pages from '../router/pages'
+import pages from '../router/pages';
 
 export default {
-  created () {
-    this.pages = pages
+  created() {
+    this.pages = pages;
   }
-}
+};
 </script>
 
 <style lang="sass" scoped>

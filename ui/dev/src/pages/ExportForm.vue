@@ -5,16 +5,15 @@
   </q-page>
 </template>
 <script>
-
 export default {
-    data() {
-        return {
-            schema:{
-            title: 'filename'
-            }
-        }
-    }
-}
+  data() {
+    return {
+      schema: {
+        title: 'filename'
+      }
+    };
+  }
+};
 </script>
 <style lang="sass" scoped>
 .directive-target

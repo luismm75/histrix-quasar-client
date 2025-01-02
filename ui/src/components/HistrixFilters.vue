@@ -25,7 +25,7 @@ export default {
   name: 'HistrixFilters',
   props: ['schema', 'show'],
   components: {
-    HistrixField: () => import('./HistrixField.vue'),
+    HistrixField: () => import('./HistrixField.vue')
   },
   mounted() {
     this.initFilters();
@@ -34,32 +34,26 @@ export default {
   data() {
     return {
       filters: [],
-      open: false,
+      open: false
     };
   },
   computed: {
     filterCount() {
-      return this.filters.length
+      return this.filters.length;
     },
     filterString() {
       let query = '';
       this.filters.map((filter) => {
-        let value = filter.valor
-        if (filter.type == 'checkbox') {
-          value = (filter.valor)?1:0;
+        let value = filter.valor;
+        if (filter.type === 'checkbox') {
+          value = filter.valor ? 1 : 0;
         }
         if (filter.valor) {
-          query
-            += `&_f[]=${
-              filter.campo
-            }&_o[]=${
-              filter.operador
-            }&_v[]=${
-              value}`;
+          query += `&_f[]=${filter.campo}&_o[]=${filter.operador}&_v[]=${value}`;
         }
       });
       return query;
-    },    
+    }
   },
   methods: {
     filterData() {
@@ -67,8 +61,8 @@ export default {
     },
     initFilters() {
       // filter local fields
-      const filteredFilters = this.schema.filters.filter(e => e.local != 'true');
-      const customFields = [];
+      const filteredFilters = this.schema.filters.filter((e) => e.local !== 'true');
+      const _customFields = [];
 
       this.filters = filteredFilters.map(function (f) {
         f.disabled = f.deshabilitado;
@@ -76,8 +70,7 @@ export default {
         const item = this.schema.fields[f.id];
         return { ...item, ...f };
       }, this);
-    },
-
-  },
+    }
+  }
 };
 </script>

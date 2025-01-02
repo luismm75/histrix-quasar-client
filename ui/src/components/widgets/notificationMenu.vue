@@ -39,10 +39,10 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js'
+import histrixApi from '../../services/histrixApi.js';
 
 export default {
-  name: "notificationMenu",
+  name: 'notificationMenu',
   components: {},
   mounted() {
     this.getNotifications();
@@ -58,7 +58,7 @@ export default {
       histrixApi.getUserNotifications().then((response) => {
         this.notificationCount = response.data.messageCount;
         this.notifications = response.data.messages;
-      })
+      });
     }
   }
 };

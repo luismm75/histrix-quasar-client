@@ -56,14 +56,14 @@
 
 <script>
 import { date } from 'quasar';
-import histrixApi from '../../services/histrixApi.js'
+import histrixApi from '../../services/histrixApi.js';
 
 export default {
   name: 'HistrixUsers',
   props: {
-    online: Array,
+    online: Array
   },
-  data () {
+  data() {
     return {
       search: '',
       total: 0,
@@ -71,50 +71,48 @@ export default {
     };
   },
   computed: {
-    onlineCount () {
+    onlineCount() {
       return this.filteredItems.filter((item) => {
-        return item.isUp
-      }).length
+        return item.isUp;
+      }).length;
     },
-    filteredItems () {
-      return this.users.map((item) => {
-        item['isUp'] = this.online.filter((up) => {
-          const online = JSON.parse(up)
-          return item.Id_usuario == online.id;
-        }).length;
-        let newDate = new Date()
-        let lastlog = new Date(item.ultimolog)
-        let daydiff = date.getDateDiff(newDate, lastlog, 'days')
-        if (daydiff > 0) {
-          item['time'] = daydiff + ' días';
-        } else {
-          let mindiff = date.getDateDiff(newDate, lastlog, 'minutes')
-          if (mindiff > 60) {
-            let hourdiff = date.getDateDiff(newDate, lastlog, 'hours')
-            item['time'] = hourdiff + ' hs';
+    filteredItems() {
+      return this.users
+        .map((item) => {
+          item.isUp = this.online.filter((up) => {
+            const online = JSON.parse(up);
+            return item.Id_usuario === online.id;
+          }).length;
+          const newDate = new Date();
+          const lastlog = new Date(item.ultimolog);
+          const daydiff = date.getDateDiff(newDate, lastlog, 'days');
+          if (daydiff > 0) {
+            item.time = `${daydiff} días`;
           } else {
-            item['time'] = mindiff + ' min';
+            const mindiff = date.getDateDiff(newDate, lastlog, 'minutes');
+            if (mindiff > 60) {
+              const hourdiff = date.getDateDiff(newDate, lastlog, 'hours');
+              item.time = `${hourdiff} hs`;
+            } else {
+              item.time = `${mindiff} min`;
+            }
           }
 
-        }
-
-        return item;
-      }).filter((item) => {
-        const name = item.fullname || item.Nombre
-        return name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
-      });
+          return item;
+        })
+        .filter((item) => {
+          const name = item.fullname || item.Nombre;
+          return name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
+        });
     }
   },
-  mounted () {
+  mounted() {
     // this.subscribeWamp();
-    histrixApi.getUsers()
-      .then((response) => {
-        this.users = response.data.users;
-        this.total = response.data.total;
-      })
+    histrixApi.getUsers().then((response) => {
+      this.users = response.data.users;
+      this.total = response.data.total;
+    });
   },
-  methods: {
-
-  }
+  methods: {}
 };
 </script>

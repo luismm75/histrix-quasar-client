@@ -23,59 +23,60 @@
 </template>
 
 <script>
-import histrixApi from '../services/histrixApi.js'
+import histrixApi from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixList',
   props: {
     path: null,
     schema: {},
-    resources: {},
+    resources: {}
   },
   components: {
-    HistrixFilters: () => import('./HistrixFilters.vue'),
+    HistrixFilters: () => import('./HistrixFilters.vue')
   },
   mounted() {
     const url = this.xmlUrl();
     this.getData(url);
   },
   watch: {
-    path(newVal, oldVal) {
+    path(_newVal, _oldVal) {
       const url = this.xmlUrl();
-      this.getData(url);      
-    },
+      this.getData(url);
+    }
   },
   computed: {
     visibleColumns() {
-      return this.schema.columns.filter(
-        (column) => {return !column.hidden}
-      ).map((column, index, array) => {
-        return column.name; 
-      });
+      return this.schema.columns
+        .filter((column) => {
+          return !column.hidden;
+        })
+        .map((column, _index, _array) => {
+          return column.name;
+        });
     },
 
-    filteredData(cols) {
+    filteredData(_cols) {
       return this.data.filter((row) => {
-        return !row.value
+        return !row.value;
       });
-    },
+    }
   },
   methods: {
     xmlUrl(query) {
-      return `${this.path}?${query || '' }&_dt=list`;
+      return `${this.path}?${query || ''}&_dt=list`;
     },
     deleteItem(item) {
       const index = this.data.indexOf(item);
-      confirm('Are you sure you want to delete this item?')
-        && this.data.splice(index, 1);
+      confirm('Are you sure you want to delete this item?') && this.data.splice(index, 1);
     },
     editItem(item) {
       this.editedIndex = this.data.indexOf(item);
 
-      const item2 = {}; let 
-        key;
+      const item2 = {};
+      let key;
       for (key in item) {
-        item2[key] = (item[key].value || item[key]._);
+        item2[key] = item[key].value || item[key]._;
       }
 
       this.editedItem = Object.assign({}, item2);
@@ -85,8 +86,8 @@ export default {
           path: this.path,
           editedItem: item2,
           schema: this.schema,
-          resources: this.resources,
-        },
+          resources: this.resources
+        }
       });
     },
     close() {
@@ -96,15 +97,16 @@ export default {
       }, 300);
     },
     getData(url) {
-      histrixApi.getAppData(url)
+      histrixApi
+        .getAppData(url)
         .then((response) => {
           this.data = response.data.data;
         })
-        .catch((e) => {
+        .catch((_e) => {
           this.dialog = true;
           this.message = 'Error de Carga de Datos';
         });
-    },
+    }
   },
   data() {
     return {
@@ -118,11 +120,10 @@ export default {
         sortBy: 'desc',
         descending: false,
         page: 1,
-        rowsPerPage: 10,
+        rowsPerPage: 10
         // rowsNumber: xx if getting data from a server
-      },
-
+      }
     };
-  },
+  }
 };
 </script>

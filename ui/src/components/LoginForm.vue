@@ -15,9 +15,8 @@
 </template>
 
 <script>
-
 export default {
-  props:{
+  props: {
     /**
      * @description Url para redirecionar despues de login
      * @type {String} - Url
@@ -25,10 +24,10 @@ export default {
      * @example
      * nextUrl="/"
      */
-    'nextUrl': {
+    nextUrl: {
       required: false,
       default: null,
-      type: String || Boolean,
+      type: String || Boolean
     },
 
     /**
@@ -38,10 +37,10 @@ export default {
      * @example
      * login="histrix"
      */
-    'login': {
-      required:false,
+    login: {
+      required: false,
       default: null,
-      type: String,
+      type: String
     },
 
     /**
@@ -51,10 +50,10 @@ export default {
      * @example
      * isRegister="true"
      */
-    'isRegister':{
+    isRegister: {
       required: false,
       default: false,
-      type: Boolean,
+      type: Boolean
     },
 
     /**
@@ -64,10 +63,10 @@ export default {
      * @example
      * isSelectDataBase="true"
      */
-    'isSelectDataBase':{
+    isSelectDataBase: {
       required: false,
       default: false,
-      type: Boolean,
+      type: Boolean
     },
 
     /**
@@ -77,18 +76,18 @@ export default {
      * @example
      * formLoginAlter="{email: 'histrix', password: 'histrix'}"
      */
-    'formLoginAlter': {
+    formLoginAlter: {
       required: false,
       default: () => ({
         email: null,
-        password: null,
+        password: null
       }),
-      type: Object,
+      type: Object
     }
   },
   name: 'LoginForm',
   components: {
-    FormLoginNotStyles: () => import('./FormLoginNotStyles.vue'),
+    FormLoginNotStyles: () => import('./FormLoginNotStyles.vue')
   },
   mixins: [],
   data() {
@@ -104,12 +103,14 @@ export default {
        * @type {String} - Evento
        * @default null
        */
-      eventAfter: null,
+      eventAfter: null
     };
   },
-  mounted() {},
+  mounted() {
+    //
+  },
   computed: {},
-  watch:{},
+  watch: {},
   methods: {},
   events: {
     /**
@@ -134,10 +135,9 @@ export default {
     'event-after'(eventAfter) {
       this.redir = null;
       this.eventAfter = eventAfter;
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

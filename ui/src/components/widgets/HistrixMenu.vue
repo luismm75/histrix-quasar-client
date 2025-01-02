@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js'
+import histrixApi from '../../services/histrixApi.js';
 
 export default {
   name: 'HistrixMenu',
@@ -57,26 +57,27 @@ export default {
       filterString: '',
       tree: [{ nodeKey: '0', label: 'Buscando ...' }],
       expanded: [],
-      loading:true
+      loading: true
     };
   },
   watch: {
-    filterString(newval, oldval) {
-      if (newval != '') {
+    filterString(newval, _oldval) {
+      if (newval !== '') {
         this.$refs.qtree.expandAll();
       }
     }
   },
   methods: {
     nodeUri(prop) {
-      const path = (`/auth/${  prop.node.uri}`).replace('//', '/')
-      return { path,  query: { _title: prop.node.label } }
+      const path = `/auth/${prop.node.uri}`.replace('//', '/');
+      return { path, query: { _title: prop.node.label } };
     }
   },
   mounted() {
-    histrixApi.getMenu(this.level)
+    histrixApi
+      .getMenu(this.level)
       .then((response) => {
-        this.loading = false
+        this.loading = false;
         this.tree = response.data.tree;
       })
       .catch(console.log);

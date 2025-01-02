@@ -47,11 +47,11 @@ export default {
     query: '',
     styles: '',
     schema: {},
-    resources: {},
+    resources: {}
   },
   components: {
     HistrixFilters: () => import('./HistrixFilters.vue'),
-    IEcharts: () => import('vue-echarts-v3/src/full.js'),
+    IEcharts: () => import('vue-echarts-v3/src/full.js')
   },
   mounted() {
     const url = this.xmlUrl();
@@ -59,11 +59,11 @@ export default {
     this.getData(url);
   },
   watch: {
-    path(newVal, oldVal) {
+    path(_newVal, _oldVal) {
       const url = this.xmlUrl();
       this.getData(url);
     },
-    chartTypes(newVal, oldVal) {
+    chartTypes(newVal, _oldVal) {
       console.log(newVal.key);
       /*
        this.chartOptions.map(function(options){
@@ -77,7 +77,7 @@ export default {
       }, this)
 //      console.log(this.chartOptions)
 */
-    },
+    }
   },
   computed: {},
   methods: {
@@ -96,25 +96,25 @@ export default {
       return `${this.schema.api}/app/${this.path}?${query || ''}`;
     },
     setChartOptions(data) {
-      var series = [];
-      let types = this.types;
+      let series = [];
+      const types = this.types;
       this.schema.charts.map((chart) => {
-        let options = this.defaultOptions;
+        const options = this.defaultOptions;
 
         options.title.text = chart.titulo;
         options.title.subtext = chart.subtitulo;
 
-        let label = chart.etiquetas;
+        const label = chart.etiquetas;
 
-        if (chart.tipo == 'P') {
+        if (chart.tipo === 'P') {
           options.xAxis = null;
           options.yAxis = null;
           series = this.getDataIfIsPie(chart, data);
         } else {
           options.dataset.dimensions = Object.keys(chart.series);
           series = Object.keys(chart.series).map((serie) => {
-            let xaxis = [];
-            let newdata = [];
+            const xaxis = [];
+            const newdata = [];
             data.map((item) => {
               newdata.push(item[serie]);
               xaxis.push(item[label]);
@@ -123,8 +123,8 @@ export default {
             return {
               name: this.schema.fields[serie].title,
               type: types[chart.tipo],
-              stack: chart.tipo == 'SC' ? 'A' : null,
-              data: newdata,
+              stack: chart.tipo === 'SC' ? 'A' : null,
+              data: newdata
             };
           }, this);
         }
@@ -139,11 +139,11 @@ export default {
       const keysSerie = Object.keys(chart.series);
       let series = [];
       if (keysSerie.length >= 1) {
-        let tempArray = [];
-        for (let key of keysSerie) {
+        const tempArray = [];
+        for (const key of keysSerie) {
           const newdata = data.map((item) => ({
             value: item[key],
-            name: this.schema.fields[key].title,
+            name: this.schema.fields[key].title
           }));
           tempArray.push(newdata);
         }
@@ -151,21 +151,21 @@ export default {
           {
             name: chart.datos,
             type: this.types[chart.tipo],
-            data: tempArray.flat(),
-          },
+            data: tempArray.flat()
+          }
         ];
       } else {
-        let newdata = data.map((item) => ({
+        const newdata = data.map((item) => ({
           value: item[chart.datos],
-          name: item[chart.etiquetas],
+          name: item[chart.etiquetas]
         }));
         series = [
           {
             name: chart.datos,
             type: this.types[chart.tipo],
             // radius: ['40%', '70%'],z|
-            data: newdata,
-          },
+            data: newdata
+          }
         ];
       }
       return series;
@@ -177,11 +177,11 @@ export default {
           this.setChartOptions(response.data.data);
           this.loading = false;
         })
-        .catch((e) => {
+        .catch((_e) => {
           this.dialog = true;
           this.message = 'Error de Carga de Datos';
         });
-    },
+    }
   },
   data() {
     return {
@@ -201,27 +201,27 @@ export default {
         grid: {
           bottom: '20%',
           left: '5%',
-          top: '10%',
+          top: '10%'
         },
         legend: {
           orient: 'horizontal',
-          bottom: 0,
+          bottom: 0
         },
 
         tooltip: {
-          show: true,
+          show: true
         },
         // Global palette:
         // color: ['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
         dataset: {
           dimensions: [],
-          source: [],
+          source: []
         },
         xAxis: {},
         yAxis: {},
-        series: [],
-      },
+        series: []
+      }
     };
-  },
+  }
 };
 </script>

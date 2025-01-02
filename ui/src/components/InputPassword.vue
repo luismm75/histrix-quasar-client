@@ -283,10 +283,7 @@ export default {
      */
     passwordCount() {
       return (
-        this.password &&
-        (this.password.length > this.secureLength
-          ? `${this.secureLength}+`
-          : this.password.length)
+        this.password && (this.password.length > this.secureLength ? `${this.secureLength}+` : this.password.length)
       );
     },
     /**
@@ -294,15 +291,11 @@ export default {
      * based on the local _showPassword data or the showPassword prop
      */
     inputType() {
-      return this.$data._showPassword || this.showPassword
-        ? 'text'
-        : 'password';
+      return this.$data._showPassword || this.showPassword ? 'text' : 'password';
     },
 
     showPasswordLabel() {
-      return this.$data._showPassword || this.showPassword
-        ? this.labelHide
-        : this.labelShow;
+      return this.$data._showPassword || this.showPassword ? this.labelHide : this.labelShow;
     }
   },
 
@@ -311,7 +304,7 @@ export default {
       if (this.strengthMeterOnly) {
         this.emitValue('input', newValue);
       }
-    },
+    }
   }
 };
 </script>

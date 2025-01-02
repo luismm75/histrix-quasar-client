@@ -1,6 +1,6 @@
-import Vue from 'vue'
-import Plugin from '../../src/index'
+import Vue from 'vue';
+import Plugin from '../../src/index';
 
-Vue.use(Plugin)
+Vue.use(Plugin);
 
-export * from '../../src/index'
+export * from '../../src/index';
