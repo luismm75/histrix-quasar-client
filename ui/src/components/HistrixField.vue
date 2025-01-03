@@ -1101,7 +1101,10 @@ export default {
     localValue: {
       get() {
         if (this.histrixType === 'check' || this.histrixType === 'toggle') {
-          return this.value === true || this.value !== 0;
+          if (typeof this.value === 'boolean') {
+            return this.value;
+          }
+          return this.value !== '0';
         }
         if (this.isDate) {
           if (this.value === '' || !this.value) {
