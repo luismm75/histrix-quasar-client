@@ -158,6 +158,7 @@
           />
           <q-btn
             v-if="insertButton || updateButton"
+            :disable="$v.$invalid"
             type="submit"
             label="Grabar"
             icon="save"
@@ -166,8 +167,8 @@
           />
 
           <!--
-            <q-btn v-if="editedIndex == -1"_v-if="schema.insertButton"  label="Grabar" icon="save" @click="insertRow()"  />
-            <q-btn label="guardar"   icon="save" :disable="$v.$invalid" class=" bg-primary text-white nojustify-end" @click="saveForm()" :loading="submitting" v-if="updateButton" />
+            <q-btn v-if="editedIndex == -1" label="Grabar" icon="save" @click="insertRow()"  />
+            <q-btn v-if="updateButton" label="guardar"   icon="save" :disable="$v.$invalid" class=" bg-primary text-white nojustify-end" @click="saveForm()" :loading="submitting" />
             -->
         </span>
         <!--
@@ -691,7 +692,7 @@ export default {
         });
     },
     onSubmit() {
-      if (this.editedIndex === -1) {
+      if (this.editedIndex === -1 || this.editedIndex === null) {
         this.insertRow();
       } else {
         this.saveForm();

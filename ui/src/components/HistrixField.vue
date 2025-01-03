@@ -28,214 +28,238 @@
     <div v-if="fieldComponent === 'HistrixApp'">
       <slot name="slot-top-field-histrixapp" :props="localValue" />
     </div>
-    <component
-      v-bind:is="fieldComponent"
-      v-model="localValue"
-      v-bind="$attrs"
-      v-on:computed-total="onComputedTotal"
-      @v-on:keyup.113="showHelper()"
-      @filter="filterFn"
-      bottom-slots
-      :name="fieldSchema.name"
-      use-input
-      :type="inputType"
-      :path="helperPath"
-      :headers="headers"
-      :url="uploadUrl"
-      :query="query"
-      :options="options"
-      emit-value
-      map-options
-      debounce="500"
-      hide-bottom-space
-      :rules="rules"
-      :label="label"
-      :inner="true"
-      :mask="fieldMask"
-      :reverse-fill-mask="isDecimal"
-      :fill-mask="fillMask"
-      :isFormulation="true"
-      :filled="!isDisabled"
-      :toolbar="toolbar"
-      :disabled="isDisabled"
-      :disable="isDisabled"
-      :readonly="isDisabled"
-      :counter="isMultiple"
-      :fonts="{
-        arial: 'Arial',
-        arial_black: 'Arial Black',
-        comic_sans: 'Comic Sans MS',
-        courier_new: 'Courier New',
-        impact: 'Impact',
-        lucida_grande: 'Lucida Grande',
-        times_new_roman: 'Times New Roman',
-        verdana: 'Verdana',
-      }"
-      :size="size"
-      :use-chips="isMultiple"
-      :multiple="isMultiple"
-      :autogrow="isTextarea"
-      :style="style"
-      :input-class="inputClass"
-      :clearable="clearable"
-      inline
-      :borderless="isDisabled"
-      :autocomplete="autoComplet"
-    >
-      <span
-        v-if="histrixType === 'check'"
-        v-html="hint"
-        class="text-blue text-bold text-caption q-ml-md"
-      ></span>
-      <template v-slot:hint>
-        <div v-html="hint" :title="hint" class="text-blue text-bold"></div>
-      </template>
+    <div class="content-field">
+      <component
+        v-bind:is="fieldComponent"
+        v-model="localValue"
+        v-bind="$attrs"
+        style="flex: 1;"
+        v-on:computed-total="onComputedTotal"
+        @v-on:keyup.113="showHelper()"
+        @filter="filterFn"
+        bottom-slots
+        :name="fieldSchema.name"
+        use-input
+        :type="inputType"
+        :path="helperPath"
+        :headers="headers"
+        :url="uploadUrl"
+        :query="query"
+        :options="options"
+        emit-value
+        map-options
+        debounce="500"
+        hide-bottom-space
+        :rules="rules"
+        :label="label"
+        :inner="true"
+        :mask="fieldMask"
+        :reverse-fill-mask="isDecimal"
+        :fill-mask="fillMask"
+        :isFormulation="true"
+        :filled="!isDisabled"
+        :toolbar="toolbar"
+        :disabled="isDisabled"
+        :disable="isDisabled"
+        :readonly="isDisabled"
+        :counter="isMultiple"
+        :fonts="{
+          arial: 'Arial',
+          arial_black: 'Arial Black',
+          comic_sans: 'Comic Sans MS',
+          courier_new: 'Courier New',
+          impact: 'Impact',
+          lucida_grande: 'Lucida Grande',
+          times_new_roman: 'Times New Roman',
+          verdana: 'Verdana',
+        }"
+        :size="size"
+        :use-chips="isMultiple"
+        :multiple="isMultiple"
+        :autogrow="isTextarea"
+        :style="style"
+        :input-class="inputClass"
+        :clearable="clearable"
+        inline
+        :borderless="isDisabled"
+        :autocomplete="autoComplet"
+      >
+        <span
+          v-if="histrixType === 'check'"
+          v-html="hint"
+          class="text-blue text-bold text-caption q-ml-md"
+        ></span>
+        <template v-slot:hint>
+          <div v-html="hint" :title="hint" class="text-blue text-bold"></div>
+        </template>
 
-      <template v-slot:before v-if="histrixType === 'q-file'">
-        <!--<q-btn   icon="folder"  @click="fileManager = true" />
+        <template v-slot:before v-if="histrixType === 'q-file'">
+          <!--<q-btn   icon="folder"  @click="fileManager = true" />
 
-        <q-dialog v-model="fileManager">
-          <HistrixFileManager :path="path" />
-        </q-dialog>
-        -->
-        <q-avatar size="100px">
-          <q-img
-            :src="previewUrl"
-            v-if="previewUrl"
-            @click="showImage = true"
-          />
-          <q-img
-            _v-else-if="value"
-            :src="thumb"
-            spinner-color="grey"
-            @click="showImage = true"
-          />
-        </q-avatar>
-        <q-dialog v-model="showImage">
-          <q-card style="width: 700px; max-width: 80vw">
-            <q-card-section class="row items-center q-pb-none">
-              <q-space />
-              <q-btn icon="close" flat round dense v-close-popup />
-            </q-card-section>
-            <q-card-section>
-              <q-img :src="previewUrl" v-if="previewUrl" spinner-color="grey" />
-              <q-img :src="thumb" v-else spinner-color="grey"> </q-img>
-            </q-card-section>
-          </q-card>
-        </q-dialog>
-      </template>
-
-      <template v-slot:prepend>
-        <q-icon v-if="histrixType === 'q-file'" name="attach_file" />
-        <span class="q-pa-xs text-caption" v-if="isRadio">
-          {{ label }}
-        </span>
-      </template>
-
-      <!-- in control button -->
-      <template v-slot:append>
-        <!-- EXTERNAL HELP POPUP -->
-
-        <q-icon
-          name="help"
-          class="cursor-pointer"
-          v-if="fieldSchema.helpContainer"
-        >
-          <q-popup-proxy
-            ref="helperProxy"
-            anchor="bottom left"
-            self="top right"
-            transition-show="scale"
-            transition-hide="scale"
-          >
-            <HistrixApp
-              :path="helpPath"
-              :query="query"
-              :title="'Seleccione ' + label"
-              v-on:select-row="selectRow"
-              :search="true"
+          <q-dialog v-model="fileManager">
+            <HistrixFileManager :path="path" />
+          </q-dialog>
+          -->
+          <q-avatar size="100px">
+            <q-img
+              :src="previewUrl"
+              v-if="previewUrl"
+              @click="showImage = true"
             />
-          </q-popup-proxy>
-        </q-icon>
-
-        <!-- DATE CONTROL POPUP -->
-        <q-icon name="event" class="cursor-pointer" v-if="isDate">
-          <q-popup-proxy
-            ref="qDateProxy"
-            transition-show="scale"
-            transition-hide="scale"
-          >
-            <q-date
-              mask="DD/MM/YYYY"
-              :locale="dateLocale"
-              v-model="localValue"
-              @input="() => $refs.qDateProxy.hide()"
+            <q-img
+              _v-else-if="value"
+              :src="thumb"
+              spinner-color="grey"
+              @click="showImage = true"
             />
-          </q-popup-proxy>
-        </q-icon>
+          </q-avatar>
+          <q-dialog v-model="showImage">
+            <q-card style="width: 700px; max-width: 80vw">
+              <q-card-section class="row items-center q-pb-none">
+                <q-space />
+                <q-btn icon="close" flat round dense v-close-popup />
+              </q-card-section>
+              <q-card-section>
+                <q-img :src="previewUrl" v-if="previewUrl" spinner-color="grey" />
+                <q-img :src="thumb" v-else spinner-color="grey"> </q-img>
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </template>
 
-        <!-- IMAGE FOLDER -->
-        <q-icon
-          v-if="histrixType === 'q-file'"
-          name="close"
-          @click.stop="localValue = null"
-          class="cursor-pointer"
+        <template v-slot:prepend>
+          <q-icon v-if="histrixType === 'q-file'" name="attach_file" />
+          <span class="q-pa-xs text-caption" v-if="isRadio">
+            {{ label }}
+          </span>
+        </template>
+
+        <!-- in control button -->
+        <template v-slot:append>
+          <!-- EXTERNAL HELP POPUP -->
+
+          <q-icon
+            name="help"
+            class="cursor-pointer"
+            v-if="fieldSchema.helpContainer"
+          >
+            <q-popup-proxy
+              ref="helperProxy"
+              anchor="bottom left"
+              self="top right"
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <HistrixApp
+                :path="helpPath"
+                :query="query"
+                :title="'Seleccione ' + label"
+                v-on:select-row="selectRow"
+                :search="true"
+              />
+            </q-popup-proxy>
+          </q-icon>
+
+          <!-- DATE CONTROL POPUP -->
+          <q-icon name="event" class="cursor-pointer" v-if="isDate">
+            <q-popup-proxy
+              ref="qDateProxy"
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <q-date
+                mask="DD/MM/YYYY"
+                :locale="dateLocale"
+                v-model="localValue"
+                @input="() => $refs.qDateProxy.hide()"
+              />
+            </q-popup-proxy>
+          </q-icon>
+
+          <!-- IMAGE FOLDER -->
+          <q-icon
+            v-if="histrixType === 'q-file'"
+            name="close"
+            @click.stop="localValue = null"
+            class="cursor-pointer"
+          />
+          <!-- <q-icon name="create_new_folder" @click.stop v-if="histrixType === 'q-file'" /> -->
+
+          <!-- TIME CONTROL POPUP -->
+          <q-icon name="access_time" class="cursor-pointer" v-if="isTime">
+            <q-popup-proxy
+              ref="timeProxy"
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <q-time
+                v-model="localValue"
+                @input="() => $refs.timeProxy.hide()"
+              />
+            </q-popup-proxy>
+          </q-icon>
+          <!--
+              <q-icon name="event" class="cursor-pointer" v-if="isDateTime">
+              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                <q-date mask="YYYY-MM-DD HH:mm:ss" :locale="dateLocale" v-model="localValue" @input="() => $refs.qDateProxy.hide()" />
+
+              </q-popup-proxy>
+            </q-icon>
+              <q-icon name="access_time" class="cursor-pointer" v-if="isDateTime">
+              <q-popup-proxy ref="timeProxy" transition-show="scale" transition-hide="scale">
+                <q-time mask="YYYY-MM-DD HH:mm:ss" v-model="localValue" @input="() => $refs.timeProxy.hide()" format24h />
+              </q-popup-proxy>
+            </q-icon>
+  -->
+          <q-icon name="event" class="cursor-pointer" v-if="isDateTime">
+            <q-popup-proxy transition-show="scale" transition-hide="scale">
+              <q-date v-model="localValue" mask="YYYY-MM-DD HH:mm:ss">
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-icon>
+
+          <q-icon name="access_time" class="cursor-pointer" v-if="isDateTime">
+            <q-popup-proxy transition-show="scale" transition-hide="scale">
+              <q-time v-model="localValue" mask="YYYY-MM-DD HH:mm:ss" format24h>
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                </div>
+              </q-time>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey"> No resultado </q-item-section>
+          </q-item>
+        </template>
+      </component>
+      <div v-if="isViewAddButton">
+        <q-btn
+          round
+          class="q-ml-xs"
+          dense
+          color="green"
+          icon="add"
+          @click="openAdd"
         />
-        <!-- <q-icon name="create_new_folder" @click.stop v-if="histrixType === 'q-file'" /> -->
+      </div>
+    </div>
 
-        <!-- TIME CONTROL POPUP -->
-        <q-icon name="access_time" class="cursor-pointer" v-if="isTime">
-          <q-popup-proxy
-            ref="timeProxy"
-            transition-show="scale"
-            transition-hide="scale"
-          >
-            <q-time
-              v-model="localValue"
-              @input="() => $refs.timeProxy.hide()"
-            />
-          </q-popup-proxy>
-        </q-icon>
-        <!--
-            <q-icon name="event" class="cursor-pointer" v-if="isDateTime">
-            <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-              <q-date mask="YYYY-MM-DD HH:mm:ss" :locale="dateLocale" v-model="localValue" @input="() => $refs.qDateProxy.hide()" />
-
-            </q-popup-proxy>
-          </q-icon>
-            <q-icon name="access_time" class="cursor-pointer" v-if="isDateTime">
-            <q-popup-proxy ref="timeProxy" transition-show="scale" transition-hide="scale">
-              <q-time mask="YYYY-MM-DD HH:mm:ss" v-model="localValue" @input="() => $refs.timeProxy.hide()" format24h />
-            </q-popup-proxy>
-          </q-icon>
--->
-        <q-icon name="event" class="cursor-pointer" v-if="isDateTime">
-          <q-popup-proxy transition-show="scale" transition-hide="scale">
-            <q-date v-model="localValue" mask="YYYY-MM-DD HH:mm:ss">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="primary" flat />
-              </div>
-            </q-date>
-          </q-popup-proxy>
-        </q-icon>
-
-        <q-icon name="access_time" class="cursor-pointer" v-if="isDateTime">
-          <q-popup-proxy transition-show="scale" transition-hide="scale">
-            <q-time v-model="localValue" mask="YYYY-MM-DD HH:mm:ss" format24h>
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="primary" flat />
-              </div>
-            </q-time>
-          </q-popup-proxy>
-        </q-icon>
-      </template>
-
-      <template v-slot:no-option>
-        <q-item>
-          <q-item-section class="text-grey"> No resultado </q-item-section>
-        </q-item>
-      </template>
-    </component>
+    <q-dialog v-model="openNew" ref="formDialog" full-width @input="showDialog">
+        <HistrixApp
+          :inner="false"
+          :path="dialog.path"
+          :query="dialog.query"
+          :title="dialog.title"
+          @process-finish="fetchData"
+          class="bg-white"
+        />
+    </q-dialog>
   </div>
 </template>
 
@@ -306,6 +330,21 @@ export default {
     // PictureInput
   },
   methods: {
+    showDialog() {
+      this.openNew = false;
+    },
+    fetchData() {
+      this.getOptions(true);
+      this.openNew = false;
+    },
+    openAdd() {
+      const dialog = {};
+      dialog.path = this.innerContainerUrl;
+      dialog.query = { ...this.query };
+      dialog.title = `Agregar ${this.label}`;
+      this.dialog = dialog;
+      this.openNew = true;
+    },
     shallowEqual(object1, object2) {
       const keys1 = Object.keys(object1);
       const keys2 = Object.keys(object2);
@@ -587,7 +626,7 @@ export default {
             this.helpSchema = response.data.schema;
           })
           .catch((e) => {
-            this.dialog = true;
+            // this.dialog = true;
             this.message = `Error de Carga${e}`;
           });
       }
@@ -719,7 +758,9 @@ export default {
       options: [],
       optionFixed: [],
       rules: [],
+      dialog: {},
       toolbar: [],
+      openNew: false,
       type: 'q-input',
       dateLocale: {
         /* starting with Sunday */
@@ -839,6 +880,12 @@ export default {
       const helper = this.fieldSchema.innerContainer;
       const url = `${helper.dir}/${helper.xml}`;
       return url.replace('//', '/');
+    },
+    isViewAddButton() {
+      if (!this.fieldSchema?.innerContainer) return false;
+      const { innerContainer } = this.fieldSchema;
+      const schema = innerContainer.schema;
+      return schema?.type === 'fichaing';
     },
     helpPath() {
       if (this.fieldSchema.helpContainer) {
@@ -1178,3 +1225,11 @@ export default {
   }
 };
 </script>
+<style scoped>
+.content-field {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+</style>
