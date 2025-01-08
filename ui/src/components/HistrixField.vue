@@ -1104,6 +1104,7 @@ export default {
           if (typeof this.value === 'boolean') {
             return this.value;
           }
+          if (this.value === '') return false;
           return this.value !== '0';
         }
         if (this.isDate) {
