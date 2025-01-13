@@ -383,8 +383,6 @@ export default {
           this.options = this.optionFixed;
           return;
         }
-        console.log('juan Ignacio', Date.now());
-
         const accent_map = {
           á: 'a',
           é: 'e',
@@ -494,6 +492,7 @@ export default {
           }
           counter++;
         }
+        if (!label) continue;
         if (!flat && label.includes(' - ')) {
           const temp = label.slice(0, label.indexOf(' - '));
           if (temp.match(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/)) flat = true;
