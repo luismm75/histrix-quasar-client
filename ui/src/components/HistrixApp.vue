@@ -50,7 +50,6 @@
               v-on:validity="onValidityChange"
               v-on:advance-step="$emit('advance-step')"
               v-on:process-finish="refreshMaster"
-              :editedIndex="-1"
             >
               <template v-slot:slot-top-form="props">
                 <slot name="slot-top-form" :props="props.props" />

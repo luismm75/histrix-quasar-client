@@ -258,6 +258,7 @@
           :title="dialog.title"
           @process-finish="fetchData"
           class="bg-white"
+          :editedIndex="-1"
         />
     </q-dialog>
   </div>
