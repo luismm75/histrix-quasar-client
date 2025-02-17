@@ -560,7 +560,7 @@ export default {
       let flat = false;
       if (options) {
         Object.entries(options).map((option) => {
-          const key = option[0];
+          const key = option[0]?.trim?.() ?? option[0];
           let label = option[1];
           if ((typeof label === 'object' || typeof label === 'function') && label !== null) {
             label = label[Object.keys(label)[0]];
@@ -703,8 +703,9 @@ export default {
       // this.$emit("refreshFieldSchema", {value: localValue.value, selected_option: option})
       // this.getFieldSchema(query)
       let refresh = _refresh;
-      if (!refresh && this.rowSchema && this.fieldSchema.options) {
-        this.options = this.mapOptionsOld(this.fieldSchema.options);
+      const opt = this.fieldSchema?.options_sorted ?? this.fieldSchema?.options;
+      if (!refresh && this.rowSchema && opt) {
+        this.options = this.mapOptionsOld(opt);
         refresh = false;
       } else {
         refresh = true;
@@ -736,7 +737,7 @@ export default {
           if (this.fieldSchema.full_options) {
             this.options = this.mapOptions(this.fieldSchema.full_options);
           } else {
-            this.options = this.mapOptionsOld(this.fieldSchema.options);
+            this.options = this.mapOptionsOld(opt);
           }
 
           const option = this.options.find((obj) => obj.value === val);
@@ -860,9 +861,8 @@ export default {
       return this.fieldSchema.disabled === 'disabled';
     },
     hasOptions() {
-      return (
-        (this.fieldSchema.options && Object.keys(this.fieldSchema.options).length !== 0) || this.fieldSchema.isSelect
-      );
+      const opt = this.fieldSchema?.options_sorted ?? this.fieldSchema?.options;
+      return (opt && Object.keys(opt).length !== 0) || this.fieldSchema.isSelect;
     },
     renderHelper() {
       return this.fieldSchema.innerContainer && !this.hasOptions;
