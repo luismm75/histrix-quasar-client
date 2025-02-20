@@ -190,7 +190,7 @@
 <script>
 import { date } from 'quasar';
 import Vue from 'vue';
-import { decimal, email, maxLength, required } from 'vuelidate/lib/validators';
+import { decimal, email, helpers, maxLength, minLength, required } from 'vuelidate/lib/validators';
 import histrixApi from '../services/histrixApi.js';
 
 export default {
@@ -228,6 +228,10 @@ export default {
     },
     localValidations() {
       const localValidations = {};
+      const maskToRegex = (mask) => {
+        if (!mask || typeof mask !== 'string') return true;
+        return mask.replace(/9/g, '\\d').replace(/a/g, '[a-zA-Z]').replace(/\*/g, '[a-zA-Z0-9]');
+      };
       Object.entries(this.editables).map((fieldArray) => {
         const field = fieldArray[1];
         localValidations[field.name] = {};
@@ -239,6 +243,14 @@ export default {
         // add validations
         if (field.maxlength) {
           localValidations[field.name].maxLength = maxLength(field.maxlength);
+        }
+
+        if (field.mask) {
+          console.log('🚀 ~ Object.entries ~ field.mask:', field.mask);
+          console.log('🚀 ~ Object.entries ~ field:', field);
+          const regex = new RegExp(maskToRegex(field.mask));
+          console.log('🚀 ~ Object.entries ~ regex:', regex);
+          localValidations[field.name].mask = helpers.regex('mask', regex);
         }
 
         switch (field.histrix_type) {

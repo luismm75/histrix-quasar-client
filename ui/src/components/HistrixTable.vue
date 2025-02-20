@@ -57,7 +57,7 @@
       <!-- TOP right: BUTTONS -->
       <template v-slot:top-right="props">
         <div
-          v-if="data.length !== 0"
+          v-if="data.length > 50"
           style="display: flex; align-items: center; justify-content: center; text-align: center;"
         >
           <span style="text-align: center; font-size: 0.8rem;"
@@ -465,8 +465,9 @@ export default {
     query: Object,
     schema: { type: Object, required: true },
     resources: Object,
+    valueFilter: { type: String, required: false },
     title: String,
-    search: String,
+    search: { type: Boolean, default: false },
     computedFields: Object,
     computedTotals: Object,
     value: null,
@@ -674,6 +675,9 @@ export default {
     canDelete() {
       // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
       return this.resources.hasOwnProperty('DELETE');
+    },
+    onlyConsulta() {
+      return !this.canInsert && !this.canUpdate && !this.canDelete;
     },
     visibleColumns() {
       return this.schema.columns
@@ -1008,7 +1012,7 @@ export default {
         rowclass = attr.DT_RowClass || '';
       }
 
-      if (this.hasDetail(props)) {
+      if (this.hasDetail(props) || this.onlyConsulta) {
         rowclass += ' cursor-pointer ';
       }
 
@@ -1197,7 +1201,7 @@ export default {
       ],
       data: [],
       openFilter: false,
-      searchStr: '',
+      searchStr: this.valueFilter,
       pagination: {
         sortBy: 'desc',
         descending: false,

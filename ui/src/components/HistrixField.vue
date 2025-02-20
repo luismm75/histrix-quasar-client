@@ -50,7 +50,6 @@
         map-options
         debounce="500"
         hide-bottom-space
-        :rules="rules"
         :label="label"
         :inner="true"
         :mask="fieldMask"
@@ -132,33 +131,35 @@
           <span class="q-pa-xs text-caption" v-if="isRadio">
             {{ label }}
           </span>
+          <q-icon
+            name="help"
+            class="cursor-pointer"
+            v-if="fieldSchema.helpContainer"
+          >
+        </q-icon>
+        <q-menu
+          ref="helperProxy"
+          anchor="bottom left"
+          self="top right"
+          transition-show="scale"
+          transition-hide="scale"
+        >
+          <HistrixApp
+            :path="helpPath"
+            :query="queryComputedHelpExternal"
+            :value-filter="localValue"
+            :title="'Seleccione ' + label"
+            v-on:select-row="selectRow"
+            :search="false"
+            :inner="true"
+          />
+        </q-menu>
         </template>
 
         <!-- in control button -->
         <template v-slot:append>
           <!-- EXTERNAL HELP POPUP -->
 
-          <q-icon
-            name="help"
-            class="cursor-pointer"
-            v-if="fieldSchema.helpContainer"
-          >
-            <q-popup-proxy
-              ref="helperProxy"
-              anchor="bottom left"
-              self="top right"
-              transition-show="scale"
-              transition-hide="scale"
-            >
-              <HistrixApp
-                :path="helpPath"
-                :query="query"
-                :title="'Seleccione ' + label"
-                v-on:select-row="selectRow"
-                :search="true"
-              />
-            </q-popup-proxy>
-          </q-icon>
 
           <!-- DATE CONTROL POPUP -->
           <q-icon name="event" class="cursor-pointer" v-if="isDate">
@@ -449,32 +450,28 @@ export default {
       this.$emit('computed-total', data);
     },
     selectRow(args) {
+      console.log('🚀 ~ selectRow ~ args:', args);
       const targets = {};
       const { row } = args;
 
       if (row) {
+        console.log('🚀 ~ selectRow ~ row:', row);
         const firstkey = Object.keys(row)[0];
+        console.log('🚀 ~ selectRow ~ firstkey:', firstkey);
         targets[this.fieldSchema.name] = row[firstkey];
-        this.helpFounded = true;
-      } else {
-        this.helpFounded = false;
       }
-
-      Object.entries(this.fieldSchema.fields)
-        .filter((field) => field[1].detail.length !== 0)
-        .map((field) => {
-          field[1].detail.map((target) => {
-            targets[target] = row ? row[field[0]] : '';
+      // @TODO: Verificar si se puede hacer de otra forma
+      if (this.fieldSchema.fields) {
+        Object.entries(this.fieldSchema.fields)
+          .filter((field) => field[1].detail.length !== 0)
+          .map((field) => {
+            field[1].detail.map((target) => {
+              targets[target] = row ? row[field[0]] : '';
+            });
           });
-        });
-
-      this.$emit('fill-fields', targets);
-      this.$refs.helperProxy.hide();
-    },
-    setRules() {
-      if (this.helpPath) {
-        this.rules.push((_val) => this.helpFounded || 'Código Incorrecto');
       }
+      this.$emit('fill-fields', row);
+      this.$refs.helperProxy.hide();
     },
     mapRemoteOptions(options) {
       const data = [];
@@ -758,7 +755,6 @@ export default {
       helpFoundes: true,
       options: [],
       optionFixed: [],
-      rules: [],
       dialog: {},
       toolbar: [],
       openNew: false,
@@ -777,7 +773,6 @@ export default {
     // this.getOptions(true);
   },
   mounted() {
-    this.setRules();
     this.getHelpSchema();
     this.getOptions(true);
   },
@@ -789,6 +784,12 @@ export default {
      */
     autoComplet() {
       return this.fieldSchema.autocomplete;
+    },
+    queryComputedHelpExternal() {
+      if (this.schema?.help_key) {
+        return { [this.schema.help_key]: this.localValue, ...this.query };
+      }
+      return this.query;
     },
     hint() {
       return this.fieldSchema.placeholder !== this.fieldSchema.title ? this.fieldSchema.placeholder : '';
@@ -803,6 +804,9 @@ export default {
       return `text-${this.fieldSchema.align}`;
     },
     fieldMask() {
+      if (this.fieldSchema.mask) {
+        return this.fieldSchema.mask.replace(/9/g, '#');
+      }
       let mask = '';
       if (this.isDate) {
         mask = '##/##/####';
