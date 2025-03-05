@@ -643,20 +643,33 @@ export default {
       return totals;
     },
     filteredRows() {
-      if (this.searchStr === '') {
+      if (!this.searchStr) {
         return this.data;
       }
-
-      return this.data.filter(
-        (row) =>
-          Object.keys(row)
-            .map((key, _index) => {
-              return row[key]._ || row[key].value || row[key];
-            })
-            .join()
-            .toLowerCase()
-            .indexOf(this.searchStr.toLowerCase()) > -1
-      );
+      return this.data.filter((row) => {
+        try {
+          return (
+            Object.keys(row)
+              .map((key, index) => {
+                try {
+                  const value = row[key]._ || row[key].value || row[key];
+                  if (typeof value !== 'string') {
+                    return '';
+                  }
+                  return value.toLowerCase(); // Aquí puede fallar
+                } catch (error) {
+                  console.error(`Error en el índice ${index} con la clave "${key}":`, error);
+                  return ''; // Retorna un string vacío para evitar que falle el `join()`
+                }
+              })
+              .join()
+              .indexOf(this.searchStr.toLowerCase()) > -1
+          );
+        } catch (error) {
+          console.error('Error en la iteración de filter:', error);
+          return false;
+        }
+      });
     },
     filteredData(_cols) {
       return this.data.filter((row) => !row.value);
