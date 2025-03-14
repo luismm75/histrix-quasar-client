@@ -1096,7 +1096,7 @@ export default {
     },
     style() {
       const style = this.fieldSchema.style || '';
-      return style;
+      return `width: 100%; ${style}`;
     },
     dateMask() {
       return 'DD/MM/YYYY';
