@@ -1,6 +1,7 @@
 import { Notify } from 'quasar';
 import Vue from 'vue';
 import config from './config';
+import { axiosInstance } from '@mundoit-lib/plugin-vue-axios';
 
 export default {
   /**
@@ -11,7 +12,7 @@ export default {
     return this.getAxios().get(url);
   },
   getAxios() {
-    return Vue.prototype.$axios;
+    return axiosInstance;
   },
   currentDb() {
     return localStorage.getItem('database') || config.db;

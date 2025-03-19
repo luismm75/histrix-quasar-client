@@ -188,8 +188,6 @@
 </template>
 
 <script>
-import { date } from 'quasar';
-import Vue from 'vue';
 import { decimal, email, helpers, maxLength, minLength, required } from 'vuelidate/lib/validators';
 import histrixApi from '../services/histrixApi.js';
 

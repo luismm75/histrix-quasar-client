@@ -1,6 +1,6 @@
 {
   "name": "quasar-ui-histrix-client",
-  "version": "0.0.164",
+  "version": "0.0.165",
   "author": "Luis M. Melgratti <luis@mundoit.com.ar>",
   "description": "Histrix Quasar client components",
   "license": "MIT",
@@ -58,14 +58,15 @@
   ],
   "dependencies": {
     "@quasar/quasar-ui-qcalendar": "^3.4.1",
-    "@websanova/vue-auth": "^4.1.13",
     "echarts": "^5.3.3",
-    "http-vue-loader": "^1.4.2",
     "qs": "^6.11.0",
     "vue": "^2.6.11",
     "vue-echarts-v3": "^2.0.1",
+    "vue-picture-input": "^2.4.0"
+  },
+  "peerDependencies": {
+    "@mundoit-lib/plugin-vue-axios": "*",
     "vue-file-agent": "^1.7.3",
-    "vue-picture-input": "^2.4.0",
     "vuelidate": "^0.7.7"
   }
 }

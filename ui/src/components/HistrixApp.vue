@@ -296,21 +296,8 @@
 </template>
 
 <script>
-// TODO: ver que onda
-// import httpVueLoader from 'http-vue-loader';
 import qs from 'qs';
 import histrixApi from '../services/histrixApi.js';
-
-// httpVueLoader.httpRequest = function(url) {
-//   histrixApi
-//     .getData(url)
-//     .then(function(res) {
-//       return res.data;
-//     })
-//     .catch(function(err) {
-//       return Promise.reject(err.status);
-//     });
-// };
 
 export default {
   name: 'HistrixApp',
