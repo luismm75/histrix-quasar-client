@@ -1,7 +1,7 @@
 import { Notify } from 'quasar';
-import Vue from 'vue';
 import config from './config';
 import { axiosInstance } from '@mundoit-lib/plugin-vue-axios';
+import { useAuth } from '@mundoit-lib/plugin-vue-auth';
 
 export default {
   /**
@@ -13,6 +13,9 @@ export default {
   },
   getAxios() {
     return axiosInstance;
+  },
+  getAuth() {
+    return useAuth();
   },
   currentDb() {
     return localStorage.getItem('database') || config.db;
@@ -160,7 +163,7 @@ export default {
    */
   async login(username, password, redirect) {
     const token = null;
-    return Vue.auth
+    return this.getAuth()
       .login({
         url: `${this.apiUrl()}/token`,
         data: {
@@ -220,7 +223,7 @@ export default {
       // this.$events.fire('got-user');
       localStorage.setItem('user', JSON.stringify(resp.data));
 
-      Vue.auth.user(userObject);
+      this.getAuth().user(userObject);
       // this.$q.localStorage.set('user', JSON.stringify(userObject))
       // Vue.events.fire('loaded-user');
       if (userObject.verified == null) {
