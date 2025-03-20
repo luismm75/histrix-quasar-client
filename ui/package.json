@@ -1,6 +1,6 @@
 {
   "name": "quasar-ui-histrix-client",
-  "version": "0.0.166",
+  "version": "0.0.167",
   "author": "Luis M. Melgratti <luis@mundoit.com.ar>",
   "description": "Histrix Quasar client components",
   "license": "MIT",
@@ -67,7 +67,8 @@
   "peerDependencies": {
     "@mundoit-lib/plugin-vue-axios": "*",
     "@mundoit-lib/plugin-vue-auth": "*",
-    "vue-file-agent": "^1.7.3",
-    "vuelidate": "^0.7.7"
+    "@vuelidate/validators": ">=2.0.0 <3.0.0",
+    "@vuelidate/core": ">=2.0.0 <3.0.0",
+    "vue-file-agent": "^1.7.3"
   }
 }

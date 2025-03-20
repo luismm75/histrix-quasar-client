@@ -188,7 +188,8 @@
 </template>
 
 <script>
-import { decimal, email, helpers, maxLength, minLength, required } from 'vuelidate/lib/validators';
+import { decimal, email, helpers, maxLength, minLength, required } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core';
 import histrixApi from '../services/histrixApi.js';
 
 export default {
@@ -210,6 +211,9 @@ export default {
   components: {
     HistrixField: () => import('./HistrixField.vue'),
     HistrixCell: () => import('./HistrixCell.vue')
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   computed: {
     insertButton() {

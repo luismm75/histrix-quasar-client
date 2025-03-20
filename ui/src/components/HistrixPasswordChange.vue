@@ -66,8 +66,8 @@
         </q-card>
 </template>
 <script>
-// import Vue from 'vue'
-import { email, minLength, required, requiredIf, sameAs } from 'vuelidate/lib/validators';
+import { minLength, required, sameAs } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core';
 import config from '../services/config.js';
 import api from '../services/histrixApi.js';
 import InputPasswordVue from './InputPassword.vue';
@@ -83,6 +83,9 @@ export default {
       default: false
     }
   },
+  setup() {
+    return { v$: useVuelidate() };
+  },
   data: () => ({
     user: '',
     btnLoading: false,
@@ -95,12 +98,14 @@ export default {
     },
     loading: true
   }),
-  validations: {
-    form: {
-      old_password: { required },
-      new_password: { required, minLength: minLength(6) },
-      confirm_password: { required, sameAsPassword: sameAs('new_password') }
-    }
+  validations() {
+    return {
+      form: {
+        old_password: { required },
+        new_password: { required, minLength: minLength(6) },
+        confirm_password: { required, sameAsPassword: sameAs('new_password') }
+      }
+    };
   },
   computed: {
     passwordErrorMsg() {

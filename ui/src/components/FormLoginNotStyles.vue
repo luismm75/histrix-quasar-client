@@ -99,7 +99,9 @@
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators';
+import { required } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core';
+
 import config from '../services/config.js';
 import histrixApi from '../services/histrixApi.js';
 
@@ -200,6 +202,9 @@ export default {
       type: String
     }
   },
+  setup() {
+    return { v$: useVuelidate() };
+  },
   watch: {
     /**
      * @description Si se cambia la base de datos, se guarda en el localStorage, se cambia la configuracion y se cambia la imagen
@@ -285,11 +290,13 @@ export default {
       });
     }
   },
-  validations: {
-    form: {
-      email: { required },
-      password: { required }
-    }
+  validations() {
+    return {
+      form: {
+        email: { required },
+        password: { required }
+      }
+    };
   },
   computed: {
     /**

@@ -454,7 +454,8 @@
 <script>
 import qs from 'qs';
 import Vue from 'vue';
-import { decimal, email, maxLength, required, requiredIf } from 'vuelidate/lib/validators';
+import { decimal, email, maxLength, required, requiredIf } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core';
 import histrixApi from '../services/histrixApi.js';
 
 export default {
@@ -472,6 +473,9 @@ export default {
     computedTotals: Object,
     value: null,
     isFormulation: { type: Boolean, default: false }
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   components: {
     HistrixFilters: () => import('./HistrixFilters.vue'),
