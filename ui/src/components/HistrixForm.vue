@@ -101,8 +101,6 @@
                         v-on:fill-fields="fillFields"
                         v-on:computed-total="onComputedTotal"
                         dense
-                        :error-message="errorMessage(field)"
-                        :error="$v['localValues'][field.name].$invalid"
                         v-else-if="!localSchema.readonly"
                       >
                         <template v-slot:slot-top-field-histrixapp="props">
@@ -158,7 +156,7 @@
           />
           <q-btn
             v-if="insertButton || updateButton"
-            :disable="$v.$invalid"
+            :disable="v$.$invalid"
             type="submit"
             label="Grabar"
             icon="save"
@@ -168,7 +166,7 @@
 
           <!--
             <q-btn v-if="editedIndex == -1" label="Grabar" icon="save" @click="insertRow()"  />
-            <q-btn v-if="updateButton" label="guardar"   icon="save" :disable="$v.$invalid" class=" bg-primary text-white nojustify-end" @click="saveForm()" :loading="submitting" />
+            <q-btn v-if="updateButton" label="guardar"   icon="save" :disable="v$.$invalid" class=" bg-primary text-white nojustify-end" @click="saveForm()" :loading="submitting" />
             -->
         </span>
         <!--
@@ -188,7 +186,6 @@
 </template>
 
 <script>
-import { decimal, email, helpers, maxLength, minLength, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import histrixApi from '../services/histrixApi.js';
 
@@ -228,71 +225,33 @@ export default {
         this.schema.updateButton
       );
     },
-    localValidations() {
-      const localValidations = {};
-      const maskToRegex = (mask) => {
-        if (!mask || typeof mask !== 'string') return true;
-        return mask.replace(/9/g, '\\d').replace(/a/g, '[a-zA-Z]').replace(/\*/g, '[a-zA-Z0-9]');
-      };
-      Object.entries(this.editables).map((fieldArray) => {
-        const field = fieldArray[1];
-        localValidations[field.name] = {};
+    //@TODO: Ver de implemtar esto
+    // localValidations() {
+    //   // add formValidationscol
+    //   if (this.localSchema.formValidations) {
+    //     this.localSchema.formValidations.map((validation) => {
+    //       const operatios = /[+\-\*\/\(\)]/g;
+    //       const keys = validation.condition.split(operatios);
 
-        if (field.required === 'required') {
-          localValidations[field.name].required = required;
-        }
+    //       keys.map((key) => {
+    //         const k = key.trim();
+    //         if (k && this.localValues[k] !== undefined && validation.condition) {
+    //           if (localValidations[k]) {
+    //             localValidations[k].customValidation = (_value) => !this.processOperation(validation.condition);
+    //           } else {
+    //             localValidations[k] = {
+    //               customValidation: (_value) => !this.processOperation(validation.condition)
+    //             };
+    //           }
 
-        // add validations
-        if (field.maxlength) {
-          localValidations[field.name].maxLength = maxLength(field.maxlength);
-        }
+    //           this.errorMessages[k] = { customError: validation.message };
+    //         }
+    //       }, this);
+    //     }, this);
+    //   }
 
-        if (field.mask) {
-          console.log('🚀 ~ Object.entries ~ field.mask:', field.mask);
-          console.log('🚀 ~ Object.entries ~ field:', field);
-          const regex = new RegExp(maskToRegex(field.mask));
-          console.log('🚀 ~ Object.entries ~ regex:', regex);
-          localValidations[field.name].mask = helpers.regex('mask', regex);
-        }
-
-        switch (field.histrix_type) {
-          case 'Numeric':
-          case 'CustomNumeric':
-            localValidations[field.name].decimal = decimal;
-            break;
-          case 'Email':
-            localValidations[field.name].email = email;
-            break;
-          default:
-            break;
-        }
-      });
-
-      // add formValidationscol
-      if (this.localSchema.formValidations) {
-        this.localSchema.formValidations.map((validation) => {
-          const operatios = /[+\-\*\/\(\)]/g;
-          const keys = validation.condition.split(operatios);
-
-          keys.map((key) => {
-            const k = key.trim();
-            if (k && this.localValues[k] !== undefined && validation.condition) {
-              if (localValidations[k]) {
-                localValidations[k].customValidation = (_value) => !this.processOperation(validation.condition);
-              } else {
-                localValidations[k] = {
-                  customValidation: (_value) => !this.processOperation(validation.condition)
-                };
-              }
-
-              this.errorMessages[k] = { customError: validation.message };
-            }
-          }, this);
-        }, this);
-      }
-
-      return { localValues: localValidations };
-    },
+    //   return { localValues: localValidations };
+    // },
     formTitle() {
       return this.title || this.schema.title;
     },
@@ -461,14 +420,15 @@ export default {
         }
         // this.refreshSchema();
         this.$emit('input', this.localValues);
-        this.$emit('validity', !this.$v.$invalid && !this.validationExtra.$invalid);
       },
       deep: true
-    }
-  },
-  events: {
-    'validations-add'(field) {
-      this.validationExtra = field;
+    },
+    v$: {
+      handler() {
+        console.log('🚀 ~ handler ~ this.v$.$invalid:', this.v$.$invalid);
+        this.$emit('validity', !this.v$.$invalid);
+      },
+      deep: true
     }
   },
   methods: {
@@ -495,32 +455,6 @@ export default {
       const dirValue = this.localValues[field.path] || '';
       const path = `${this.schema.path}/${dirValue}/`;
       return path.replaceAll('//', '/').replaceAll('//', '/');
-    },
-    errorMessage(field) {
-      const cell = this.$v.localValues[field.name];
-
-      if (cell.customValidation !== undefined && !cell.customValidation) {
-        return this.errorMessages[field.name].customError;
-      }
-
-      if (cell.required !== undefined && !cell.required) {
-        return 'Campo Obligatorio';
-      }
-
-      if (cell.decimal !== undefined && !cell.decimal) {
-        return 'Campo debe ser numérico';
-      }
-
-      if (cell.email !== undefined && !cell.email) {
-        return 'Email incorrecto';
-      }
-
-      if (cell.minLength !== undefined && !cell.minLength) {
-        return `Tamaño mínimo de ${cell.$params.minLength.min} caracteres`;
-      }
-      if (cell.maxLength !== undefined && !cell.maxLength) {
-        return `Tamaño máximo de ${cell.$params.maxLength.max} caracteres`;
-      }
     },
     /**
      * recives values from inner tables and updates local field values
@@ -786,7 +720,7 @@ export default {
     }
   },
   validations() {
-    return this.localValidations;
+    return {};
   },
   data() {
     return {
@@ -798,9 +732,6 @@ export default {
       },
       // fieldQuerys:{},
       data: [],
-      validationExtra: {
-        $invalid: false
-      },
       submitting: false,
       currentTab: 'mainTab',
       valueEdit: false

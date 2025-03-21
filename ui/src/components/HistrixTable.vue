@@ -230,11 +230,6 @@
               :rowSchema="getRowSchema(props.key, cell.name)"
               dense
               hide-bottom-space
-              :error-message="errorMessage(props.key, schema.fields[cell.name])"
-              :error="
-                $v['rawData']['$each'][props.key][cell.name].$invalid ||
-                  customError(props.key, schema.fields[cell.name])
-              "
               v-on:field-change="rowChange"
               v-if="
                 getFieldAttribute(props.key, cell.name, 'editable') && isGrid
@@ -293,13 +288,6 @@
                   :schema="schema.fields[cell.name]"
                   :rowSchema="getRowSchema(props.key, cell.name)"
                   dense
-                  :error-message="
-                    errorMessage(props.key, schema.fields[cell.name])
-                  "
-                  :error="
-                    $v['rawData']['$each'][props.key][cell.name].$invalid ||
-                      customError(props.key, cell.name)
-                  "
                   v-if="
                     getFieldAttribute(props.key, cell.name, 'editable') &&
                       isGrid
@@ -454,8 +442,6 @@
 <script>
 import qs from 'qs';
 import Vue from 'vue';
-import { decimal, email, maxLength, required, requiredIf } from '@vuelidate/validators';
-import { useVuelidate } from '@vuelidate/core';
 import histrixApi from '../services/histrixApi.js';
 
 export default {
@@ -473,9 +459,6 @@ export default {
     computedTotals: Object,
     value: null,
     isFormulation: { type: Boolean, default: false }
-  },
-  setup() {
-    return { v$: useVuelidate() };
   },
   components: {
     HistrixFilters: () => import('./HistrixFilters.vue'),
@@ -525,54 +508,11 @@ export default {
         this.$emit('input', this.rawData);
       },
       deep: true
-    },
-    localValidations: {
-      handler() {
-        this.$events.fire('validations-add', this.$v);
-      },
-      immediate: true
     }
   },
   computed: {
     contentItem() {
       return this.isFormulation ? 'div' : 'q-card';
-    },
-    localValidations() {
-      const localValidations = {};
-      Object.entries(this.schema.fields).map((fieldArray) => {
-        const field = fieldArray[1];
-        localValidations[field.name] = {};
-
-        localValidations[field.name].requiredIf = requiredIf((item) => {
-          const id = item._id;
-          const row = this.innerData.find((row) => row._id === id);
-          if (row?.DT_RowAttr?.attributes) {
-            const cell = row.DT_RowAttr.attributes[field.name];
-            if (!cell) return false;
-            return cell.required === 'required' || cell.required === 'true';
-          }
-          return false;
-        });
-
-        // add validations
-        if (field.maxlength) {
-          localValidations[field.name].maxLength = maxLength(field.maxlength);
-        }
-
-        switch (field.histrix_type) {
-          case 'Numeric':
-          case 'CustomNumeric':
-            localValidations[field.name].decimal = decimal;
-            break;
-          case 'Email':
-            localValidations[field.name].email = email;
-            break;
-          default:
-            break;
-        }
-      });
-
-      return { rawData: { $each: localValidations } };
     },
     headerPath() {
       if (this.schema.header) {
@@ -853,51 +793,6 @@ export default {
     colStyle(col) {
       const style = col.value?.style ? col.value.style : '';
       return `${style};`;
-    },
-    customError(row, field) {
-      const cell = {
-        ...this.schema.fields[field.name],
-        ...this.getRowSchema(row, field.name)
-      };
-
-      if (
-        cell.required &&
-        (cell.required === 'required' || cell.required === 'true') &&
-        (this.rawData[row][field.name] === '' || this.rawData[row][field.name] === undefined)
-      ) {
-        return true;
-      }
-      return false;
-    },
-    errorMessage(row, field) {
-      const cell = {
-        ...this.$v.rawData.$each[row][field.name],
-        ...this.getRowSchema(row, field.name)
-      };
-
-      if (cell.customValidation !== undefined && !cell.customValidation) {
-        return this.errorMessages[field.name].customError;
-      }
-
-      if (cell.required !== undefined && !cell.required) {
-        return 'Campo Obligatorio';
-      }
-
-      if (cell.decimal !== undefined && !cell.decimal) {
-        return 'Campo debe ser numérico';
-      }
-
-      if (cell.email !== undefined && !cell.email) {
-        return 'Email incorrecto';
-      }
-
-      if (cell.minLength !== undefined && !cell.minLength) {
-        return `Tamaño mínimo de ${cell.$params.minLength.min} caracteres`;
-      }
-
-      if (cell.maxLength !== undefined && !cell.maxLength) {
-        return `Tamaño máximo de ${cell.$params.maxLength.max} caracteres`;
-      }
     },
     processOperation(str, row) {
       let formula = str;
@@ -1183,9 +1078,6 @@ export default {
           this.loading = false;
         });
     }
-  },
-  validations() {
-    return this.localValidations;
   },
   data() {
     return {

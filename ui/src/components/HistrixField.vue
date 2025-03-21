@@ -79,6 +79,8 @@
         :style="style"
         :input-class="inputClass"
         :clearable="clearable"
+        :error="v$.value?.$error"
+        :error-message="v$.value?.$errors?.[0]?.$message"
         inline
         :borderless="isDisabled"
         :autocomplete="autoComplet"
@@ -269,6 +271,8 @@
 import { date } from 'quasar';
 
 import histrixApi from '../services/histrixApi.js';
+import { decimal, email, maxLength, required, helpers } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core';
 // import PictureInput from 'vue-picture-input'
 
 export default {
@@ -283,6 +287,9 @@ export default {
     submitting: null,
     path: null
   },
+  setup() {
+    return { v$: useVuelidate() };
+  },
   watch: {
     localValue: {
       handler(newVal, _oldVal) {
@@ -296,7 +303,6 @@ export default {
       immediate: true,
       deep: true
     },
-
     schema: {
       handler(_newVal, _oldVal) {
         this.getOptions(true);
@@ -745,6 +751,7 @@ export default {
       }
     }
   },
+
   data() {
     return {
       delayTimer: 0,
@@ -775,6 +782,9 @@ export default {
   mounted() {
     this.getHelpSchema();
     this.getOptions(true);
+    if (this.v$?.value) {
+      this.v$?.value?.$touch();
+    }
   },
   computed: {
     /**
@@ -784,6 +794,37 @@ export default {
      */
     autoComplet() {
       return this.fieldSchema.autocomplete;
+    },
+    rules() {
+      const validations = {};
+      if (this.fieldSchema?.required === 'required' || this.fieldSchema?.required === 'true') {
+        validations.value = { ...validations.value, required: helpers.withMessage('* Valor requerido', required) };
+      }
+      if (this.fieldSchema?.TipoDato === 'decimal' || this.fieldSchema?.histrix_type === 'decimal') {
+        validations.value = { ...validations.value, decimal: helpers.withMessage('* Valor decimal', decimal) };
+      }
+      if (this.fieldSchema?.TipoDato === 'email' || this.fieldSchema?.histrix_type === 'email') {
+        validations.value = { ...validations.value, email: helpers.withMessage('Valor email', email) };
+      }
+      if (this.fieldSchema?.max_length && this.fieldSchema?.max_length !== '0') {
+        validations.value = {
+          ...validations.value,
+          maxLength: helpers.withMessage(
+            `No puede tener mas de ${this.fieldSchema.max_length} caracteres`,
+            maxLength(this.fieldSchema.max_length)
+          )
+        };
+      }
+      if (this.fieldSchema?.mask) {
+        const regex = new RegExp(
+          this.fieldSchema.mask.replace(/9/g, '\\d').replace(/a/g, '[a-zA-Z]').replace(/\*/g, '[a-zA-Z0-9]')
+        );
+        validations.value = {
+          ...validations.value,
+          mask: helpers.withMessage('Valor incorrecto', helpers.regex(regex))
+        };
+      }
+      return validations;
     },
     queryComputedHelpExternal() {
       if (this.schema?.help_key) {
@@ -1230,6 +1271,9 @@ export default {
         this.localValue = '';
       }
     }
+  },
+  validations() {
+    return this.rules;
   }
 };
 </script>

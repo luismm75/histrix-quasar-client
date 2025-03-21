@@ -15,7 +15,7 @@
                     v-model="form.old_password"
                     name="password" 
                     :before="[{ icon: 'lock' }]"
-                    :error="$v.form.old_password.$error"
+                    :error="v$.form.old_password.$error"
                     />
             </q-item-section>
         </q-item>
@@ -128,7 +128,7 @@ export default {
       // return msg
     },
     passwordError() {
-      return this.$v.form.old_password.$error;
+      return this.v$.form.old_password.$error;
     }
   },
   mounted() {
