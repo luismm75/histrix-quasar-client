@@ -296,7 +296,6 @@
 </template>
 
 <script>
-import qs from 'qs';
 import histrixApi from '../services/histrixApi.js';
 
 export default {
@@ -625,7 +624,7 @@ export default {
      */
     openDetail($rowAttr) {
       this.selected = $rowAttr;
-      this.detailQuery = qs.parse($rowAttr.detailquery);
+      this.detailQuery = new URLSearchParams($rowAttr.detailquery);
       this.detailPath = $rowAttr.detailpath;
       this.isDetailOpened = true;
     },

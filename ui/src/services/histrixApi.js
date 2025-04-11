@@ -330,14 +330,18 @@ export default {
     });
   },
   queryStringToObject(query) {
-    const urlParams = new URLSearchParams(query);
+    const params = new URLSearchParams(query);
+    const result = {};
 
-    const obj = {};
-    urlParams.forEach((_value, key) => {
-      const newkey = key.replace('[]', '');
-      obj[newkey] = urlParams.getAll(key);
-    });
-    return obj;
+    for (const [key, value] of params.entries()) {
+      const cleanKey = key.replace(/\[\]$/, '');
+      if (result[cleanKey]) {
+        result[cleanKey].push(value);
+      } else {
+        result[cleanKey] = [value];
+      }
+    }
+    return result;
   },
   getFiles(path) {
     const url = `${this.apiUrl()}/dir/${path}`;

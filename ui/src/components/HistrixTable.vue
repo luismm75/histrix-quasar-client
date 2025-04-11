@@ -904,7 +904,7 @@ export default {
     detailQuery(props) {
       const { row } = props;
       const rowAttr = row.DT_RowAttr;
-      return qs.parse(rowAttr.detailquery);
+      return new URLSearchParams(rowAttr.detailquery);
     },
 
     hasDetail(props) {

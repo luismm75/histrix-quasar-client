@@ -87,8 +87,8 @@ export default {
   },
   computed: {
     params() {
-      // const params = histrixApi.queryStringToObject(this.exportQuery)
-      return { ...this.query, ...this.exportQuery };
+      const params = histrixApi.queryStringToObject(this.exportQuery);
+      return { ...this.query, ...params };
     }
   },
   methods: {
