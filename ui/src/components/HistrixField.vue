@@ -456,14 +456,11 @@ export default {
       this.$emit('computed-total', data);
     },
     selectRow(args) {
-      console.log('🚀 ~ selectRow ~ args:', args);
       const targets = {};
       const { row } = args;
 
       if (row) {
-        console.log('🚀 ~ selectRow ~ row:', row);
         const firstkey = Object.keys(row)[0];
-        console.log('🚀 ~ selectRow ~ firstkey:', firstkey);
         targets[this.fieldSchema.name] = row[firstkey];
       }
       // @TODO: Verificar si se puede hacer de otra forma
@@ -563,7 +560,10 @@ export default {
       let flat = false;
       if (options) {
         Object.entries(options).map((option) => {
-          const key = option[0]?.trim?.() ?? option[0];
+          let key = option[0]?.trim?.() ?? option[0];
+          if (key && !Number.isNaN(key) && typeof key === 'string') {
+            key = Number(key);
+          }
           let label = option[1];
           if ((typeof label === 'object' || typeof label === 'function') && label !== null) {
             label = label[Object.keys(label)[0]];

@@ -425,7 +425,6 @@ export default {
     },
     v$: {
       handler() {
-        console.log('🚀 ~ handler ~ this.v$.$invalid:', this.v$.$invalid);
         this.$emit('validity', !this.v$.$invalid);
       },
       deep: true
