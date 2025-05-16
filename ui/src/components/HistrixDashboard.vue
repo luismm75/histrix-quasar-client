@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import HistrixApp from './HistrixApp.vue';
+
 export default {
   name: 'HistrixDashboard',
   props: {
@@ -38,7 +40,7 @@ export default {
     resources: {}
   },
   components: {
-    HistrixApp: () => import('./HistrixApp.vue')
+    HistrixApp
   },
   mounted() {
     //

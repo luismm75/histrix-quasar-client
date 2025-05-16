@@ -21,11 +21,13 @@
 </template>
 
 <script>
+import HistrixField from './HistrixField.vue';
+
 export default {
   name: 'HistrixFilters',
   props: ['schema', 'show'],
   components: {
-    HistrixField: () => import('./HistrixField.vue')
+    HistrixField
   },
   mounted() {
     this.initFilters();

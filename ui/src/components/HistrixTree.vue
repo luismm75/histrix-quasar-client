@@ -155,6 +155,9 @@
 
 <script>
 import histrixApi from '../services/histrixApi.js';
+import HistrixFilters from './HistrixFilters.vue';
+import HistrixCell from './HistrixCell.vue';
+import HistrixForm from './HistrixForm.vue';
 
 export default {
   name: 'HistrixTable',
@@ -167,9 +170,9 @@ export default {
     resources: {}
   },
   components: {
-    HistrixForm: () => import('./HistrixForm.vue'),
-    HistrixCell: () => import('./HistrixCell.vue'),
-    HistrixFilters: () => import('./HistrixFilters.vue')
+    HistrixForm,
+    HistrixCell,
+    HistrixFilters
   },
   mounted() {
     this.getData(this.xmlUrl(this.query));

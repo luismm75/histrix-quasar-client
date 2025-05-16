@@ -174,6 +174,7 @@
 
 <script>
 import histrixApi from '../services/histrixApi.js';
+import HistrixFilters from './HistrixFilters.vue';
 
 export default {
   name: 'HistrixCalendar',
@@ -183,7 +184,7 @@ export default {
     resources: {}
   },
   components: {
-    HistrixFilters: () => import('./HistrixFilters.vue')
+    HistrixFilters
   },
   computed: {
     view() {

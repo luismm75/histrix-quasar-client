@@ -24,6 +24,7 @@
 
 <script>
 import histrixApi from '../services/histrixApi.js';
+import HistrixFilters from './HistrixFilters.vue';
 
 export default {
   name: 'HistrixList',
@@ -33,7 +34,7 @@ export default {
     resources: {}
   },
   components: {
-    HistrixFilters: () => import('./HistrixFilters.vue')
+    HistrixFilters
   },
   mounted() {
     const url = this.xmlUrl();

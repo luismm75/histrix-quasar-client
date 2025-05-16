@@ -273,6 +273,8 @@ import { date } from 'quasar';
 import histrixApi from '../services/histrixApi.js';
 import { decimal, email, maxLength, required, helpers } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
+import HistrixApp from './HistrixApp.vue';
+import HistrixFileManager from './widgets/HistrixFileManager.vue';
 // import PictureInput from 'vue-picture-input'
 
 export default {
@@ -333,8 +335,8 @@ export default {
     }
   },
   components: {
-    HistrixApp: () => import('./HistrixApp.vue'),
-    HistrixFileManager: () => import('./widgets/HistrixFileManager.vue')
+    HistrixApp,
+    HistrixFileManager
     // PictureInput
   },
   methods: {

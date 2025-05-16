@@ -89,6 +89,8 @@
 <script>
 import histrixApi from '../../services/histrixApi.js';
 
+import HistrixExpansionMenu from './HistrixExpansionMenu.vue';
+
 export default {
   name: 'HistrixExpansionMenu',
   props: {
@@ -108,7 +110,7 @@ export default {
     }
   },
   components: {
-    HistrixExpansionMenu: () => import('./HistrixExpansionMenu.vue')
+    HistrixExpansionMenu
   },
   data() {
     return {

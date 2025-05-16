@@ -39,6 +39,8 @@
 
 <script>
 import histrixApi from '../services/histrixApi.js';
+import HistrixFilters from './HistrixFilters.vue';
+import IEcharts from 'vue-echarts-v3/src/full.js';
 
 export default {
   name: 'HistrixChart',
@@ -50,8 +52,8 @@ export default {
     resources: {}
   },
   components: {
-    HistrixFilters: () => import('./HistrixFilters.vue'),
-    IEcharts: () => import('vue-echarts-v3/src/full.js')
+    HistrixFilters,
+    IEcharts
   },
   mounted() {
     const url = this.xmlUrl();

@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import FormLoginNotStyles from './FormLoginNotStyles.vue';
+
 export default {
   props: {
     /**
@@ -87,7 +89,7 @@ export default {
   },
   name: 'LoginForm',
   components: {
-    FormLoginNotStyles: () => import('./FormLoginNotStyles.vue')
+    FormLoginNotStyles
   },
   mixins: [],
   data() {

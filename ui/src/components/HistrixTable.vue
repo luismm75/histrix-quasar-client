@@ -443,6 +443,11 @@
 import qs from 'qs';
 import Vue from 'vue';
 import histrixApi from '../services/histrixApi.js';
+import HistrixForm from './HistrixForm.vue';
+import HistrixCell from './HistrixCell.vue';
+import HistrixApp from './HistrixApp.vue';
+import HistrixFilters from './HistrixFilters.vue';
+import HistrixField from './HistrixField.vue';
 
 export default {
   name: 'HistrixTable',
@@ -461,11 +466,11 @@ export default {
     isFormulation: { type: Boolean, default: false }
   },
   components: {
-    HistrixFilters: () => import('./HistrixFilters.vue'),
-    HistrixField: () => import('./HistrixField.vue'),
-    HistrixForm: () => import('./HistrixForm.vue'),
-    HistrixCell: () => import('./HistrixCell.vue'),
-    HistrixApp: () => import('./HistrixApp.vue')
+    HistrixFilters,
+    HistrixField,
+    HistrixForm,
+    HistrixCell,
+    HistrixApp
   },
   mounted() {
     this.editedItem = Object.assign({}, this.schema.values);

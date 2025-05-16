@@ -298,6 +298,17 @@
 <script>
 import histrixApi from '../services/histrixApi.js';
 
+import ExportForm from './ExportForm.vue';
+
+// Importación estática arriba del archivo
+import HistrixForm from './HistrixForm.vue';
+import HistrixCalendar from './HistrixCalendar.vue';
+import HistrixDashboard from './HistrixDashboard.vue';
+import HistrixTree from './HistrixTree.vue';
+import HistrixChart from './HistrixChart.vue';
+import HistrixList from './HistrixList.vue';
+import HistrixTable from './HistrixTable.vue';
+
 export default {
   name: 'HistrixApp',
   props: {
@@ -322,7 +333,7 @@ export default {
     finalStep: Boolean
   },
   components: {
-    ExportForm: () => import('./ExportForm.vue')
+    ExportForm
   },
   beforeMount() {
     //
@@ -482,58 +493,31 @@ export default {
      * select apropiate component to render
      */
     histrixComponent() {
-      if (this.schema.type !== '') {
-        let type = '';
-        switch (this.schema.type) {
-          case 'ficha':
-          case 'fichaing':
-          case 'cabecera':
-            type = './HistrixForm.vue';
-            break;
-          case 'calendar':
-          case 'gantt':
-            type = './HistrixCalendar.vue';
-            break;
-          case 'dashboard':
-            type = './HistrixDashboard.vue';
-            break;
-          case 'tree':
-          case 'arbol':
-            type = './HistrixTree.vue';
-            break;
-          case 'treeView':
-          case 'map':
-          case 'chart':
-            type = './HistrixChart.vue';
-            break;
-          /*
-        case "horizontalgrid":
-        case "ing":
-          type = "notyet";
-          break;
-    */
-          case 'list':
-            type = './HistrixList.vue';
-            break;
-          case 'consulta':
-          case 'crud':
-          case 'abm':
-          case 'ing':
-          case 'grid':
-          case 'liveGrid':
-          case 'help':
-          case 'ayuda':
-          case 'abm-mini':
-            type = './HistrixTable.vue';
-            break;
-          default:
-            //type = './HistrixTable.vue';
-            break;
-        }
-        if (type !== '') {
-          return () => import(`${type}`);
-        }
-      }
+      const map = {
+        ficha: HistrixForm,
+        fichaing: HistrixForm,
+        cabecera: HistrixForm,
+        calendar: HistrixCalendar,
+        gantt: HistrixCalendar,
+        dashboard: HistrixDashboard,
+        tree: HistrixTree,
+        arbol: HistrixTree,
+        treeView: HistrixChart,
+        map: HistrixChart,
+        chart: HistrixChart,
+        list: HistrixList,
+        consulta: HistrixTable,
+        crud: HistrixTable,
+        abm: HistrixTable,
+        ing: HistrixTable,
+        grid: HistrixTable,
+        liveGrid: HistrixTable,
+        help: HistrixTable,
+        ayuda: HistrixTable,
+        'abm-mini': HistrixTable
+      };
+
+      return map[this.schema.type] || null;
     },
     isPdf() {
       if (this.schema.pdf || this.pdf) {

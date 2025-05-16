@@ -188,6 +188,8 @@
 <script>
 import { useVuelidate } from '@vuelidate/core';
 import histrixApi from '../services/histrixApi.js';
+import HistrixField from './HistrixField.vue';
+import HistrixCell from './HistrixCell.vue';
 
 export default {
   name: 'HistrixForm',
@@ -206,8 +208,8 @@ export default {
     computedFields: Object
   },
   components: {
-    HistrixField: () => import('./HistrixField.vue'),
-    HistrixCell: () => import('./HistrixCell.vue')
+    HistrixField,
+    HistrixCell
   },
   setup() {
     return { v$: useVuelidate() };
