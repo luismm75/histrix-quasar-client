@@ -10,9 +10,13 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js';
+import useApi from '../../services/histrixApi.js';
 export default {
   name: 'FavoritItems',
+  setup() {
+    const { getFavorites } = useApi();
+    return { getFavorites };
+  },
   data() {
     return {
       favoritItems: []
@@ -20,7 +24,7 @@ export default {
   },
   methods: {
     async getFavoritItems() {
-      const response = await histrixApi.getFavorites();
+      const response = await this.getFavorites();
       this.favoritItems = response;
     }
   },

@@ -154,13 +154,17 @@
 </template>
 
 <script>
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 import HistrixFilters from './HistrixFilters.vue';
 import HistrixCell from './HistrixCell.vue';
 import HistrixForm from './HistrixForm.vue';
 
 export default {
   name: 'HistrixTable',
+  setup() {
+    const { deleteAppData, getAppData } = useApi();
+    return { deleteAppData, getAppData };
+  },
   props: {
     inner: false,
     title: '',
@@ -247,8 +251,7 @@ export default {
       return keyData;
     },
     delete(item) {
-      histrixApi
-        .deleteAppData(this.xmlUrl(), this.getKeys(item))
+      this.deleteAppData(this.xmlUrl(), this.getKeys(item))
         .then((_response) => {
           const index = this.data.indexOf(item);
           this.data.splice(index, 1);
@@ -302,8 +305,7 @@ export default {
     },
     getData(url) {
       console.log(this.requestQuery);
-      histrixApi
-        .getAppData(url, this.requestQuery)
+      this.getAppData(url, this.requestQuery)
         .then((response) => {
           const { data } = response.data;
           /*

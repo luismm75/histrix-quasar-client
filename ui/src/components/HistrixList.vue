@@ -23,11 +23,15 @@
 </template>
 
 <script>
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 import HistrixFilters from './HistrixFilters.vue';
 
 export default {
   name: 'HistrixList',
+  setup() {
+    const { getAppData } = useApi();
+    return { getAppData };
+  },
   props: {
     path: null,
     schema: {},
@@ -98,8 +102,7 @@ export default {
       }, 300);
     },
     getData(url) {
-      histrixApi
-        .getAppData(url)
+      this.getAppData(url)
         .then((response) => {
           this.data = response.data.data;
         })

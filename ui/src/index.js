@@ -26,11 +26,11 @@ import notificationMenu from './components/widgets/notificationMenu.vue';
 import profileMenu from './components/widgets/profileMenu.vue';
 import profileMenuItems from './components/widgets/profileMenuItems.vue';
 import config from './services/config';
-import HistrixApi from './services/histrixApi.js';
+// import HistrixApi from './services/histrixApi.js';
 
 export {
   version,
-  HistrixApi,
+  // HistrixApi,
   ExportForm,
   HistrixApp,
   HistrixCalendar,

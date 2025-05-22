@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 
 export default {
   name: 'ExportForm',
@@ -41,6 +41,10 @@ export default {
     query: null,
     exportQuery: null,
     schema: {}
+  },
+  setup() {
+    const { queryStringToObject, downloadAppData } = useApi();
+    return { queryStringToObject, downloadAppData };
   },
   components: {},
   watch: {
@@ -87,13 +91,13 @@ export default {
   },
   computed: {
     params() {
-      const params = histrixApi.queryStringToObject(this.exportQuery);
+      const params = this.queryStringToObject(this.exportQuery);
       return { ...this.query, ...params };
     }
   },
   methods: {
     downloadFile() {
-      histrixApi.downloadAppData(this.path, this.params, this.fileFormat, this.fileName);
+      this.downloadAppData(this.path, this.params, this.fileFormat, this.fileName);
     }
   }
 };
