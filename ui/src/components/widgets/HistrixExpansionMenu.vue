@@ -87,12 +87,16 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js';
+import useApi from '../../services/histrixApi.js';
 
 import HistrixExpansionMenu from './HistrixExpansionMenu.vue';
 
 export default {
   name: 'HistrixExpansionMenu',
+  setup() {
+    const { removeFavorit, setFavorit, getFavorites, getMenu } = useApi();
+    return { removeFavorit, setFavorit, getFavorites, getMenu };
+  },
   props: {
     level: String,
     filter: Boolean,
@@ -143,14 +147,13 @@ export default {
     },
     async setFavorit(menuId, uri, name) {
       if (this.favorit.keys.some((value) => value.menuId === menuId)) {
-        histrixApi.removeFavorit(this.favorit.id, menuId);
+        this.removeFavorit(this.favorit.id, menuId);
         const indexItem = this.favorit.keys.findIndex((item) => item.menuId === menuId);
         this.favorit.keys.splice(indexItem, 1);
         this.$events.fire('update-favorit');
         return;
       }
-      histrixApi
-        .setFavorit(menuId, uri, name, this.favorit.id)
+      this.setFavorit(menuId, uri, name, this.favorit.id)
         .then((response) => {
           this.$q.notify({
             message: 'Favorito guardado',
@@ -185,12 +188,11 @@ export default {
     },
     getData() {
       if (this.isFavorite) {
-        histrixApi.getFavorites().then((response) => {
+        this.getFavorites().then((response) => {
           this.favorit = response;
         });
       }
-      histrixApi
-        .getMenu(this.level)
+      this.getMenu(this.level)
         .then((response) => {
           this.loading = false;
           this.data = response.data.tree;

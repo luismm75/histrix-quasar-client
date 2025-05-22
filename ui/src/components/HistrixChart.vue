@@ -38,12 +38,16 @@
 </template>
 
 <script>
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 import HistrixFilters from './HistrixFilters.vue';
 import IEcharts from 'vue-echarts-v3/src/full.js';
 
 export default {
   name: 'HistrixChart',
+  setup() {
+    const { getData } = useApi();
+    return { getData };
+  },
   props: {
     path: '',
     query: '',
@@ -173,8 +177,7 @@ export default {
       return series;
     },
     getData(url) {
-      histrixApi
-        .getData(url)
+      this.getData(url)
         .then((response) => {
           this.setChartOptions(response.data.data);
           this.loading = false;

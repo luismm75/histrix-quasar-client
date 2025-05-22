@@ -69,7 +69,7 @@
 import { minLength, required, sameAs } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import config from '../services/config.js';
-import api from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 import InputPasswordVue from './InputPassword.vue';
 
 export default {
@@ -84,7 +84,8 @@ export default {
     }
   },
   setup() {
-    return { v$: useVuelidate() };
+    const { changePassword } = useApi();
+    return { v$: useVuelidate(), changePassword };
   },
   data: () => ({
     user: '',
@@ -149,8 +150,7 @@ export default {
       this.btnLoading = true;
       const _redirect = this.$auth.redirect();
 
-      api
-        .changePassword(this.form)
+      this.changePassword(this.form)
         .then((resp) => {
           this.response = resp.data.responseText;
           this.form.old_password = null;

@@ -270,7 +270,7 @@
 <script>
 import { date } from 'quasar';
 
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 import { decimal, email, maxLength, required, helpers } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import HistrixApp from './HistrixApp.vue';
@@ -290,7 +290,8 @@ export default {
     path: null
   },
   setup() {
-    return { v$: useVuelidate() };
+    const { getAppSchema, getAppData, apiUrl } = useApi();
+    return { v$: useVuelidate(), getAppSchema, getAppData, apiUrl };
   },
   watch: {
     localValue: {
@@ -625,8 +626,7 @@ export default {
     },
     getHelpSchema(_url) {
       if (this.helpPath) {
-        histrixApi
-          .getAppSchema(this.helpPath)
+        this.getAppSchema(this.helpPath)
           .then((response) => {
             this.helpSchema = response.data.schema;
           })
@@ -644,8 +644,7 @@ export default {
       params[helpKey] = newVal;
 
       this.delayTimer = setTimeout(() => {
-        histrixApi
-          .getAppData(this.helpPath, params)
+        this.getAppData(this.helpPath, params)
           .then((response) => {
             const row = response.data.data[0];
             const schema = this.helpSchema;
@@ -663,7 +662,7 @@ export default {
     getFieldSchema: function(query) {
       if (this.hasOptions) {
         if (query) {
-                histrixApi.getAppSchema(this.innerContainerUrl, query)
+                this.getAppSchema(this.innerContainerUrl, query)
                   .then(response => {
                     this.options = this.mapOptions(response.data.data);
                   })
@@ -683,9 +682,9 @@ export default {
 
     async searchOptions(valueSearch) {
       try {
-        let field = await histrixApi.getAppSchema(this.innerContainerUrl);
+        let field = await this.getAppSchema(this.innerContainerUrl);
         field = Object.keys(field.data.schema.fields)[1];
-        const response = await histrixApi.getAppData(this.innerContainerUrl, {
+        const response = await this.getAppData(this.innerContainerUrl, {
           '_f[]': `${field}`,
           '_o[]': 'like',
           '_v[]': valueSearch
@@ -722,8 +721,7 @@ export default {
         if (this.query !== undefined && Object.entries(this.query).length !== 0) {
           if (this.autoComplet === 'true') return;
           if (refresh || this.histrixType === 'radio') {
-            histrixApi
-              .getAppData(this.innerContainerUrl, this.query)
+            this.getAppData(this.innerContainerUrl, this.query)
               .then((response) => {
                 // this.options = this.mapOptions(response.data.data);
                 this.options = this.mapRemoteOptions(response.data.data);
@@ -918,10 +916,10 @@ export default {
       return [{ name: 'Authorization', value: `Bearer ${localStorage.accessToken}` }];
     },
     uploadUrl() {
-      return `${histrixApi.apiUrl()}/files/${this.path}`;
+      return `${this.apiUrl()}/files/${this.path}`;
     },
     thumb() {
-      return `${histrixApi.apiUrl()}/thumb/${this.path}${this.value}`;
+      return `${this.apiUrl()}/thumb/${this.path}${this.value}`;
     },
     helperPath() {
       const helper = this.fieldSchema.innerContainer;

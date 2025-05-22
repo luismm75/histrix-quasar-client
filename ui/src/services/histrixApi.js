@@ -3,57 +3,60 @@ import config from './config';
 import { axiosInstance } from '@mundoit-lib/plugin-vue-axios';
 import { useAuth } from '@mundoit-lib/plugin-vue-auth';
 
-export default {
+export default function useApi() {
   /**
    * Histrix Methods
    */
-  getHostDb(host) {
-    const url = `${host}/api/db/`;
-    return this.getAxios().get(url);
-  },
-  getAxios() {
-    return axiosInstance;
-  },
-  getAuth() {
-    return useAuth();
-  },
-  currentDb() {
-    return localStorage.getItem('database') || config.db;
-  },
-  async info() {
-    const host = this.host();
-    return this.getData(`${host}/api/info/`);
-  },
-  async getDatabaseInfo(db) {
-    const host = this.host();
-    return this.getData(`${host}/api/db/${db}`);
-  },
-  host() {
-    //TODO: Change fixApi to config.apiUrl in production
-    return localStorage.getItem('host') || config.fixApi;
-  },
-  apiUrl() {
-    if (this.currentDb()) {
-      return `${this.host()}/api/db/${this.currentDb()}`;
-    }
-    return config.apiUrl;
-  },
+  const auth = useAuth();
+  const axios = axiosInstance;
+  return {
+    getHostDb(host) {
+      const url = `${host}/api/db/`;
+      return axios.get(url);
+    },
+    // getAxios() {
+    //   return axiosInstance;
+    // },
+    // getAuth() {
+    //   return useAuth();
+    // },
+    currentDb() {
+      return localStorage.getItem('database') || config.db;
+    },
+    async info() {
+      const host = this.host();
+      return this.getData(`${host}/api/info/`);
+    },
+    async getDatabaseInfo(db) {
+      const host = this.host();
+      return this.getData(`${host}/api/db/${db}`);
+    },
+    host() {
+      //TODO: Change fixApi to config.apiUrl in production
+      return localStorage.getItem('host') || config.fixApi;
+    },
+    apiUrl() {
+      if (this.currentDb()) {
+        return `${this.host()}/api/db/${this.currentDb()}`;
+      }
+      return config.apiUrl;
+    },
 
-  /**
-   * User Methods
-   */
-  changePassword(data) {
-    return this.getAxios().post(`${this.apiUrl()}/change-password/`, data);
-  },
-  reSendConfirmationMail(data) {
-    return this.getAxios().post(`${this.apiUrl()}/resend-confirmation/`, data);
-  },
-  confirmRegistration(data) {
-    return this.getAxios().post(`${this.apiUrl()}/confirm-registration/`, data);
-  },
-  register(form) {
-    return this.getAxios().post(`${this.apiUrl()}/registration/`, form);
-    /*
+    /**
+     * User Methods
+     */
+    changePassword(data) {
+      return axios.post(`${this.apiUrl()}/change-password/`, data);
+    },
+    reSendConfirmationMail(data) {
+      return axios.post(`${this.apiUrl()}/resend-confirmation/`, data);
+    },
+    confirmRegistration(data) {
+      return axios.post(`${this.apiUrl()}/confirm-registration/`, data);
+    },
+    register(form) {
+      return axios.post(`${this.apiUrl()}/registration/`, form);
+      /*
       .then(response => {
         if (response.id !== null || response.id !== undefined) {
           return {
@@ -81,48 +84,48 @@ export default {
         };
       });
       */
-  },
+    },
 
-  //
+    //
 
-  updateUser(form, userId) {
-    return this.getAxios()
-      .put(`${this.apiUrl()}/app/users/current_user_form.xml`, {
-        data: {
-          Nombre: form.Nombre,
-          name: form.Nombre,
-          apellido: form.apellido,
-          lastName: form.apellido,
-          email: form.email,
-          telefono: form.telefono,
+    updateUser(form, userId) {
+      return axios
+        .put(`${this.apiUrl()}/app/users/current_user_form.xml`, {
+          data: {
+            Nombre: form.Nombre,
+            name: form.Nombre,
+            apellido: form.apellido,
+            lastName: form.apellido,
+            email: form.email,
+            telefono: form.telefono,
+            keys: {
+              Id_usuario: userId
+            }
+          },
           keys: {
             Id_usuario: userId
           }
-        },
-        keys: {
-          Id_usuario: userId
-        }
-      })
-      .then((response) => {
-        if (response.id !== null || response.id !== undefined) {
+        })
+        .then((response) => {
+          if (response.id !== null || response.id !== undefined) {
+            return {
+              error: false,
+              html: false,
+              msg: 'Usuario actualizado exitosamente',
+              detail: ''
+            };
+          }
           return {
-            error: false,
+            error: true,
             html: false,
-            msg: 'Usuario actualizado exitosamente',
-            detail: ''
+            msg: 'Error actualizando usuario'
           };
-        }
-        return {
-          error: true,
-          html: false,
-          msg: 'Error actualizando usuario'
-        };
-      });
-  },
+        });
+    },
 
-  getBasicDataUser(_scope) {
-    return this.getAxios().get(`${this.apiUrl()}/me`);
-    /*
+    getBasicDataUser(_scope) {
+      return axios.get(`${this.apiUrl()}/me`);
+      /*
       .then((resp) => {
         console.log(resp.data)
         scope.$events.fire('got-user');
@@ -134,8 +137,8 @@ export default {
         // console.log('error')
         null);
         */
-  },
-  /*
+    },
+    /*
   getCuitData(cuit) {
     return this.getAxios()
       .get(`${this.apiUrl()}/app/cuit/cuit.xml`, {
@@ -156,311 +159,312 @@ export default {
       });
     },
     */
-  /**
-   * Login
-   * @param {string} username
-   * @param {string} password
-   */
-  async login(username, password, redirect) {
-    const token = null;
-    return this.getAuth()
-      .login({
-        url: `${this.apiUrl()}/token`,
-        data: {
-          username,
-          password,
-          grant_type: 'password',
-          client_id: config.clientId,
-          client_secret: config.clientSecret,
-          notification_token: token
-        },
-        method: 'POST',
-        rememberMe: true,
-        staySignedIn: true,
-        headers: {
-          Accept: 'application/json, text/plain',
-          'Content-Type': 'application/json'
-        },
-        // redirect: '/auth',
-        redirect: redirect ? redirect : '',
-        fetchUser: false
-      })
-      .then((_success) => {
-        return this.getUser();
-      });
-  },
-  async getData(url) {
-    return this.getAxios().get(url);
-  },
-  /**
-   * System Methods
-   * */
-
-  /**
-   * Get Menu
-   * @param {string} level
-   */
-  async getMenu(level) {
-    const url = `${this.apiUrl()}/menu/${level}`;
-    return this.getData(url);
-  },
-  async getUserNotifications() {
-    const url = `${this.apiUrl()}/user/notifications/`;
-    return this.getData(url);
-  },
-  async getUsers() {
-    const url = `${this.apiUrl()}/users/`;
-    return this.getData(url);
-  },
-  async getUserInfo() {
-    const url = `${this.apiUrl()}/me/`;
-    return this.getData(url);
-  },
-
-  async getUser(_verify = false) {
-    return this.getBasicDataUser(this).then((resp) => {
-      const userObject = resp.data;
-      // this.$events.fire('got-user');
-      localStorage.setItem('user', JSON.stringify(resp.data));
-
-      this.getAuth().user(userObject);
-      // this.$q.localStorage.set('user', JSON.stringify(userObject))
-      // Vue.events.fire('loaded-user');
-      if (userObject.verified == null) {
-        /*  'Usuario no Verificado, por favor revise su casilla de correo y confirme su registro.',
-         */
-        return '/auth/verify';
-      }
-      return true;
-    });
-  },
-  async getValidToken(id) {
-    return this.getAxios()
-      .get(`${this.apiUrl()}/app/users/valid_token.xml?login=${id}`, {
-        params: {
-          token: 'magic_token',
-          redirect: false
-        }
-      })
-      .then((resp) => {
-        if (!resp.data || resp.data.errors) {
-          return null;
-        }
-        return resp.data.data[0];
-      })
-      .catch((e) => {
-        console.log(e);
-        return null;
-      });
-  },
-  /**
-   * Application related methods
-   * */
-  /**
-   * getSchema
-   * @param {string} path App Xml Path
-   */
-  async getAppSchema(path, params) {
-    return this.getAxios().get(`${this.apiUrl()}/schema/${path}`, { params });
-  },
-  async getAppData(path, params) {
-    return this.getAxios()({
-      method: 'GET',
-      url: `${this.apiUrl()}/app/${path}`,
-      params
-    });
-  },
-  async getAppPdf(path, params) {
-    return this.getAxios().get(`${this.apiUrl()}/pdf/${path}`, { params, responseType: 'arraybuffer' });
-  },
-  upload(files) {
-    files
-      .filter((file) => file.data.name)
-      .map((file) => {
-        const formData = new FormData();
-        formData.append('file', file.data);
-        this.getAxios()({
-          method: 'POST',
-          headers: {
-            'Content-Type': 'multipart/form-data'
+    /**
+     * Login
+     * @param {string} username
+     * @param {string} password
+     */
+    async login(username, password, redirect) {
+      const token = null;
+      return auth
+        .login({
+          url: `${this.apiUrl()}/token`,
+          data: {
+            username,
+            password,
+            grant_type: 'password',
+            client_id: config.clientId,
+            client_secret: config.clientSecret,
+            notification_token: token
           },
-          url: `${this.apiUrl()}/files/${file.path}`,
-          data: formData
+          method: 'POST',
+          rememberMe: true,
+          staySignedIn: true,
+          headers: {
+            Accept: 'application/json, text/plain',
+            'Content-Type': 'application/json'
+          },
+          // redirect: '/auth',
+          redirect: redirect ? redirect : '',
+          fetchUser: false
+        })
+        .then((_success) => {
+          return this.getUser();
         });
+    },
+    async getData(url) {
+      return axios.get(url);
+    },
+    /**
+     * System Methods
+     * */
+
+    /**
+     * Get Menu
+     * @param {string} level
+     */
+    async getMenu(level) {
+      const url = `${this.apiUrl()}/menu/${level}`;
+      return this.getData(url);
+    },
+    async getUserNotifications() {
+      const url = `${this.apiUrl()}/user/notifications/`;
+      return this.getData(url);
+    },
+    async getUsers() {
+      const url = `${this.apiUrl()}/users/`;
+      return this.getData(url);
+    },
+    async getUserInfo() {
+      const url = `${this.apiUrl()}/me/`;
+      return this.getData(url);
+    },
+
+    async getUser(_verify = false) {
+      return this.getBasicDataUser(this).then((resp) => {
+        const userObject = resp.data;
+        // this.$events.fire('got-user');
+        localStorage.setItem('user', JSON.stringify(resp.data));
+
+        this.getAuth().user(userObject);
+        // this.$q.localStorage.set('user', JSON.stringify(userObject))
+        // Vue.events.fire('loaded-user');
+        if (userObject.verified == null) {
+          /*  'Usuario no Verificado, por favor revise su casilla de correo y confirme su registro.',
+           */
+          return '/auth/verify';
+        }
+        return true;
       });
-    //    return
-  },
-  async insertAppData(path, data) {
-    return this.getAxios()({
-      method: 'POST',
-      url: `${this.apiUrl()}/app/${path}`,
-      data
-    });
-  },
-  async updateAppData(path, data) {
-    return this.getAxios()({
-      method: 'PUT',
-      url: `${this.apiUrl()}/app/${path}`,
-      data
-    });
-  },
-  async processAppForm(path, data) {
-    return this.getAxios()({
-      method: 'PATCH',
-      url: `${this.apiUrl()}/app/${path}`,
-      data: { data }
-    });
-  },
-  async processApp(path, data) {
-    return this.getAxios()({
-      method: 'PATCH',
-      url: `${this.apiUrl()}/app/${path}`,
-      data: {
-        jsonData: data
-      }
-    });
-  },
-  async deleteAppData(path, keys) {
-    return this.getAxios()({
-      method: 'DELETE',
-      url: `${this.apiUrl()}/app/${path}`,
-      data: {
-        keys
-      }
-    });
-  },
-  queryStringToObject(query) {
-    const params = new URLSearchParams(query);
-    const result = {};
-
-    for (const [key, value] of params.entries()) {
-      const cleanKey = key.replace(/\[\]$/, '');
-      if (result[cleanKey]) {
-        result[cleanKey].push(value);
-      } else {
-        result[cleanKey] = [value];
-      }
-    }
-    return result;
-  },
-  getFiles(path) {
-    const url = `${this.apiUrl()}/dir/${path}`;
-    return this.getAxios().get(url, {});
-  },
-  async deleteFile(path) {
-    return this.getAxios()({
-      method: 'DELETE',
-      url: `${this.apiUrl()}/files/${path}`
-    });
-  },
-
-  // Favorites
-  async getFavoritesOption() {
-    const url = `${this.apiUrl()}/app/favorito_qry`;
-    try {
-      const response = await this.getData(url);
-      return JSON.parse(response.data.data[0].option_value);
-    } catch (_error) {
-      return [];
-    }
-  },
-  async getFavorites() {
-    const url = `${this.apiUrl()}/app/favorito_qry`;
-    try {
-      const response = await this.getData(url);
-      return { id: response.data.data[0].id_option, keys: JSON.parse(response.data.data[0].option_value) };
-    } catch (_error) {
-      return { id: null, keys: [] };
-    }
-  },
-  async setFavorit(menuId, uri, name, idOption) {
-    if (!idOption) {
-      return this.getAxios()({
+    },
+    async getValidToken(id) {
+      return axios
+        .get(`${this.apiUrl()}/app/users/valid_token.xml?login=${id}`, {
+          params: {
+            token: 'magic_token',
+            redirect: false
+          }
+        })
+        .then((resp) => {
+          if (!resp.data || resp.data.errors) {
+            return null;
+          }
+          return resp.data.data[0];
+        })
+        .catch((e) => {
+          console.log(e);
+          return null;
+        });
+    },
+    /**
+     * Application related methods
+     * */
+    /**
+     * getSchema
+     * @param {string} path App Xml Path
+     */
+    async getAppSchema(path, params) {
+      return axios.get(`${this.apiUrl()}/schema/${path}`, { params });
+    },
+    async getAppData(path, params) {
+      return axios({
+        method: 'GET',
+        url: `${this.apiUrl()}/app/${path}`,
+        params
+      });
+    },
+    async getAppPdf(path, params) {
+      return axios.get(`${this.apiUrl()}/pdf/${path}`, { params, responseType: 'arraybuffer' });
+    },
+    upload(files) {
+      files
+        .filter((file) => file.data.name)
+        .map((file) => {
+          const formData = new FormData();
+          formData.append('file', file.data);
+          axios({
+            method: 'POST',
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            },
+            url: `${this.apiUrl()}/files/${file.path}`,
+            data: formData
+          });
+        });
+      //    return
+    },
+    async insertAppData(path, data) {
+      return axios({
         method: 'POST',
+        url: `${this.apiUrl()}/app/${path}`,
+        data
+      });
+    },
+    async updateAppData(path, data) {
+      return axios({
+        method: 'PUT',
+        url: `${this.apiUrl()}/app/${path}`,
+        data
+      });
+    },
+    async processAppForm(path, data) {
+      return axios({
+        method: 'PATCH',
+        url: `${this.apiUrl()}/app/${path}`,
+        data: { data }
+      });
+    },
+    async processApp(path, data) {
+      return axios({
+        method: 'PATCH',
+        url: `${this.apiUrl()}/app/${path}`,
+        data: {
+          jsonData: data
+        }
+      });
+    },
+    async deleteAppData(path, keys) {
+      return axios({
+        method: 'DELETE',
+        url: `${this.apiUrl()}/app/${path}`,
+        data: {
+          keys
+        }
+      });
+    },
+    queryStringToObject(query) {
+      const params = new URLSearchParams(query);
+      const result = {};
+
+      for (const [key, value] of params.entries()) {
+        const cleanKey = key.replace(/\[\]$/, '');
+        if (result[cleanKey]) {
+          result[cleanKey].push(value);
+        } else {
+          result[cleanKey] = [value];
+        }
+      }
+      return result;
+    },
+    getFiles(path) {
+      const url = `${this.apiUrl()}/dir/${path}`;
+      return axios.get(url, {});
+    },
+    async deleteFile(path) {
+      return axios({
+        method: 'DELETE',
+        url: `${this.apiUrl()}/files/${path}`
+      });
+    },
+
+    // Favorites
+    async getFavoritesOption() {
+      const url = `${this.apiUrl()}/app/favorito_qry`;
+      try {
+        const response = await this.getData(url);
+        return JSON.parse(response.data.data[0].option_value);
+      } catch (_error) {
+        return [];
+      }
+    },
+    async getFavorites() {
+      const url = `${this.apiUrl()}/app/favorito_qry`;
+      try {
+        const response = await this.getData(url);
+        return { id: response.data.data[0].id_option, keys: JSON.parse(response.data.data[0].option_value) };
+      } catch (_error) {
+        return { id: null, keys: [] };
+      }
+    },
+    async setFavorit(menuId, uri, name, idOption) {
+      if (!idOption) {
+        return axios({
+          method: 'POST',
+          url: `${this.apiUrl()}/app/favorito`,
+          data: {
+            option_value: JSON.stringify([{ menuId, uri, name }])
+          }
+        });
+      }
+      const options = await this.getFavoritesOption();
+      options.push({ menuId, uri, name });
+      console.log(options);
+      return axios({
+        method: 'PUT',
         url: `${this.apiUrl()}/app/favorito`,
         data: {
-          option_value: JSON.stringify([{ menuId, uri, name }])
+          data: {
+            option_value: JSON.stringify(options)
+          },
+          keys: {
+            id_option: idOption
+          }
         }
       });
-    }
-    const options = await this.getFavoritesOption();
-    options.push({ menuId, uri, name });
-    console.log(options);
-    return this.getAxios()({
-      method: 'PUT',
-      url: `${this.apiUrl()}/app/favorito`,
-      data: {
-        data: {
-          option_value: JSON.stringify(options)
-        },
-        keys: {
-          id_option: idOption
-        }
+    },
+    async removeFavorit(idOption, menuId) {
+      const options = await this.getFavoritesOption();
+      const index = options.findIndex((item) => item.menuId === menuId);
+      if (index > -1) {
+        options.splice(index, 1);
       }
-    });
-  },
-  async removeFavorit(idOption, menuId) {
-    const options = await this.getFavoritesOption();
-    const index = options.findIndex((item) => item.menuId === menuId);
-    if (index > -1) {
-      options.splice(index, 1);
-    }
-    return this.getAxios()({
-      method: 'PUT',
-      url: `${this.apiUrl()}/app/favorito`,
-      data: {
+      return axios({
+        method: 'PUT',
+        url: `${this.apiUrl()}/app/favorito`,
         data: {
-          option_value: JSON.stringify(options)
-        },
-        keys: {
-          id_option: idOption
+          data: {
+            option_value: JSON.stringify(options)
+          },
+          keys: {
+            id_option: idOption
+          }
         }
-      }
-    });
-  },
-
-  downloadAppData(path, query, fileFormat, fileName) {
-    const url = `${this.apiUrl()}/export/${fileFormat}/${path}`;
-    this.getAxios()
-      .get(url, {
-        params: query,
-        responseType: 'blob'
-      })
-      .then((response) => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]));
-        const fileLink = document.createElement('a');
-        fileLink.href = fileURL;
-        fileLink.setAttribute('download', fileName);
-        document.body.appendChild(fileLink);
-        fileLink.click();
-      })
-      .catch((_err) => {
-        Notify.create({
-          message: 'Error downloading File',
-          type: 'negative',
-          textColor: 'white',
-          color: 'negative',
-          icon: 'error',
-          closeBtn: 'close',
-          position: 'top'
-        });
       });
-  },
+    },
 
-  async apiDBQuery() {
-    const { data } = await this.getAxios().get(config.mainUrl);
-    const infoDB = [];
-    for (const db in data) {
-      const aux = data[db];
-      if (aux.hidden !== 'true') {
-        aux.name = aux.name ? aux.name : db;
-        infoDB.push({
-          value: aux.id,
-          label: aux.description,
-          img: aux.logo
+    downloadAppData(path, query, fileFormat, fileName) {
+      const url = `${this.apiUrl()}/export/${fileFormat}/${path}`;
+      axios
+        .get(url, {
+          params: query,
+          responseType: 'blob'
+        })
+        .then((response) => {
+          const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+          const fileLink = document.createElement('a');
+          fileLink.href = fileURL;
+          fileLink.setAttribute('download', fileName);
+          document.body.appendChild(fileLink);
+          fileLink.click();
+        })
+        .catch((_err) => {
+          Notify.create({
+            message: 'Error downloading File',
+            type: 'negative',
+            textColor: 'white',
+            color: 'negative',
+            icon: 'error',
+            closeBtn: 'close',
+            position: 'top'
+          });
         });
+    },
+
+    async apiDBQuery() {
+      const { data } = await axios.get(config.mainUrl);
+      const infoDB = [];
+      for (const db in data) {
+        const aux = data[db];
+        if (aux.hidden !== 'true') {
+          aux.name = aux.name ? aux.name : db;
+          infoDB.push({
+            value: aux.id,
+            label: aux.description,
+            img: aux.logo
+          });
+        }
       }
+      return infoDB;
     }
-    return infoDB;
-  }
-};
+  };
+}

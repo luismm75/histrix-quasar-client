@@ -65,10 +65,14 @@
 </template>
 
 <script>
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 
 export default {
   name: 'HistrixCell',
+  setup() {
+    const { apiUrl, host, currentDb } = useApi();
+    return { apiUrl, host, currentDb };
+  },
   props: {
     schema: Object,
     value: Object,
@@ -78,7 +82,7 @@ export default {
   computed: {
     thumb() {
       if (this.col.value.thumb) {
-        return `${histrixApi.apiUrl()}/thumb/${this.col.value.computedPath}`;
+        return `${this.apiUrl()}/thumb/${this.col.value.computedPath}`;
       }
       return null;
     },
@@ -175,7 +179,7 @@ export default {
           recid: element.getAttributeNode('data-recid').value,
           title: element.innerText
         };
-        aws.url = `${histrixApi.host()}/uploader/?table=${aws.table}&recid=${aws.recid}&db=${histrixApi.currentDb()}`;
+        aws.url = `${this.host()}/uploader/?table=${aws.table}&recid=${aws.recid}&db=${this.currentDb()}`;
       }
       if (test_element.childNodes[1]) {
         const element = test_element.childNodes[1];
@@ -184,7 +188,7 @@ export default {
           recid: element.getAttributeNode('data-recid').value,
           title: element.innerText
         };
-        aws.url = `${histrixApi.host()}/uploader/?table=${aws.table}&recid=${aws.recid}&db=${histrixApi.currentDb()}`;
+        aws.url = `${this.host()}/uploader/?table=${aws.table}&recid=${aws.recid}&db=${this.currentDb()}`;
       }
       return aws;
     },
