@@ -273,8 +273,6 @@ import { date } from 'quasar';
 import histrixApi from '../services/histrixApi.js';
 import { decimal, email, maxLength, required, helpers } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
-import HistrixApp from './HistrixApp.vue';
-import HistrixFileManager from './widgets/HistrixFileManager.vue';
 // import PictureInput from 'vue-picture-input'
 
 export default {
@@ -335,8 +333,8 @@ export default {
     }
   },
   components: {
-    HistrixApp,
-    HistrixFileManager
+    HistrixApp: () => import('./HistrixApp.vue'),
+    HistrixFileManager: () => import('./widgets/HistrixFileManager.vue')
     // PictureInput
   },
   methods: {
@@ -349,7 +347,9 @@ export default {
     },
     openAdd() {
       const dialog = {};
-      dialog.path = this.innerContainerUrl;
+      const link = this.fieldSchema.helpers?.link;
+      const path = `${link.dir}/${link.xml}`;
+      dialog.path = path;
       dialog.query = { ...this.query };
       dialog.title = `Agregar ${this.label}`;
       this.dialog = dialog;
@@ -929,10 +929,7 @@ export default {
       return url.replace('//', '/');
     },
     isViewAddButton() {
-      if (!this.fieldSchema?.innerContainer) return false;
-      const { innerContainer } = this.fieldSchema;
-      const schema = innerContainer.schema;
-      return schema?.type === 'fichaing';
+      return !!this.fieldSchema?.helpers?.link;
     },
     helpPath() {
       if (this.fieldSchema.helpContainer) {
