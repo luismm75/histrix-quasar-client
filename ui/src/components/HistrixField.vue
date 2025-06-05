@@ -1170,7 +1170,7 @@ export default {
 
         if (this.histrixType === 'q-select' && this.options) {
           if (!this.isMultiple) {
-            return this.value;
+            return !Number.isNaN(this.value) && this.value !== '' ? Number(this.value) : this.value;
             // return this.options.find(obj => obj.value == this.value);
           }
           if (this.value === '' || this.value === null) {
@@ -1182,6 +1182,10 @@ export default {
             if (!Array.isArray(items)) {
               items = [this.value];
             }
+            items = items.map((item) => {
+              // Si es un número válido, convertirlo a Number. Si no, dejarlo igual.
+              return !Number.isNaN(item) && item !== '' ? Number(item) : item;
+            });
             return items;
           }
         }
