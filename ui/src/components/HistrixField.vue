@@ -1152,6 +1152,15 @@ export default {
           if (typeof this.value === 'string') return this.value !== '0';
           return this.value !== '0';
         }
+        if (this.histrixType === 'radio') {
+          if (this.value === '' || this.value === null) {
+            return undefined;
+          }
+          if (typeof this.value === 'string' || this.value instanceof String) {
+            return !Number.isNaN(this.value) && this.value !== '' ? Number(this.value) : this.value;
+          }
+          return this.value;
+        }
         if (this.isDate) {
           if (this.value === '' || !this.value) {
             return undefined;
