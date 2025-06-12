@@ -440,9 +440,9 @@
 </template>
 
 <script>
-import qs from 'qs';
-import Vue from 'vue';
-import histrixApi from '../services/histrixApi.js';
+// import qs from 'qs';
+// import Vue from 'vue';
+import useApi from '../services/histrixApi.js';
 import HistrixForm from './HistrixForm.vue';
 import HistrixCell from './HistrixCell.vue';
 import HistrixApp from './HistrixApp.vue';
@@ -451,6 +451,10 @@ import HistrixField from './HistrixField.vue';
 
 export default {
   name: 'HistrixTable',
+  setup() {
+    const { updateAppData, processApp, deleteAppData, getAppData } = useApi();
+    return { updateAppData, processApp, deleteAppData, getAppData };
+  },
   props: {
     inner: { type: Boolean, default: false },
     path: String,
@@ -840,8 +844,7 @@ export default {
         keys: this.getKeys(row),
         data: this.getValuesFromRow(row)
       };
-      histrixApi
-        .updateAppData(this.xmlUrl(), postData)
+      this.updateAppData(this.xmlUrl(), postData)
         .then((_response) => {
           this.$q.notify({
             message: 'Dato Guardado',
@@ -860,11 +863,11 @@ export default {
     /**
      * Executed when row is inserted by Form
      */
-    rowRecived(row, _index) {
-      Vue.set(this.data, row._id, row);
-      this.edit = false;
-      this.refresh();
-    },
+    // rowRecived(row, _index) {
+    //   Vue.set(this.data, row._id, row);
+    //   this.edit = false;
+    //   this.refresh();
+    // },
     formSaved(_row, index) {
       // update row values
 
@@ -877,8 +880,7 @@ export default {
     },
     processData() {
       this.submitting = true;
-      histrixApi
-        .processApp(this.xmlUrl(), this.rawData)
+      this.processApp(this.xmlUrl(), this.rawData)
         .then((_response) => {
           this.submitting = false;
           this.$emit('closepopup');
@@ -960,8 +962,7 @@ export default {
         this.removeItem(item);
       } else {
         if (this.getKeys(item).length !== 0) {
-          histrixApi
-            .deleteAppData(this.xmlUrl(), this.getKeys(item))
+          this.deleteAppData(this.xmlUrl(), this.getKeys(item))
             .then((_response) => {
               this.removeItem(item);
               this.refresh();
@@ -1058,8 +1059,7 @@ export default {
       const url = this.xmlUrl(this.fullQuery);
       const filters = { ...this.query, ...this.localFilters };
 
-      histrixApi
-        .getAppData(url, filters)
+      this.getAppData(url, filters)
         .then((response) => {
           const { data } = response.data;
           data.map((element) => {

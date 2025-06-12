@@ -187,7 +187,7 @@
 
 <script>
 import { useVuelidate } from '@vuelidate/core';
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 import HistrixField from './HistrixField.vue';
 import HistrixCell from './HistrixCell.vue';
 
@@ -212,7 +212,8 @@ export default {
     HistrixCell
   },
   setup() {
-    return { v$: useVuelidate() };
+    const { getAppSchema, upload, processAppForm, insertAppData, updateAppData, getAppData } = useApi();
+    return { v$: useVuelidate(), getAppSchema, upload, processAppForm, insertAppData, updateAppData, getAppData };
   },
   computed: {
     insertButton() {
@@ -497,7 +498,7 @@ export default {
     Why soud i refresh the schema ?
     refreshSchema() {
       var fieldQuerys = {fieldQuerys: this.fieldQuerys};
-      histrixApi.getAppSchema(this.url, {...this.query, ...fieldQuerys})
+      this.getAppSchema(this.url, {...this.query, ...fieldQuerys})
         .then((response) => {
           this.localSchema = response.data.schema;
         })
@@ -606,12 +607,11 @@ export default {
 
       // upload attached files
       if (this.files) {
-        histrixApi.upload(this.files);
+        this.upload(this.files);
       }
       console.log('process');
       console.log(this.postData);
-      histrixApi
-        .processAppForm(this.xmlUrl(), this.postData)
+      this.processAppForm(this.xmlUrl(), this.postData)
         .then((_response) => {
           this.submitting = false;
           this.$q.notify({
@@ -657,7 +657,7 @@ export default {
 
       // upload attached files
       if (this.files) {
-        histrixApi.upload(this.files);
+        this.upload(this.files);
       }
 
       const postData = {
@@ -666,8 +666,7 @@ export default {
       };
       // if this is a new record Insert
       if (this.newRecord) {
-        histrixApi
-          .insertAppData(this.xmlUrl(), postData)
+        this.insertAppData(this.xmlUrl(), postData)
           .then((response) => {
             this.submitting = false;
             this.$emit('closepopup');
@@ -680,8 +679,7 @@ export default {
             this.$events.fire('histrix-error-http', e);
           });
       } else {
-        histrixApi
-          .updateAppData(this.xmlUrl(), postData)
+        this.updateAppData(this.xmlUrl(), postData)
           .then((_response) => {
             this.submitting = false;
             this.$emit('closepopup');
@@ -707,8 +705,7 @@ export default {
       }
     },
     getData() {
-      histrixApi
-        .getAppData(this.xmlUrl(), this.query)
+      this.getAppData(this.xmlUrl(), this.query)
         .then((response) => {
           this.localValues = response.data.data[0];
           // this.localValues = { ...this.localValues, ...this.parseDateToLocale() };

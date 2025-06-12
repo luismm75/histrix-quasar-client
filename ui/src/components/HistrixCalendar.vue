@@ -173,11 +173,15 @@
 </template>
 
 <script>
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 import HistrixFilters from './HistrixFilters.vue';
 
 export default {
   name: 'HistrixCalendar',
+  setup() {
+    const { getData } = useApi();
+    return { getData };
+  },
   props: {
     schema: {},
     path: null,
@@ -306,8 +310,7 @@ export default {
       return `${this.schema.api}/app/${this.path}?${query || ''}&_dt=!&start=2020-01-01`;
     },
     getData(url) {
-      histrixApi
-        .getData(url)
+      this.getData(url)
         .then((response) => {
           this.data = response.data;
         })

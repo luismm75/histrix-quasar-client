@@ -103,10 +103,14 @@ import { required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 
 import config from '../services/config.js';
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 
 export default {
   name: 'FormLoginNotStyles',
+  setup() {
+    const { apiDBQuery, login } = useApi();
+    return { apiDBQuery, login, v$: useVuelidate() };
+  },
   props: {
     /**
      * @description Url para redirecionar despues de login
@@ -202,9 +206,6 @@ export default {
       type: String
     }
   },
-  setup() {
-    return { v$: useVuelidate() };
-  },
   watch: {
     /**
      * @description Si se cambia la base de datos, se guarda en el localStorage, se cambia la configuracion y se cambia la imagen
@@ -282,7 +283,7 @@ export default {
   mounted() {
     this.form.email = this.login;
     if (this.isSelectDataBase) {
-      histrixApi.apiDBQuery().then((response) => {
+      this.apiDBQuery().then((response) => {
         this.infoDB = response;
         if (config.db) {
           this.db = this.infoDB.find((val) => val.value === config.db).value;
@@ -329,8 +330,7 @@ export default {
     submitLogin() {
       const formData = this.formatDataPostLogin();
       this.btnLoading = true;
-      histrixApi
-        .login(formData.email, formData.password, this.redirect)
+      this.login(formData.email, formData.password, this.redirect)
         .then((_success) => {
           this.$events.fire('loaded-user');
           this.$events.fire('login-ok');

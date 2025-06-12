@@ -13,10 +13,14 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js';
+import useApi from '../../services/histrixApi.js';
 
 export default {
   name: 'DatabaseSelector',
+  setup() {
+    const { getHostDb } = useApi();
+    return { getHostDb };
+  },
   props: {
     host: null,
     value: {}
@@ -48,8 +52,7 @@ export default {
   },
   methods: {
     getData(host) {
-      histrixApi
-        .getHostDb(host)
+      this.getHostDb(host)
         .then((response) => {
           const data = [];
           console.log(response.data);

@@ -49,24 +49,28 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js';
+import useApi from '../../services/histrixApi.js';
 
 export default {
   name: 'HistrixFileManager',
+  setup() {
+    const { getFiles, apiUrl, deleteFile } = useApi();
+    return { getFiles, apiUrl, deleteFile };
+  },
   props: ['path'],
   components: {},
   data() {
     return {
       files: [],
       uploadHeaders: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
-      uploadUrl: `${histrixApi.apiUrl()}/files${this.path}`
+      uploadUrl: `${this.apiUrl()}/files${this.path}`
     };
   },
   computed: {},
   methods: {
     getFiles() {
       let files = [];
-      histrixApi.getFiles(this.path).then((success) => {
+      this.getFiles(this.path).then((success) => {
         files = success.data.data;
         this.files = files
           .map((item) => {
@@ -86,7 +90,7 @@ export default {
       const url = this.uploadUrl + fileRecord.name();
 
       this.$refs.fileAgent.deleteUpload(url, this.uploadHeaders, fileRecord);
-      histrixApi.deleteFile(this.path + fileRecord.name()).then((_success) => {
+      this.deleteFile(this.path + fileRecord.name()).then((_success) => {
         this.getFiles();
       });
     }
