@@ -1150,7 +1150,7 @@ export default {
           }
           if (this.value === '') return false;
           if (typeof this.value === 'string') return this.value !== '0';
-          return this.value !== '0';
+          return this.value !== 0;
         }
         if (this.histrixType === 'radio') {
           if (this.value === '' || this.value === null) {
