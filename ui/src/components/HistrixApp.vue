@@ -296,7 +296,7 @@
 </template>
 
 <script>
-import histrixApi from '../services/histrixApi.js';
+import useApi from '../services/histrixApi.js';
 
 import ExportForm from './ExportForm.vue';
 
@@ -311,6 +311,15 @@ import HistrixTable from './HistrixTable.vue';
 
 export default {
   name: 'HistrixApp',
+  setup() {
+    const { currentDb, apiUrl, getAppPdf, getAppSchema } = useApi();
+    return {
+      currentDb,
+      apiUrl,
+      getAppPdf,
+      getAppSchema
+    };
+  },
   props: {
     path: String,
     query: Object,
@@ -481,13 +490,13 @@ export default {
      * database id
      */
     databaseId() {
-      return this.database ? this.database : histrixApi.currentDb();
+      return this.database ? this.database : this.currentDb();
     },
     /**
      * url api endpoint
      */
     apiUrl() {
-      return this.api ? this.api : histrixApi.apiUrl();
+      return this.api ? this.api : this.apiUrl();
     },
     /**
      * select apropiate component to render
@@ -683,8 +692,7 @@ export default {
      * get PDF blob data
      */
     fetchPDF() {
-      histrixApi
-        .getAppPdf(this.path, this.query)
+      this.getAppPdf(this.path, this.query)
         .then((res) => {
           // create the blob
           const blob = new Blob([res.data], {
@@ -724,8 +732,7 @@ export default {
      * get Schema from API
      */
     getSchema() {
-      histrixApi
-        .getAppSchema(this.path, this.query)
+      this.getAppSchema(this.path, this.query)
         .then((response) => {
           this.resources = response.data.resources;
           this.schema = response.data.schema;

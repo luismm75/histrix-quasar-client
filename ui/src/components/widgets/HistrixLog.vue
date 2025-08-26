@@ -9,8 +9,7 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js';
-
+import useApi from '../../services/histrixApi.js';
 export default {
   name: 'HistrixLog',
   data() {
@@ -18,10 +17,16 @@ export default {
       data: []
     };
   },
+  setup() {
+    const { currentDb } = useApi();
+    return {
+      currentDb
+    };
+  },
   methods: {
     subscribeWamp() {
       if (this.$wamp) {
-        this.$wamp.subscribe(`${histrixApi.currentDb()}.histrix.log`, (_args, kwArgs, _details) => {
+        this.$wamp.subscribe(`${this.currentDb()}.histrix.log`, (_args, kwArgs, _details) => {
           this.data.push(kwArgs.data.data.log);
         });
       }

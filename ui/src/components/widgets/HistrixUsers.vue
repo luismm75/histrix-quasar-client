@@ -56,10 +56,14 @@
 
 <script>
 import { date } from 'quasar';
-import histrixApi from '../../services/histrixApi.js';
+import useApi from '../../services/histrixApi.js';
 
 export default {
   name: 'HistrixUsers',
+  setup() {
+    const { getUsers } = useApi();
+    return { getUsers };
+  },
   props: {
     online: Array
   },
@@ -108,7 +112,7 @@ export default {
   },
   mounted() {
     // this.subscribeWamp();
-    histrixApi.getUsers().then((response) => {
+    this.getUsers().then((response) => {
       this.users = response.data.users;
       this.total = response.data.total;
     });

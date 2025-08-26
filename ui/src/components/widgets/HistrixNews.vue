@@ -47,10 +47,14 @@
 
 <script>
 import config from '../../services/config.js';
-import histrixApi from '../../services/histrixApi.js';
+import useApi from '../../services/histrixApi.js';
 
 export default {
   name: 'HistrixNews',
+  setup() {
+    const { getAppData } = useApi();
+    return { getAppData };
+  },
   data() {
     return {
       numberOfPosts: 2,
@@ -61,8 +65,7 @@ export default {
   methods: {
     getData() {
       const url = '/news/htx_news.xml';
-      histrixApi
-        .getAppData(url)
+      this.getAppData(url)
         .then((response) => {
           this.data = response.data.data;
         })

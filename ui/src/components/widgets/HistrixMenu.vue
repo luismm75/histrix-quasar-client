@@ -44,10 +44,14 @@
 </template>
 
 <script>
-import histrixApi from '../../services/histrixApi.js';
+import useApi from '../../services/histrixApi.js';
 
 export default {
   name: 'HistrixMenu',
+  setup() {
+    const { getMenu } = useApi();
+    return { getMenu };
+  },
   props: {
     level: '',
     filter: true
@@ -74,8 +78,7 @@ export default {
     }
   },
   mounted() {
-    histrixApi
-      .getMenu(this.level)
+    this.getMenu(this.level)
       .then((response) => {
         this.loading = false;
         this.tree = response.data.tree;
