@@ -1,11 +1,142 @@
 {
   "name": "quasar-ui-histrix-client",
-  "version": "0.0.176",
+  "version": "0.0.177",
   "author": "Luis M. Melgratti <luis@mundoit.com.ar>",
   "description": "Histrix Quasar client components",
   "license": "MIT",
   "module": "dist/index.esm.js",
   "main": "dist/index.common.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.common.js"
+    },
+    "./components/ExportForm": {
+      "import": "./src/components/ExportForm.vue",
+      "require": "./src/components/ExportForm.vue"
+    },
+    "./components/FormLoginNotStyles": {
+      "import": "./src/components/FormLoginNotStyles.vue",
+      "require": "./src/components/FormLoginNotStyles.vue"
+    },
+    "./components/HistrixApp": {
+      "import": "./src/components/HistrixApp.vue",
+      "require": "./src/components/HistrixApp.vue"
+    },
+    "./components/HistrixCalendar": {
+      "import": "./src/components/HistrixCalendar.vue",
+      "require": "./src/components/HistrixCalendar.vue"
+    },
+    "./components/HistrixCell": {
+      "import": "./src/components/HistrixCell.vue",
+      "require": "./src/components/HistrixCell.vue"
+    },
+    "./components/HistrixChart": {
+      "import": "./src/components/HistrixChart.vue",
+      "require": "./src/components/HistrixChart.vue"
+    },
+    "./components/HistrixDashboard": {
+      "import": "./src/components/HistrixDashboard.vue",
+      "require": "./src/components/HistrixDashboard.vue"
+    },
+    "./components/HistrixField": {
+      "import": "./src/components/HistrixField.vue",
+      "require": "./src/components/HistrixField.vue"
+    },
+    "./components/HistrixFilters": {
+      "import": "./src/components/HistrixFilters.vue",
+      "require": "./src/components/HistrixFilters.vue"
+    },
+    "./components/HistrixForm": {
+      "import": "./src/components/HistrixForm.vue",
+      "require": "./src/components/HistrixForm.vue"
+    },
+    "./components/HistrixList": {
+      "import": "./src/components/HistrixList.vue",
+      "require": "./src/components/HistrixList.vue"
+    },
+    "./components/HistrixPasswordChange": {
+      "import": "./src/components/HistrixPasswordChange.vue",
+      "require": "./src/components/HistrixPasswordChange.vue"
+    },
+    "./components/HistrixTable": {
+      "import": "./src/components/HistrixTable.vue",
+      "require": "./src/components/HistrixTable.vue"
+    },
+    "./components/HistrixTree": {
+      "import": "./src/components/HistrixTree.vue",
+      "require": "./src/components/HistrixTree.vue"
+    },
+    "./components/InputPassword": {
+      "import": "./src/components/InputPassword.vue",
+      "require": "./src/components/InputPassword.vue"
+    },
+    "./components/LoginForm": {
+      "import": "./src/components/LoginForm.vue",
+      "require": "./src/components/LoginForm.vue"
+    },
+    "./components/widgets/DatabaseSelector": {
+      "import": "./src/components/widgets/DatabaseSelector.vue",
+      "require": "./src/components/widgets/DatabaseSelector.vue"
+    },
+    "./components/widgets/FavoritItems": {
+      "import": "./src/components/widgets/FavoritItems.vue",
+      "require": "./src/components/widgets/FavoritItems.vue"
+    },
+    "./components/widgets/HistrixConnectionSettings": {
+      "import": "./src/components/widgets/HistrixConnectionSettings.vue",
+      "require": "./src/components/widgets/HistrixConnectionSettings.vue"
+    },
+    "./components/widgets/HistrixExpansionMenu": {
+      "import": "./src/components/widgets/HistrixExpansionMenu.vue",
+      "require": "./src/components/widgets/HistrixExpansionMenu.vue"
+    },
+    "./components/widgets/HistrixFileManager": {
+      "import": "./src/components/widgets/HistrixFileManager.vue",
+      "require": "./src/components/widgets/HistrixFileManager.vue"
+    },
+    "./components/widgets/HistrixLog": {
+      "import": "./src/components/widgets/HistrixLog.vue",
+      "require": "./src/components/widgets/HistrixLog.vue"
+    },
+    "./components/widgets/HistrixMenu": {
+      "import": "./src/components/widgets/HistrixMenu.vue",
+      "require": "./src/components/widgets/HistrixMenu.vue"
+    },
+    "./components/widgets/HistrixNews": {
+      "import": "./src/components/widgets/HistrixNews.vue",
+      "require": "./src/components/widgets/HistrixNews.vue"
+    },
+    "./components/widgets/HistrixUsers": {
+      "import": "./src/components/widgets/HistrixUsers.vue",
+      "require": "./src/components/widgets/HistrixUsers.vue"
+    },
+    "./components/widgets/notificationMenu": {
+      "import": "./src/components/widgets/notificationMenu.vue",
+      "require": "./src/components/widgets/notificationMenu.vue"
+    },
+    "./components/widgets/profileMenu": {
+      "import": "./src/components/widgets/profileMenu.vue",
+      "require": "./src/components/widgets/profileMenu.vue"
+    },
+    "./components/widgets/profileMenuItems": {
+      "import": "./src/components/widgets/profileMenuItems.vue",
+      "require": "./src/components/widgets/profileMenuItems.vue"
+    },
+    "./services/config": {
+      "import": "./src/services/config.js",
+      "require": "./src/services/config.js"
+    },
+    "./services/histrix-bearer": {
+      "import": "./src/services/histrix-bearer.js",
+      "require": "./src/services/histrix-bearer.js"
+    },
+    "./services/histrixApi": {
+      "import": "./src/services/histrixApi.js",
+      "require": "./src/services/histrixApi.js"
+    },
+    "./style": "./dist/index.css"
+  },
   "scripts": {
     "dev": "cd dev && yarn dev && cd ..",
     "dev:umd": "yarn build && node build/script.open-umd.js",

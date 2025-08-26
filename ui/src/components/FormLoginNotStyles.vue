@@ -108,8 +108,8 @@ import useApi from '../services/histrixApi.js';
 export default {
   name: 'FormLoginNotStyles',
   setup() {
-    const { apiDBQuery, login } = useApi();
-    return { apiDBQuery, login, v$: useVuelidate() };
+    const { apiDBQuery, login: loginApi } = useApi();
+    return { apiDBQuery, loginApi, v$: useVuelidate() };
   },
   props: {
     /**
@@ -330,7 +330,7 @@ export default {
     submitLogin() {
       const formData = this.formatDataPostLogin();
       this.btnLoading = true;
-      this.login(formData.email, formData.password, this.redirect)
+      this.loginApi(formData.email, formData.password, this.redirect)
         .then((_success) => {
           this.$events.fire('loaded-user');
           this.$events.fire('login-ok');

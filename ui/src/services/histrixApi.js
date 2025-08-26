@@ -9,88 +9,88 @@ export default function useApi() {
    */
   const auth = useAuth();
   const axios = axiosInstance;
+
+  // Helper functions que antes usaban 'this'
+  const currentDb = () => {
+    return localStorage.getItem('database') || config.db;
+  };
+
+  const host = () => {
+    //TODO: Change fixApi to config.apiUrl in production
+    return localStorage.getItem('host') || config.fixApi;
+  };
+
+  const apiUrl = () => {
+    if (currentDb()) {
+      return `${host()}/api/db/${currentDb()}`;
+    }
+    return config.apiUrl;
+  };
+
+  const getData = async (url) => {
+    return axios.get(url);
+  };
+
+  const getBasicDataUser = (_scope) => {
+    return axios.get(`${apiUrl()}/me`);
+  };
+
+  // Definir getUser como función helper antes del return
+  const getUser = async (_verify = false) => {
+    return getBasicDataUser().then((resp) => {
+      const userObject = resp.data;
+      localStorage.setItem('user', JSON.stringify(resp.data));
+      auth.user(userObject);
+      if (userObject.verified == null) {
+        return '/auth/verify';
+      }
+      return true;
+    });
+  };
+
   return {
     getHostDb(host) {
       const url = `${host}/api/db/`;
       return axios.get(url);
     },
-    // getAxios() {
-    //   return axiosInstance;
-    // },
-    // getAuth() {
-    //   return useAuth();
-    // },
-    currentDb() {
-      return localStorage.getItem('database') || config.db;
-    },
+
+    currentDb,
+
     async info() {
-      const host = this.host();
-      return this.getData(`${host}/api/info/`);
+      const hostUrl = host();
+      return getData(`${hostUrl}/api/info/`);
     },
+
     async getDatabaseInfo(db) {
-      const host = this.host();
-      return this.getData(`${host}/api/db/${db}`);
+      const hostUrl = host();
+      return getData(`${hostUrl}/api/db/${db}`);
     },
-    host() {
-      //TODO: Change fixApi to config.apiUrl in production
-      return localStorage.getItem('host') || config.fixApi;
-    },
-    apiUrl() {
-      if (this.currentDb()) {
-        return `${this.host()}/api/db/${this.currentDb()}`;
-      }
-      return config.apiUrl;
-    },
+
+    host,
+    apiUrl,
 
     /**
      * User Methods
      */
     changePassword(data) {
-      return axios.post(`${this.apiUrl()}/change-password/`, data);
-    },
-    reSendConfirmationMail(data) {
-      return axios.post(`${this.apiUrl()}/resend-confirmation/`, data);
-    },
-    confirmRegistration(data) {
-      return axios.post(`${this.apiUrl()}/confirm-registration/`, data);
-    },
-    register(form) {
-      return axios.post(`${this.apiUrl()}/registration/`, form);
-      /*
-      .then(response => {
-        if (response.id !== null || response.id !== undefined) {
-          return {
-            error: false,
-            html: false,
-            msg: 'Usuario registrado exitosamente',
-            detail: ''
-            // 'Recibirá un mail de confirmación y deberá esperar aprobación por parte del consignatario'
-          };
-        } else {
-          return {
-            error: true,
-            html: false,
-            msg: response
-          };
-        }
-      })
-      .catch(e => {
-        const error = e.response.data.split('</br>');
-        return {
-          error: true,
-          html: true,
-          msg: error[0],
-          detail: error[1]
-        };
-      });
-      */
+      return axios.post(`${apiUrl()}/change-password/`, data);
     },
 
-    //
+    reSendConfirmationMail(data) {
+      return axios.post(`${apiUrl()}/resend-confirmation/`, data);
+    },
+
+    confirmRegistration(data) {
+      return axios.post(`${apiUrl()}/confirm-registration/`, data);
+    },
+
+    register(form) {
+      return axios.post(`${apiUrl()}/registration/`, form);
+    },
 
     updateUser(form, userId) {
       return axios
-        .put(`${this.apiUrl()}/app/users/current_user_form.xml`, {
+        .put(`${apiUrl()}/app/users/current_user_form.xml`, {
           data: {
             Nombre: form.Nombre,
             name: form.Nombre,
@@ -123,42 +123,8 @@ export default function useApi() {
         });
     },
 
-    getBasicDataUser(_scope) {
-      return axios.get(`${this.apiUrl()}/me`);
-      /*
-      .then((resp) => {
-        console.log(resp.data)
-        scope.$events.fire('got-user');
-        //localStorage.setItem('user', JSON.stringify(resp.data.data[0]));
-        localStorage.setItem('user', JSON.stringify(resp.data));
-        return resp.data;
-      })
-      .catch(e =>
-        // console.log('error')
-        null);
-        */
-    },
-    /*
-  getCuitData(cuit) {
-    return this.getAxios()
-      .get(`${this.apiUrl()}/app/cuit/cuit.xml`, {
-        params: {
-          cuit: cuit,
-          token: 'magic_token',
-          redirect: false
-        }
-      })
-      .then(({ data }) => {
-        if (!data || data.errors) {
-          return null;
-        }
-        // console.log(data);
-        return data
-      }).catch(e => {
-        return null;
-      });
-    },
-    */
+    getBasicDataUser,
+
     /**
      * Login
      * @param {string} username
@@ -168,7 +134,7 @@ export default function useApi() {
       const token = null;
       return auth
         .login({
-          url: `${this.apiUrl()}/token`,
+          url: `${apiUrl()}/token`,
           data: {
             username,
             password,
@@ -184,62 +150,48 @@ export default function useApi() {
             Accept: 'application/json, text/plain',
             'Content-Type': 'application/json'
           },
-          // redirect: '/auth',
           redirect: redirect ? redirect : '',
           fetchUser: false
         })
         .then((_success) => {
-          return this.getUser();
+          return getUser();
         });
     },
-    async getData(url) {
-      return axios.get(url);
-    },
+
+    getData,
+
     /**
      * System Methods
-     * */
-
+     */
     /**
      * Get Menu
      * @param {string} level
      */
     async getMenu(level) {
-      const url = `${this.apiUrl()}/menu/${level}`;
-      return this.getData(url);
+      const url = `${apiUrl()}/menu/${level}`;
+      return getData(url);
     },
+
     async getUserNotifications() {
-      const url = `${this.apiUrl()}/user/notifications/`;
-      return this.getData(url);
+      const url = `${apiUrl()}/user/notifications/`;
+      return getData(url);
     },
+
     async getUsers() {
-      const url = `${this.apiUrl()}/users/`;
-      return this.getData(url);
+      const url = `${apiUrl()}/users/`;
+      return getData(url);
     },
+
     async getUserInfo() {
-      const url = `${this.apiUrl()}/me/`;
-      return this.getData(url);
+      const url = `${apiUrl()}/me/`;
+      return getData(url);
     },
 
-    async getUser(_verify = false) {
-      return this.getBasicDataUser(this).then((resp) => {
-        const userObject = resp.data;
-        // this.$events.fire('got-user');
-        localStorage.setItem('user', JSON.stringify(resp.data));
+    getUser,
 
-        this.getAuth().user(userObject);
-        // this.$q.localStorage.set('user', JSON.stringify(userObject))
-        // Vue.events.fire('loaded-user');
-        if (userObject.verified == null) {
-          /*  'Usuario no Verificado, por favor revise su casilla de correo y confirme su registro.',
-           */
-          return '/auth/verify';
-        }
-        return true;
-      });
-    },
     async getValidToken(id) {
       return axios
-        .get(`${this.apiUrl()}/app/users/valid_token.xml?login=${id}`, {
+        .get(`${apiUrl()}/app/users/valid_token.xml?login=${id}`, {
           params: {
             token: 'magic_token',
             redirect: false
@@ -256,26 +208,30 @@ export default function useApi() {
           return null;
         });
     },
+
     /**
      * Application related methods
-     * */
+     */
     /**
      * getSchema
      * @param {string} path App Xml Path
      */
     async getAppSchema(path, params) {
-      return axios.get(`${this.apiUrl()}/schema/${path}`, { params });
+      return axios.get(`${apiUrl()}/schema/${path}`, { params });
     },
+
     async getAppData(path, params) {
       return axios({
         method: 'GET',
-        url: `${this.apiUrl()}/app/${path}`,
+        url: `${apiUrl()}/app/${path}`,
         params
       });
     },
+
     async getAppPdf(path, params) {
-      return axios.get(`${this.apiUrl()}/pdf/${path}`, { params, responseType: 'arraybuffer' });
+      return axios.get(`${apiUrl()}/pdf/${path}`, { params, responseType: 'arraybuffer' });
     },
+
     upload(files) {
       files
         .filter((file) => file.data.name)
@@ -287,55 +243,59 @@ export default function useApi() {
             headers: {
               'Content-Type': 'multipart/form-data'
             },
-            url: `${this.apiUrl()}/files/${file.path}`,
+            url: `${apiUrl()}/files/${file.path}`,
             data: formData
           });
         });
-      //    return
     },
+
     async insertAppData(path, data) {
       return axios({
         method: 'POST',
-        url: `${this.apiUrl()}/app/${path}`,
+        url: `${apiUrl()}/app/${path}`,
         data
       });
     },
+
     async updateAppData(path, data) {
       return axios({
         method: 'PUT',
-        url: `${this.apiUrl()}/app/${path}`,
+        url: `${apiUrl()}/app/${path}`,
         data
       });
     },
+
     async processAppForm(path, data) {
       return axios({
         method: 'PATCH',
-        url: `${this.apiUrl()}/app/${path}`,
+        url: `${apiUrl()}/app/${path}`,
         data: { data }
       });
     },
+
     async processApp(path, data) {
       return axios({
         method: 'PATCH',
-        url: `${this.apiUrl()}/app/${path}`,
+        url: `${apiUrl()}/app/${path}`,
         data: {
           jsonData: data
         }
       });
     },
+
     async deleteAppData(path, keys) {
       return axios({
         method: 'DELETE',
-        url: `${this.apiUrl()}/app/${path}`,
+        url: `${apiUrl()}/app/${path}`,
         data: {
           keys
         }
       });
     },
+
     queryStringToObject(query) {
       const params = new URLSearchParams(query);
       const result = {};
-
       for (const [key, value] of params.entries()) {
         const cleanKey = key.replace(/\[\]$/, '');
         if (result[cleanKey]) {
@@ -346,52 +306,68 @@ export default function useApi() {
       }
       return result;
     },
+
     getFiles(path) {
-      const url = `${this.apiUrl()}/dir/${path}`;
+      const url = `${apiUrl()}/dir/${path}`;
       return axios.get(url, {});
     },
+
     async deleteFile(path) {
       return axios({
         method: 'DELETE',
-        url: `${this.apiUrl()}/files/${path}`
+        url: `${apiUrl()}/files/${path}`
       });
     },
 
     // Favorites
     async getFavoritesOption() {
-      const url = `${this.apiUrl()}/app/favorito_qry`;
+      const url = `${apiUrl()}/app/favorito_qry`;
       try {
-        const response = await this.getData(url);
+        const response = await getData(url);
         return JSON.parse(response.data.data[0].option_value);
       } catch (_error) {
         return [];
       }
     },
+
     async getFavorites() {
-      const url = `${this.apiUrl()}/app/favorito_qry`;
+      const url = `${apiUrl()}/app/favorito_qry`;
       try {
-        const response = await this.getData(url);
+        const response = await getData(url);
         return { id: response.data.data[0].id_option, keys: JSON.parse(response.data.data[0].option_value) };
       } catch (_error) {
         return { id: null, keys: [] };
       }
     },
+
     async setFavorit(menuId, uri, name, idOption) {
       if (!idOption) {
         return axios({
           method: 'POST',
-          url: `${this.apiUrl()}/app/favorito`,
+          url: `${apiUrl()}/app/favorito`,
           data: {
             option_value: JSON.stringify([{ menuId, uri, name }])
           }
         });
       }
-      const options = await this.getFavoritesOption();
+
+      // Crear una referencia a getFavoritesOption para poder usarla aquí
+      const getFavoritesOption = async () => {
+        const url = `${apiUrl()}/app/favorito_qry`;
+        try {
+          const response = await getData(url);
+          return JSON.parse(response.data.data[0].option_value);
+        } catch (_error) {
+          return [];
+        }
+      };
+
+      const options = await getFavoritesOption();
       options.push({ menuId, uri, name });
       console.log(options);
       return axios({
         method: 'PUT',
-        url: `${this.apiUrl()}/app/favorito`,
+        url: `${apiUrl()}/app/favorito`,
         data: {
           data: {
             option_value: JSON.stringify(options)
@@ -402,15 +378,27 @@ export default function useApi() {
         }
       });
     },
+
     async removeFavorit(idOption, menuId) {
-      const options = await this.getFavoritesOption();
+      // Crear una referencia a getFavoritesOption para poder usarla aquí
+      const getFavoritesOption = async () => {
+        const url = `${apiUrl()}/app/favorito_qry`;
+        try {
+          const response = await getData(url);
+          return JSON.parse(response.data.data[0].option_value);
+        } catch (_error) {
+          return [];
+        }
+      };
+
+      const options = await getFavoritesOption();
       const index = options.findIndex((item) => item.menuId === menuId);
       if (index > -1) {
         options.splice(index, 1);
       }
       return axios({
         method: 'PUT',
-        url: `${this.apiUrl()}/app/favorito`,
+        url: `${apiUrl()}/app/favorito`,
         data: {
           data: {
             option_value: JSON.stringify(options)
@@ -423,7 +411,7 @@ export default function useApi() {
     },
 
     downloadAppData(path, query, fileFormat, fileName) {
-      const url = `${this.apiUrl()}/export/${fileFormat}/${path}`;
+      const url = `${apiUrl()}/export/${fileFormat}/${path}`;
       axios
         .get(url, {
           params: query,
