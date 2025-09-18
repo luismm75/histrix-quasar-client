@@ -134,7 +134,7 @@
             {{ label }}
           </span>
           <q-icon
-            name="help"
+            name="search"
             class="cursor-pointer"
             v-if="fieldSchema.helpContainer"
           >
