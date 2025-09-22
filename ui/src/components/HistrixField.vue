@@ -137,9 +137,8 @@
             name="search"
             class="cursor-pointer"
             v-if="fieldSchema.helpContainer"
-          >
-        </q-icon>
-        <q-menu
+          />
+          <q-menu
           ref="helperProxy"
           anchor="bottom left"
           self="top right"
@@ -639,7 +638,7 @@ export default {
     getFieldHelpData(newVal) {
       clearTimeout(this.delayTimer);
 
-      const params = this.query;
+      const params = this.query || {};
       const helpKey = this.fieldSchema.help_key;
       params[helpKey] = newVal;
 
@@ -656,7 +655,7 @@ export default {
             this.message = 'Error de Carga de Datos';
             */
           });
-      }, 100); // Will do the ajax stuff after 1000 ms, or 1 s
+      }, 500); // Will do the ajax stuff after 1000 ms, or 1 s
     },
     /*
     getFieldSchema: function(query) {
