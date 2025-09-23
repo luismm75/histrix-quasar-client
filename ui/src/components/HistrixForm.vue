@@ -609,10 +609,8 @@ export default {
       if (this.files) {
         this.upload(this.files);
       }
-      console.log('process');
-      console.log(this.postData);
       this.processAppForm(this.xmlUrl(), this.postData)
-        .then((_response) => {
+        .then((response) => {
           this.submitting = false;
           this.$q.notify({
             message: 'PROCESO FINALIZADO',
@@ -624,9 +622,10 @@ export default {
             position: 'top'
           });
           // this.$router.back();
+          const data = response?.data?.resourceIds || [];
           this.reset();
           this.refresh();
-          this.$emit('process-finish', true);
+          this.$emit('process-finish', data);
           this.$emit('closepopup');
         })
         .catch((e) => {

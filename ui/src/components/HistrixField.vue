@@ -341,8 +341,13 @@ export default {
     showDialog() {
       this.openNew = false;
     },
-    fetchData() {
+    fetchData(data) {
       this.getOptions(true);
+      const value = data?.[0]?.id;
+      if (value) {
+        this.localValue = value;
+        this.$emit('selectOption', { value: value, selected_option: value });
+      }
       this.openNew = false;
     },
     openAdd() {

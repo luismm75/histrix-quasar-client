@@ -66,7 +66,7 @@
                 <q-btn
                   icon="thumb_up"
                   :disable="!validity"
-                  label="procesar "
+                  :label="labelButton"
                   class="bg-secondary text-white nojustify-end"
                   @click="process"
                   v-if="schema.can_process && !inner"
@@ -378,6 +378,10 @@ export default {
     componentQuery() {
       return { ...this.$route.query, ...this.query };
     },
+    labelButton() {
+      if (this.schema?.processButton) return this.schema?.processButton;
+      return 'Procesar';
+    },
     redirectPage() {
       if (!this.schema || !this.schema.redirect) return null;
       return this.schema.redirect;
@@ -584,9 +588,9 @@ export default {
           });
       }
     },
-    refreshMaster(_doRefresh) {
+    refreshMaster(data) {
       //this.$refs.main.refresh()
-      this.$emit('process-finish', true);
+      this.$emit('process-finish', data);
       if (this.redirectPage) {
         this.$router.push(this.redirectPage);
       }
@@ -642,7 +646,6 @@ export default {
       return path.match(/.*\//);
     },
     closePopup() {
-      console.log('test');
       this.refreshMaster();
       this.linkDialog = false;
       this.$emit('closepopup');
