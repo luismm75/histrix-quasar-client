@@ -65,11 +65,11 @@
           <q-item-section avatar v-if="node.icon">
             <q-icon :name="node.icon" style="font-size: 2rem" />
           </q-item-section>
-          <q-item-section _v-if="!mini" class="capitalize">{{ he.decode(node.label).toLowerCase() }}</q-item-section>
+          <q-item-section _v-if="!mini" class="capitalize">{{ decodeHTML(node.label).toLowerCase() }}</q-item-section>
           <q-item-section
             side
             v-if="isFavorite"
-            @click="setFavorit(node.menuId, node.uri, he.decode(node.label).toLowerCase())"
+            @click="setFavorit(node.menuId, node.uri, decodeHTML(node.label).toLowerCase())"
           >
             <q-btn
               flat
@@ -138,6 +138,9 @@ export default {
     }
   },
   methods: {
+    decodeHTML(text) {
+      return he.decode(text);
+    },
     setIconStart(idMenu) {
       if (this.favorit.keys.some((value) => value.menuId === idMenu)) {
         return 'star';
