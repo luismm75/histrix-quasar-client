@@ -568,7 +568,7 @@ export default {
       if (options) {
         Object.entries(options).map((option) => {
           let key = option[0]?.trim?.() ?? option[0];
-          if (key && !Number.isNaN(key) && typeof key === 'string') {
+          if (key && !Number.isNaN(Number(key)) && typeof key === 'string') {
             key = Number(key);
           }
           let label = option[1];
@@ -1181,7 +1181,7 @@ export default {
 
         if (this.histrixType === 'q-select' && this.options) {
           if (!this.isMultiple) {
-            return !Number.isNaN(this.value) && this.value !== '' ? Number(this.value) : this.value;
+            return !Number.isNaN(Number(this.value)) && this.value !== '' ? Number(this.value) : this.value;
             // return this.options.find(obj => obj.value == this.value);
           }
           if (this.value === '' || this.value === null) {
@@ -1195,7 +1195,7 @@ export default {
             }
             items = items.map((item) => {
               // Si es un número válido, convertirlo a Number. Si no, dejarlo igual.
-              return !Number.isNaN(item) && item !== '' ? Number(item) : item;
+              return !Number.isNaN(Number(item)) && item !== '' ? Number(item) : item;
             });
             return items;
           }
