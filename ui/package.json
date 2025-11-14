@@ -1,6 +1,6 @@
 {
   "name": "quasar-ui-histrix-client",
-  "version": "0.0.183",
+  "version": "0.0.184",
   "author": "Luis M. Melgratti <luis@mundoit.com.ar>",
   "description": "Histrix Quasar client components",
   "license": "MIT",
@@ -10,6 +10,10 @@
     ".": {
       "import": "./dist/index.esm.js",
       "require": "./dist/index.common.js"
+    },
+    "./plugin": {
+      "import": "./src/index.js",
+      "require": "./src/index.js"
     },
     "./components/ExportForm": {
       "import": "./src/components/ExportForm.vue",
