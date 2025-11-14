@@ -10,7 +10,7 @@
         v-if="schema.filters[0]"
         dense
         :schema="schema"
-        v-on:filter-data="getData(xmlUrl($event))"
+        @filter-data="getData(xmlUrl($event))"
       />
     </q-card-section>
     <q-separator inset></q-separator>
@@ -24,12 +24,11 @@
         v-for="chart in schema.charts"
         :style="styles"
       >
-        <IEcharts
+        <v-chart
           ref="chart"
-          theme="light"
-          :resizable="true"
           :style="styles"
           :option="chartOptions[chart.id]"
+          autoresize
           v-if="!loading"
         />
       </div>
@@ -38,30 +37,104 @@
 </template>
 
 <script>
+import { use } from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import { LineChart, PieChart, BarChart } from 'echarts/charts';
+import {
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  DatasetComponent
+} from 'echarts/components';
+import VChart from 'vue-echarts';
 import useApi from '../services/histrixApi.js';
 import HistrixFilters from './HistrixFilters.vue';
-import IEcharts from 'vue-echarts-v3/src/full.js';
+
+// Registra los componentes necesarios de ECharts
+use([
+  CanvasRenderer,
+  LineChart,
+  PieChart,
+  BarChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  DatasetComponent
+]);
 
 export default {
   name: 'HistrixChart',
+  components: {
+    HistrixFilters,
+    VChart
+  },
+  props: {
+    path: {
+      type: String,
+      default: ''
+    },
+    query: {
+      type: String,
+      default: ''
+    },
+    styles: {
+      type: String,
+      default: ''
+    },
+    schema: {
+      type: Object,
+      default: () => ({})
+    },
+    resources: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   setup() {
     const { getData } = useApi();
     return { getData };
   },
-  props: {
-    path: '',
-    query: '',
-    styles: '',
-    schema: {},
-    resources: {}
-  },
-  components: {
-    HistrixFilters,
-    IEcharts
+  data() {
+    return {
+      showCharts: false,
+      message: null,
+      dialog: false,
+      types: { L: 'line', P: 'pie', C: 'bar', SC: 'bar' },
+      loading: true,
+      mode: 'list',
+      editedItem: [],
+      dataContainer: null,
+      data: [],
+      chartOptions: {},
+      chartTypes: [],
+      defaultOptions: {
+        title: { text: '' },
+        grid: {
+          bottom: '20%',
+          left: '5%',
+          top: '10%'
+        },
+        legend: {
+          orient: 'horizontal',
+          bottom: 0
+        },
+        tooltip: {
+          show: true
+        },
+        dataset: {
+          dimensions: [],
+          source: []
+        },
+        xAxis: {},
+        yAxis: {},
+        series: []
+      }
+    };
   },
   mounted() {
     const url = this.xmlUrl();
-
     this.getData(url);
   },
   watch: {
@@ -71,33 +144,9 @@ export default {
     },
     chartTypes(newVal, _oldVal) {
       console.log(newVal.key);
-      /*
-       this.chartOptions.map(function(options){
-        newSeries = options.series.map(function(serie) {
-          serie.type = newVal
-          return serie
-        })
-        console.log(newSeries)
-        console.log(options.series)
-        options.series  = newSeries
-      }, this)
-//      console.log(this.chartOptions)
-*/
     }
   },
-  computed: {},
   methods: {
-    /*
-    SaveImage(type) {
-        const linkSource = this.$refs[type].getDataURL();
-        const downloadLink = document.createElement('a');
-        document.body.appendChild(downloadLink);
-        downloadLink.href = linkSource;
-        downloadLink.target = '_self';
-        downloadLink.download = type + '.png';
-        downloadLink.click();
-    },
-    */
     xmlUrl(query) {
       return `${this.schema.api}/app/${this.path}?${query || ''}`;
     },
@@ -105,13 +154,12 @@ export default {
       let series = [];
       const types = this.types;
       this.schema.charts.map((chart) => {
-        const options = this.defaultOptions;
-
+        // Clonar defaultOptions para evitar mutaciones
+        const options = JSON.parse(JSON.stringify(this.defaultOptions));
         options.title.text = chart.titulo;
         options.title.subtext = chart.subtitulo;
-
         const label = chart.etiquetas;
-
+        
         if (chart.tipo === 'P') {
           options.xAxis = null;
           options.yAxis = null;
@@ -135,15 +183,14 @@ export default {
           }, this);
         }
         options.series = series;
-
         this.chartOptions[chart.id] = options;
       }, this);
-
       this.showCharts = true;
     },
     getDataIfIsPie(chart, data) {
       const keysSerie = Object.keys(chart.series);
       let series = [];
+      
       if (keysSerie.length >= 1) {
         const tempArray = [];
         for (const key of keysSerie) {
@@ -169,7 +216,6 @@ export default {
           {
             name: chart.datos,
             type: this.types[chart.tipo],
-            // radius: ['40%', '70%'],z|
             data: newdata
           }
         ];
@@ -187,46 +233,6 @@ export default {
           this.message = 'Error de Carga de Datos';
         });
     }
-  },
-  data() {
-    return {
-      showCharts: false,
-      message: null,
-      dialog: false,
-      types: { L: 'line', P: 'pie', C: 'bar', SC: 'bar' },
-      loading: true,
-      mode: 'list',
-      editedItem: [],
-      dataContainer: null,
-      data: [],
-      chartOptions: [],
-      chartTypes: [],
-      defaultOptions: {
-        title: { text: '' },
-        grid: {
-          bottom: '20%',
-          left: '5%',
-          top: '10%'
-        },
-        legend: {
-          orient: 'horizontal',
-          bottom: 0
-        },
-
-        tooltip: {
-          show: true
-        },
-        // Global palette:
-        // color: ['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
-        dataset: {
-          dimensions: [],
-          source: []
-        },
-        xAxis: {},
-        yAxis: {},
-        series: []
-      }
-    };
   }
 };
 </script>
