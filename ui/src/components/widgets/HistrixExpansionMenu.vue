@@ -86,7 +86,6 @@
 
 <script>
 import useApi from '../../services/histrixApi.js';
-import he from 'he';
 
 import HistrixExpansionMenu from './HistrixExpansionMenu.vue';
 
@@ -139,7 +138,9 @@ export default {
   },
   methods: {
     decodeHTML(text) {
-      return he.decode(text);
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      return doc.documentElement.textContent;
     },
     setIconStart(idMenu) {
       if (this.favorit.keys.some((value) => value.menuId === idMenu)) {

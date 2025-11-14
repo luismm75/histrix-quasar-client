@@ -300,14 +300,7 @@ import useApi from '../services/histrixApi.js';
 
 import ExportForm from './ExportForm.vue';
 
-// Importación estática arriba del archivo
-import HistrixForm from './HistrixForm.vue';
-import HistrixCalendar from './HistrixCalendar.vue';
-import HistrixDashboard from './HistrixDashboard.vue';
-import HistrixTree from './HistrixTree.vue';
-import HistrixChart from './HistrixChart.vue';
-import HistrixList from './HistrixList.vue';
-import HistrixTable from './HistrixTable.vue';
+import { defineAsyncComponentCompat } from '../services/asyncComponents.js';
 
 export default {
   name: 'HistrixApp',
@@ -342,7 +335,8 @@ export default {
     finalStep: Boolean
   },
   components: {
-    ExportForm
+    ExportForm,
+    HistrixApp: defineAsyncComponentCompat(() => import('./HistrixApp.vue'))
   },
   beforeMount() {
     //
@@ -506,30 +500,30 @@ export default {
      * select apropiate component to render
      */
     histrixComponent() {
+      // Import dinámico DIRECTO - funciona en Vue 2 y Vue 3
       const map = {
-        ficha: HistrixForm,
-        fichaing: HistrixForm,
-        cabecera: HistrixForm,
-        calendar: HistrixCalendar,
-        gantt: HistrixCalendar,
-        dashboard: HistrixDashboard,
-        tree: HistrixTree,
-        arbol: HistrixTree,
-        treeView: HistrixChart,
-        map: HistrixChart,
-        chart: HistrixChart,
-        list: HistrixList,
-        consulta: HistrixTable,
-        crud: HistrixTable,
-        abm: HistrixTable,
-        ing: HistrixTable,
-        grid: HistrixTable,
-        liveGrid: HistrixTable,
-        help: HistrixTable,
-        ayuda: HistrixTable,
-        'abm-mini': HistrixTable
+        ficha: () => import('./HistrixForm.vue'),
+        fichaing: () => import('./HistrixForm.vue'),
+        cabecera: () => import('./HistrixForm.vue'),
+        calendar: () => import('./HistrixCalendar.vue'),
+        gantt: () => import('./HistrixCalendar.vue'),
+        dashboard: () => import('./HistrixDashboard.vue'),
+        tree: () => import('./HistrixTree.vue'),
+        arbol: () => import('./HistrixTree.vue'),
+        treeView: () => import('./HistrixChart.vue'),
+        map: () => import('./HistrixChart.vue'),
+        chart: () => import('./HistrixChart.vue'),
+        list: () => import('./HistrixList.vue'),
+        consulta: () => import('./HistrixTable.vue'),
+        crud: () => import('./HistrixTable.vue'),
+        abm: () => import('./HistrixTable.vue'),
+        ing: () => import('./HistrixTable.vue'),
+        grid: () => import('./HistrixTable.vue'),
+        liveGrid: () => import('./HistrixTable.vue'),
+        help: () => import('./HistrixTable.vue'),
+        ayuda: () => import('./HistrixTable.vue'),
+        'abm-mini': () => import('./HistrixTable.vue')
       };
-
       return map[this.schema.type] || null;
     },
     isPdf() {
