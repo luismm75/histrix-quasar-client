@@ -86,9 +86,6 @@
 
 <script>
 import useApi from '../../services/histrixApi.js';
-
-import HistrixExpansionMenu from './HistrixExpansionMenu.vue';
-
 export default {
   name: 'HistrixExpansionMenu',
   setup() {
@@ -111,9 +108,7 @@ export default {
       }
     }
   },
-  components: {
-    HistrixExpansionMenu
-  },
+  
   data() {
     return {
       open: [],
