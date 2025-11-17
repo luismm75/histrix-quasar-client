@@ -272,6 +272,7 @@ import { date } from 'quasar';
 import useApi from '../services/histrixApi.js';
 import { decimal, email, maxLength, required, helpers } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
+import { defineAsyncComponentCompat } from '../services/asyncComponents.js';
 // import PictureInput from 'vue-picture-input'
 
 export default {
@@ -333,8 +334,8 @@ export default {
     }
   },
   components: {
-    HistrixApp: () => import('./HistrixApp.vue'),
-    HistrixFileManager: () => import('./widgets/HistrixFileManager.vue')
+    HistrixApp: defineAsyncComponentCompat(import('./HistrixApp.vue')),
+    HistrixFileManager: defineAsyncComponentCompat(import('./widgets/HistrixFileManager.vue'))
     // PictureInput
   },
   emits: ['selectOption', 'computed-total', 'fill-fields', 'input', 'field-change'],

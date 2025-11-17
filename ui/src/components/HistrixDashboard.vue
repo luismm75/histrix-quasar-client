@@ -40,7 +40,7 @@ export default {
     resources: {}
   },
   components: {
-        HistrixApp: defineAsyncComponentCompat(() => import('./HistrixApp.vue'))
+        HistrixApp: defineAsyncComponentCompat(import('./HistrixApp.vue'))
   },
   mounted() {
     //
