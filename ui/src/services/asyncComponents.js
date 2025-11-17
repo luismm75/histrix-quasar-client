@@ -1,24 +1,31 @@
-// src/utils/asyncComponent.js
-import { defineAsyncComponent, isVue3 } from 'vue-demi';
+import { defineAsyncComponent } from 'vue';
+import { isVue3 } from 'vue-demi';
 
-export function defineAsyncComponentCompat(loader) {
+export function defineAsyncComponentCompat(loader, options = {}) {
+  const normalizedLoader = () =>
+    Promise.resolve().then(() => (typeof loader === 'function' ? loader() : loader))
+      .then(m => (m && m.__esModule ? m.default || m : m.default || m));
+
+  const defaultLoading = { template: '<div>Cargando...</div>' };
+  const defaultError = { template: '<div>Error al cargar componente</div>' };
+
+  const { loading = defaultLoading, error = defaultError, delay, timeout } = options;
+
   if (isVue3) {
-    // Vue 3
     return defineAsyncComponent({
-      loader,
-      loadingComponent: { template: '<div>Cargando...</div>' },
-      errorComponent: { template: '<div>Error</div>' },
-      delay: 200,
-      timeout: 10000
+      loader: normalizedLoader,
+      loadingComponent: loading,
+      errorComponent: error,
+      delay,
+      timeout
+    });
+  } else {
+    return () => ({
+      component: normalizedLoader(),
+      loading,
+      error,
+      delay,
+      timeout
     });
   }
-  
-  // Vue 2
-  return () => ({
-    component: loader(),
-    loading: { template: '<div>Cargando...</div>' },
-    error: { template: '<div>Error al cargar</div>' },
-    delay: 200,
-    timeout: 10000
-  });
 }

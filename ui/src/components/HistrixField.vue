@@ -337,6 +337,7 @@ export default {
     HistrixFileManager: () => import('./widgets/HistrixFileManager.vue')
     // PictureInput
   },
+  emits: ['selectOption', 'computed-total', 'fill-fields', 'input', 'field-change'],
   methods: {
     showDialog() {
       this.openNew = false;

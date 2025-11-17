@@ -256,7 +256,7 @@ export default {
       this.password = value;
     }
   },
-
+  emits: ['show', 'hide'],
   computed: {
     /**
      * isSecure checks if the length of the password is longer then

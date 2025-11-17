@@ -251,6 +251,7 @@ export default {
       return '';
     }
   },
+  emits: ['input'],
   methods: {
     onTitlebarResized(size) {
       this.titlebarHeight = size.height;

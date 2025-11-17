@@ -335,8 +335,7 @@ export default {
     finalStep: Boolean
   },
   components: {
-    ExportForm,
-    HistrixApp: defineAsyncComponentCompat(() => import('./HistrixApp.vue'))
+    ExportForm
   },
   beforeMount() {
     //
@@ -500,29 +499,28 @@ export default {
      * select apropiate component to render
      */
     histrixComponent() {
-      // Import dinámico DIRECTO - funciona en Vue 2 y Vue 3
       const map = {
-        ficha: () => defineAsyncComponentCompat(import('./HistrixForm.vue')),
-        fichaing: () => defineAsyncComponentCompat(import('./HistrixForm.vue')),
-        cabecera: () => defineAsyncComponentCompat(import('./HistrixForm.vue')),
-        calendar: () => defineAsyncComponentCompat(import('./HistrixCalendar.vue')),
-        gantt: () => defineAsyncComponentCompat(import('./HistrixCalendar.vue')),
-        dashboard: () => defineAsyncComponentCompat(import('./HistrixDashboard.vue')),
-        tree: () => defineAsyncComponentCompat(import('./HistrixTree.vue')),
-        arbol: () => defineAsyncComponentCompat(import('./HistrixTree.vue')),
-        treeView: () => defineAsyncComponentCompat(import('./HistrixChart.vue')),
-        map: () => defineAsyncComponentCompat(import('./HistrixChart.vue')),
-        chart: () => defineAsyncComponentCompat(import('./HistrixChart.vue')),
-        list: () => defineAsyncComponentCompat(import('./HistrixList.vue')),
-        consulta: () => defineAsyncComponentCompat(import('./HistrixTable.vue')),
-        crud: () => defineAsyncComponentCompat(import('./HistrixTable.vue')),
-        abm: () => defineAsyncComponentCompat(import('./HistrixTable.vue')),
-        ing: () => defineAsyncComponentCompat(import('./HistrixTable.vue')),
-        grid: () => defineAsyncComponentCompat(import('./HistrixTable.vue')),
-        liveGrid: () => defineAsyncComponentCompat(import('./HistrixTable.vue')),
-        help: () => defineAsyncComponentCompat(import('./HistrixTable.vue')),
-        ayuda: () => defineAsyncComponentCompat(import('./HistrixTable.vue')),
-        'abm-mini': () => defineAsyncComponentCompat(import('./HistrixTable.vue'))
+        ficha: defineAsyncComponentCompat(import('./HistrixForm.vue')),
+        fichaing: defineAsyncComponentCompat(import('./HistrixForm.vue')),
+        cabecera: defineAsyncComponentCompat(import('./HistrixForm.vue')),
+        calendar: defineAsyncComponentCompat(import('./HistrixCalendar.vue')),
+        gantt: defineAsyncComponentCompat(import('./HistrixCalendar.vue')),
+        dashboard: defineAsyncComponentCompat(import('./HistrixDashboard.vue')),
+        tree: defineAsyncComponentCompat(import('./HistrixTree.vue')),
+        arbol: defineAsyncComponentCompat(import('./HistrixTree.vue')),
+        treeView: defineAsyncComponentCompat(import('./HistrixChart.vue')),
+        map: defineAsyncComponentCompat(import('./HistrixChart.vue')),
+        chart: defineAsyncComponentCompat(import('./HistrixChart.vue')),
+        list: defineAsyncComponentCompat(import('./HistrixList.vue')),
+        consulta: defineAsyncComponentCompat(import('./HistrixTable.vue')),
+        crud: defineAsyncComponentCompat(import('./HistrixTable.vue')),
+        abm: defineAsyncComponentCompat(import('./HistrixTable.vue')),
+        ing: defineAsyncComponentCompat(import('./HistrixTable.vue')),
+        grid: defineAsyncComponentCompat(import('./HistrixTable.vue')),
+        liveGrid: defineAsyncComponentCompat(import('./HistrixTable.vue')),
+        help: defineAsyncComponentCompat(import('./HistrixTable.vue')),
+        ayuda: defineAsyncComponentCompat(import('./HistrixTable.vue')),
+        'abm-mini': defineAsyncComponentCompat(import('./HistrixTable.vue'))
       };
       return map[this.schema.type] || null;
     },
@@ -543,6 +541,7 @@ export default {
       return `${this.databaseId}.${this.path}`.replace(/\//g, '__');
     }
   },
+  emits: ['input', 'advance-step', 'process-finish', 'select-row', 'computed-total', 'closepopup'],
   methods: {
     hashcode(s) {
       return Math.abs(

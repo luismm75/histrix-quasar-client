@@ -719,6 +719,7 @@ export default {
   validations() {
     return {};
   },
+  emits: ['valueEdit', 'input', 'validity', 'open-popup', 'closepopup', 'process-finish', 'form-saved', 'insert-row'],
   data() {
     return {
       localValues: {},

@@ -57,6 +57,7 @@ export default {
       return query;
     }
   },
+  emits: ['filter-data'],
   methods: {
     filterData() {
       this.$emit('filter-data', this.filterString);

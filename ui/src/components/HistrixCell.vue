@@ -79,6 +79,7 @@ export default {
     col: Object,
     path: String
   },
+  emits: ['open-popup'],
   computed: {
     thumb() {
       if (this.col.value.thumb) {

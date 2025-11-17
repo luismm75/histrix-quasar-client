@@ -45,6 +45,7 @@ export default {
       }
     }
   },
+  emits: ['input'],
   watch: {
     host(newVal, _oldVal) {
       this.getData(newVal);

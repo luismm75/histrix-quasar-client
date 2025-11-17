@@ -178,7 +178,8 @@ export default {
           this.btnLoading = false;
         });
     }
-  }
+  },
+  emits: ['close']
 };
 </script>
 <style scoped>

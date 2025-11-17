@@ -661,6 +661,7 @@ export default {
       return this.filterObject(this.schema.fields, (field) => !field.update_fields);
     }
   },
+  emits: ['export', 'print', 'computed-total', 'input', 'closepopup', 'open-popup'],
   methods: {
     setEdit(value) {
       this.editValue = value;
@@ -902,7 +903,6 @@ export default {
         });
       }
     },
-
     detailPath(props) {
       const { row } = props;
       const rowAttr = row.DT_RowAttr;

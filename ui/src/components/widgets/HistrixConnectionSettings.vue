@@ -67,6 +67,7 @@ export default {
 
       */
     }
-  }
+  },
+  emits: ['change-database']
 };
 </script>

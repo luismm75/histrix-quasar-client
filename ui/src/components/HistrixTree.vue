@@ -178,6 +178,7 @@ export default {
     HistrixCell,
     HistrixFilters
   },
+  emits: ['export', 'print'],
   mounted() {
     this.getData(this.xmlUrl(this.query));
   },
